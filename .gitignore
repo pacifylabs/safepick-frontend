@@ -19,3 +19,20 @@ pnpm-debug.log*
 *.log
 .turbo/
 .eslintcache
+
+# Agent & AI
+.agent/
+.agents/
+
+# Testing
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Misc
+.npm/
+.pnpm-store/
+*.tsbuildinfo
+.next-env.d.ts
+

@@ -1,7 +1,25 @@
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
+import { HeroSection } from "@/components/sections/HeroSection";
+import { FeaturesSection } from "@/components/sections/FeaturesSection";
+import { HowItWorksSection } from "@/components/sections/HowItWorksSection";
+import { StatsSection } from "@/components/sections/StatsSection";
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
+import { CtaSection } from "@/components/sections/CtaSection";
+
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-50">
-      <h1 className="text-3xl font-semibold">Safepick frontend</h1>
-    </main>
+    <>
+      <Navbar />
+      <main>
+        <HeroSection />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <StatsSection />
+        <TestimonialsSection />
+        <CtaSection />
+      </main>
+      <Footer />
+    </>
   );
 }
