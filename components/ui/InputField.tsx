@@ -27,8 +27,8 @@ export function InputField<T extends FieldValues>({
   const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
   return (
-    <div className={`flex flex-col gap-1.5 ${className}`}>
-      <label htmlFor={name} className="font-body text-[0.78rem] font-medium text-white/70">
+    <div className={`flex flex-col gap-2 ${className}`}>
+      <label htmlFor={name} className="font-body text-[0.875rem] font-medium text-navy">
         {label}
       </label>
       <div className="relative">
@@ -39,21 +39,21 @@ export function InputField<T extends FieldValues>({
           aria-invalid={error ? "true" : "false"}
           {...register(name)}
           className={[
-            "w-full px-4 py-3.5",
-            "bg-white/[0.07] border border-white/[0.12]",
-            "rounded-[14px]",
-            "text-white text-[0.9rem] font-body",
-            "placeholder:text-white/30",
+            "w-full px-4 py-3",
+            "bg-surface border border-black/10",
+            "rounded-xl",
+            "text-navy text-[0.875rem] font-body",
+            "placeholder:text-muted/50",
             "outline-none transition-all duration-200",
-            "focus:border-teal focus:ring-[3px] focus:ring-teal/25",
-            "aria-[invalid=true]:border-coral aria-[invalid=true]:ring-[3px] aria-[invalid=true]:ring-coral/25",
+            "focus:border-teal focus:ring-2 focus:ring-teal/20",
+            "aria-[invalid=true]:border-coral aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-coral/20",
             isPassword ? "pr-12" : ""
           ].join(" ")}
         />
         {isPassword ? (
           <button
             type="button"
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-navy/40 hover:text-navy/70 transition-colors"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? "Hide password" : "Show password"}
           >
@@ -72,7 +72,9 @@ export function InputField<T extends FieldValues>({
           </button>
         ) : null}
       </div>
-      <p className="mt-0.5 min-h-4 text-[0.74rem] text-coral">{error ?? ""}</p>
+      <p className="min-h-[1.25rem] text-[0.75rem] text-coral font-body">
+        {error ?? ""}
+      </p>
     </div>
   );
 }

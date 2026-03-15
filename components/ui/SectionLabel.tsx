@@ -6,12 +6,11 @@ interface SectionLabelProps {
     className?: string;
 }
 
-export function SectionLabel({ children, light = false, className = "" }: SectionLabelProps) {
+export function SectionLabel({ children, className = "" }: SectionLabelProps) {
     return (
         <p
             className={[
-                "text-xs font-bold tracking-[0.2em] uppercase mb-3",
-                light ? "text-teal-300" : "text-teal",
+                "section-label mb-3",
                 className
             ]
                 .filter(Boolean)

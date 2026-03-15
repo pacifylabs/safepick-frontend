@@ -53,6 +53,12 @@ export const delegatesService = {
     });
   },
 
+  async requestKYCAccess(delegateId: string): Promise<void> {
+    await apiFetch(`/delegates/${delegateId}/kyc-access`, {
+      method: "POST",
+    });
+  },
+
   async revokeAllAccess(delegateId: string): Promise<void> {
     await apiFetch(`/delegates/${delegateId}/authorizations`, {
       method: "DELETE",

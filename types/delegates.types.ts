@@ -11,18 +11,23 @@ export const RelationshipEnum = z.enum([
 
 export const KYCStatusEnum = z.enum(["PENDING", "APPROVED", "REJECTED"]);
 
+export const KYCAccessStatusEnum = z.enum(["NONE", "REQUESTED", "GRANTED"]);
+
 export const AuthTypeEnum = z.enum(["ONE_TIME", "RECURRING", "DATE_RANGE"]);
 
 export const AuthorizationStatusEnum = z.enum(["ACTIVE", "SUSPENDED", "REVOKED", "EXPIRED"]);
 
-export const AuthorizationSummarySchema = z.object({
+export const DelegateAuthorizationSchema = z.object({
+  id: z.string().optional(),
   childId: z.string(),
   childName: z.string(),
-  status: AuthorizationStatusEnum,
+  status: z.enum(["ACTIVE", "SUSPENDED", "REVOKED", "EXPIRED"]),
+  authType: z.enum(["ONE_TIME", "RECURRING", "DATE_RANGE"]),
   allowedDays: z.array(z.string()).optional(),
   allowedTimeStart: z.string().optional(),
   allowedTimeEnd: z.string().optional(),
-  authType: AuthTypeEnum,
+  validFrom: z.string().optional(),
+  validUntil: z.string().optional(),
 });
 
 export const DelegateProfileSchema = z.object({
@@ -32,9 +37,10 @@ export const DelegateProfileSchema = z.object({
   relationship: RelationshipEnum,
   photoUrl: z.string().nullable().optional(),
   kycStatus: KYCStatusEnum,
+  kycAccessStatus: KYCAccessStatusEnum.default("NONE"),
   kycVerifiedAt: z.string().nullable().optional(),
   failureReason: z.string().nullable().optional(),
-  authorizations: z.array(AuthorizationSummarySchema),
+  authorizations: z.array(DelegateAuthorizationSchema),
 });
 
 export const DelegateListResponseSchema = z.object({
@@ -77,7 +83,7 @@ export type Relationship = z.infer<typeof RelationshipEnum>;
 export type KYCStatus = z.infer<typeof KYCStatusEnum>;
 export type AuthType = z.infer<typeof AuthTypeEnum>;
 export type AuthorizationStatus = z.infer<typeof AuthorizationStatusEnum>;
-export type AuthorizationSummary = z.infer<typeof AuthorizationSummarySchema>;
+export type DelegateAuthorization = z.infer<typeof DelegateAuthorizationSchema>;
 export type DelegateProfile = z.infer<typeof DelegateProfileSchema>;
 export type CreateInvitePayload = z.infer<typeof CreateInvitePayloadSchema>;
 export type InviteResponse = z.infer<typeof InviteResponseSchema>;

@@ -3,22 +3,19 @@ import { SectionLabel } from "@/components/ui/SectionLabel";
 
 export function HeroSection() {
     return (
-        <section className="relative min-h-screen flex items-center overflow-hidden bg-sand-200 pt-16">
+        <section className="relative min-h-screen flex items-center overflow-hidden bg-off-white pt-16">
             {/* Decorative background blobs */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-teal/10 blur-[80px] -translate-y-1/3 translate-x-1/4 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-teal/8 blur-[60px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
-            <div className="absolute top-1/2 left-1/2 w-[600px] h-[300px] rounded-full bg-cream/60 blur-[100px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-teal/5 blur-[80px] -translate-y-1/3 translate-x-1/4 pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-teal/5 blur-[60px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
 
             <div className="relative max-w-7xl mx-auto px-6 py-24 md:py-32 grid md:grid-cols-2 gap-16 items-center">
                 {/* Left copy */}
                 <div>
                     <SectionLabel>Child safety, reimagined</SectionLabel>
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-navy leading-[1.1] tracking-tight mb-6">
-                        From shops to cars,{" "}
-                        <span className="text-teal">the peace of mind</span>{" "}
-                        every parent deserves.
+                    <h1 className="mb-6">
+                        You decide <em>who</em> picks up your child.
                     </h1>
-                    <p className="text-base md:text-lg text-muted-text leading-relaxed mb-8 max-w-lg">
+                    <p className="text-base md:text-lg text-muted leading-relaxed mb-8 max-w-lg">
                         SafePick verifies every school pickup in real-time — with multi-step identity checks, instant parent notifications, and a full audit trail. So you always know who collected your child.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4">
@@ -31,15 +28,15 @@ export function HeroSection() {
                     </div>
 
                     {/* Trust bar */}
-                    <div className="mt-10 flex items-center gap-6 flex-wrap">
+                    <div className="mt-10 flex items-center gap-10 flex-wrap">
                         {[
                             { value: "3s", label: "Avg. verification time" },
                             { value: "99%", label: "Pickup accuracy" },
                             { value: "0", label: "Unauthorised releases" }
                         ].map((stat) => (
                             <div key={stat.label} className="flex flex-col">
-                                <span className="text-2xl font-black text-navy">{stat.value}</span>
-                                <span className="text-xs text-muted-text">{stat.label}</span>
+                                <span className="text-2xl font-semibold text-navy font-display">{stat.value}</span>
+                                <span className="text-[0.7rem] uppercase tracking-widest text-teal-mid font-medium">{stat.label}</span>
                             </div>
                         ))}
                     </div>

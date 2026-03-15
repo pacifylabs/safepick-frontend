@@ -14,15 +14,15 @@ export interface ButtonProps {
 }
 
 const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
-  primary: "bg-navy text-white hover:bg-teal-mid transition-colors duration-200",
+  primary: "bg-navy text-white hover:bg-teal-mid",
   danger: "bg-coral/10 text-coral border border-coral/30 hover:bg-coral/20",
-  ghost: "bg-transparent text-navy opacity-70 hover:opacity-100",
-  outline: "border border-navy/20 text-navy hover:bg-navy hover:text-white"
+  ghost: "bg-transparent text-navy/70 hover:text-navy",
+  outline: "border border-black/10 text-navy hover:border-black/20"
 };
 
 const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
-  sm: "px-4 py-2 text-[0.85rem]",
-  md: "px-8 py-3.5 text-[0.95rem]",
+  sm: "px-6 py-2 text-[0.8rem]",
+  md: "px-8 py-3 text-[0.875rem]",
   lg: "px-10 py-4 text-[1rem]"
 };
 
@@ -45,14 +45,16 @@ export function Button({
     variantStyles[variant],
     sizeStyles[size],
     fullWidth ? "w-full" : "",
-    loading || disabled ? "opacity-70 cursor-not-allowed" : "",
+    loading || disabled ? "opacity-70 cursor-not-allowed" : "cursor-pointer",
     className
   ]
     .filter(Boolean)
     .join(" ");
 
   const content = loading ? (
-    <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+    <div className="flex items-center justify-center">
+      <div className={`w-5 h-5 border-2 rounded-full animate-spin ${variant === 'primary' ? 'border-white/30 border-t-white' : 'border-navy/30 border-t-navy'}`} />
+    </div>
   ) : (
     children
   );

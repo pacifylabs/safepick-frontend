@@ -13,10 +13,12 @@ export const delegatesHandlers = [
         relationship: "DRIVER",
         photoUrl: null,
         kycStatus: "APPROVED",
+        kycAccessStatus: "NONE",
         kycVerifiedAt: "2025-12-20T10:00:00Z",
         failureReason: null,
         authorizations: [
           {
+            id: "auth_01HXYZ",
             childId: "chd_01HXYZ",
             childName: "Zara Osei",
             status: "ACTIVE",
@@ -34,6 +36,7 @@ export const delegatesHandlers = [
         relationship: "NANNY",
         photoUrl: null,
         kycStatus: "PENDING",
+        kycAccessStatus: "NONE",
         kycVerifiedAt: null,
         failureReason: null,
         authorizations: []
@@ -62,10 +65,12 @@ export const delegatesHandlers = [
         relationship: "DRIVER",
         photoUrl: null,
         kycStatus: "APPROVED",
+        kycAccessStatus: "NONE",
         kycVerifiedAt: "2025-12-20T10:00:00Z",
         failureReason: null,
         authorizations: [
           {
+            id: "auth_01HXYZ",
             childId: "chd_01HXYZ",
             childName: "Zara Osei",
             status: "ACTIVE",
@@ -86,6 +91,7 @@ export const delegatesHandlers = [
         relationship: "NANNY",
         photoUrl: null,
         kycStatus: "PENDING",
+        kycAccessStatus: "NONE",
         kycVerifiedAt: null,
         failureReason: null,
         authorizations: []
@@ -129,6 +135,10 @@ export const delegatesHandlers = [
 
   http.post('/delegates/:delegateId/remind', () => {
     return HttpResponse.json({ message: "Reminder sent." });
+  }),
+
+  http.post('/delegates/:delegateId/kyc-access', () => {
+    return HttpResponse.json({ message: "Access requested." });
   }),
 
   http.delete('/delegates/:delegateId/authorizations', () => {

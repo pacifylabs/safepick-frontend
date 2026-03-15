@@ -28,6 +28,7 @@ import {
   X,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { ToastContainer } from "@/components/ui/Toast";
 import { useAuthStore } from "@/stores/auth.store";
 import { useUIStore } from "@/stores/ui.store";
 import { useChildren } from "@/hooks/useChildren";
@@ -198,6 +199,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
       {/* TOP NAV BAR */}
       <header className="bg-white border-b border-black/[0.06] px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-40">
+        <ToastContainer />
         <div className="flex items-center gap-3 md:gap-8">
           <button
             onClick={() => setMobileMenuOpen(true)}

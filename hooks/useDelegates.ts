@@ -60,6 +60,16 @@ export function useSendReminder() {
   });
 }
 
+export function useRequestKYCAccess() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (delegateId: string) => delegatesService.requestKYCAccess(delegateId),
+    onSuccess: (_, delegateId) => {
+      queryClient.invalidateQueries({ queryKey: ["delegates", delegateId] });
+    },
+  });
+}
+
 export function useRemoveDelegate() {
   const queryClient = useQueryClient();
   return useMutation({
