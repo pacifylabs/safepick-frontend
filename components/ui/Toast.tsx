@@ -32,7 +32,7 @@ export function ToastContainer() {
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center gap-2 pointer-events-none w-full max-w-[400px] px-4">
       <AnimatePresence>
-        {toasts.map((toast) => (
+        {toasts.map((toast: any) => (
           <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
         ))}
       </AnimatePresence>

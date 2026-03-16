@@ -20,14 +20,14 @@ interface ChildrenUIActions {
   clearDraft: () => void;
 }
 
-export const useChildrenStore = create<ChildrenUIState & ChildrenUIActions>((set) => ({
+export const useChildrenStore = create((set: any) => ({
   selectedChildId: null,
   registrationStep: "DETAILS",
   registrationDraft: {},
   setSelectedChild: (id: string | null) => set({ selectedChildId: id }),
   setRegistrationStep: (step: "DETAILS" | "GUARDIAN" | "REVIEW") => set({ registrationStep: step }),
   updateDraft: (data: Partial<ChildrenUIState["registrationDraft"]>) =>
-    set((state) => ({
+    set((state: any) => ({
       registrationDraft: { ...state.registrationDraft, ...data },
     })),
   clearDraft: () => set({ registrationDraft: {}, registrationStep: "DETAILS" }),

@@ -3,6 +3,9 @@ import { childrenHandlers } from "./children.handlers";
 import { schoolsHandlers } from "./schools.handlers";
 import { delegatesHandlers } from "./delegates.handlers";
 import { authorizationsHandlers } from "./authorizations.handlers";
+import { verificationHandlers } from "./verification.handlers";
+import { delegateAuthHandlers } from "./delegate-auth.handlers";
+import { auditHandlers } from "./audit.handlers";
 
 export const handlers = [
   ...authHandlers,
@@ -10,4 +13,7 @@ export const handlers = [
   ...schoolsHandlers,
   ...delegatesHandlers,
   ...authorizationsHandlers,
+  ...verificationHandlers,
+  ...delegateAuthHandlers,
+  ...auditHandlers,
 ];

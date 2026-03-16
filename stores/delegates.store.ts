@@ -40,22 +40,22 @@ const initialInviteConfig: InviteConfig = {
   expiresInHours: 48,
 };
 
-export const useDelegatesStore = create<DelegatesUIState & DelegatesUIActions>()((set) => ({
+export const useDelegatesStore = create((set: any) => ({
   view: "LIST",
   inviteStep: "CONFIGURE",
   inviteConfig: initialInviteConfig,
   createdInvite: null,
   dismissedBanners: [],
 
-  setView: (view) => set({ view }),
-  setInviteStep: (step) => set({ inviteStep: step }),
-  updateInviteConfig: (config) =>
-    set((state) => ({
+  setView: (view: any) => set({ view }),
+  setInviteStep: (step: any) => set({ inviteStep: step }),
+  updateInviteConfig: (config: any) =>
+    set((state: any) => ({
       inviteConfig: { ...state.inviteConfig, ...config },
     })),
-  setCreatedInvite: (invite) => set({ createdInvite: invite }),
-  dismissBanner: (id) =>
-    set((state) => ({
+  setCreatedInvite: (invite: any) => set({ createdInvite: invite }),
+  dismissBanner: (id: any) =>
+    set((state: any) => ({
       dismissedBanners: [...state.dismissedBanners, id],
     })),
   resetInvite: () =>

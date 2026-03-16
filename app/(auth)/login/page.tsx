@@ -110,11 +110,20 @@ export default function LoginPage() {
       </div>
 
       <p className="text-center font-body text-xs sm:text-sm text-white/50">
-        Don't have an account?{" "}
+        Don&apos;t have an account?{" "}
         <Link href="/signup" className="font-medium text-teal hover:underline">
           Sign up
         </Link>
       </p>
+
+      <div className="mt-8 pt-6 border-t border-white/5 text-center">
+        <p className="font-body text-xs sm:text-sm text-white/40">
+          Are you a delegate?{" "}
+          <Link href="/delegate/login" className="font-medium text-[#0FA37F] hover:underline">
+            Delegate sign in
+          </Link>
+        </p>
+      </div>
     </AuthCard>
   );
 }

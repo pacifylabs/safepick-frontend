@@ -19,9 +19,9 @@ interface UIActions {
   setPanicActive: (active: boolean) => void;
 }
 
-export const useUIStore = create<UIState & UIActions>()(
+export const useUIStore = create(
   persist(
-    (set) => ({
+    (set: any) => ({
       pageTitle: "Dashboard",
       rightPanelOpen: false,
       selectedChildId: null,
@@ -39,5 +39,5 @@ export const useUIStore = create<UIState & UIActions>()(
     {
       name: "safepick-ui",
     }
-  )
+  ) as any
 );

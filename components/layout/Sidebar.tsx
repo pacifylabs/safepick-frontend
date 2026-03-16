@@ -4,16 +4,37 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/ui/Logo";
 import { useAuthStore } from "@/stores/auth.store";
+import { useDelegateAuthStore } from "@/stores/delegateAuth.store";
+import Cookies from "js-cookie";
 import { 
   LayoutDashboard, 
   Users, 
   UserCheck, 
   CalendarCheck, 
   ShieldAlert,
-  LogOut
+  LogOut,
+  LucideIcon,
+  Home,
+  Calendar,
+  Bell,
+  Building,
+  History
 } from "lucide-react";
 
-const navItems = [
+interface NavItem {
+  href: string;
+  icon: LucideIcon;
+  label: string;
+  emergency?: boolean;
+  badge?: boolean;
+}
+
+interface SidebarProps {
+  items?: NavItem[];
+  role?: "PARENT" | "DELEGATE";
+}
+
+const defaultParentItems: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/dashboard/children", icon: Users, label: "My Children" },
   { href: "/dashboard/delegates", icon: UserCheck, label: "Delegates" },
@@ -21,23 +42,47 @@ const navItems = [
   { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency", emergency: true },
 ];
 
-export function Sidebar() {
+const defaultDelegateItems: NavItem[] = [
+  { href: "/delegate/dashboard", icon: Home, label: "Home" },
+  { href: "/delegate/children", icon: Users, label: "My children" },
+  { href: "/delegate/schedule", icon: Calendar, label: "Schedule" },
+  { href: "/delegate/pickups", icon: Bell, label: "Pickups", badge: true },
+  { href: "/delegate/schools", icon: Building, label: "Schools" },
+  { href: "/delegate/audit", icon: History, label: "Activity" },
+];
+
+export function Sidebar({ items, role = "PARENT" }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const user = useAuthStore((state) => state.user);
-  const clearSession = useAuthStore((state) => state.clearSession);
+  
+  const parentUser = useAuthStore((state: any) => state.user);
+  const clearParentSession = useAuthStore((state: any) => state.clearSession);
+  
+  const delegateUser = useDelegateAuthStore((state: any) => state.delegate);
+  const clearDelegateSession = useDelegateAuthStore((state: any) => state.clearDelegate);
+
+  const isDelegate = role === "DELEGATE";
+  const user = isDelegate ? delegateUser : parentUser;
+  const navItems = items || (isDelegate ? defaultDelegateItems : defaultParentItems);
 
   const handleSignOut = () => {
-    clearSession();
-    router.push("/login");
+    if (isDelegate) {
+      clearDelegateSession();
+      Cookies.remove("delegate-access-token");
+      router.push("/delegate/login");
+    } else {
+      clearParentSession();
+      Cookies.remove("accessToken");
+      router.push("/login");
+    }
   };
 
   const initials = user?.fullName
-    ? user.fullName.split(" ").map(n => n[0]).join("").toUpperCase()
+    ? user.fullName.split(" ").map((n: string) => n[0]).join("").toUpperCase()
     : "??";
 
   return (
-    <div className="hidden md:flex w-[240px] flex-shrink-0 bg-navy min-h-screen flex-col sticky top-0 h-screen overflow-y-auto">
+    <div className="hidden md:flex w-[240px] flex-shrink-0 bg-navy min-h-screen flex-col sticky top-0 h-screen overflow-y-auto border-r border-white/5">
       <div className="p-6">
         <Logo variant="light" size="md" className="mb-10" />
 
@@ -65,6 +110,9 @@ export function Sidebar() {
                 {item.emergency && (
                   <div className="w-2 h-2 rounded-full bg-coral ml-auto" />
                 )}
+                {item.badge && (
+                  <div className="w-2 h-2 rounded-full bg-teal ml-auto animate-pulse" />
+                )}
               </Link>
             );
           })}
@@ -80,10 +128,10 @@ export function Sidebar() {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-[0.82rem] font-medium text-white truncate font-body">
-              {user?.fullName || "Parent User"}
+              {user?.fullName || (isDelegate ? "Delegate User" : "Parent User")}
             </p>
             <p className="text-[0.72rem] text-white/40 truncate font-body">
-              Parent account
+              {isDelegate ? "Delegate account" : "Parent account"}
             </p>
           </div>
         </div>

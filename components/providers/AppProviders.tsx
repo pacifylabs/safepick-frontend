@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAuthStore } from "@/stores/auth.store";
 import { getCurrentUser } from "@/services/auth.service";
+import { ToastContainer } from "@/components/ui/Toast";
 
 const queryClient = new QueryClient();
 
@@ -16,18 +17,27 @@ export function AppProviders(props: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (process.env.NODE_ENV !== "production") {
-      import("@/mocks/browser").then(({ worker }) => {
-        if (!(globalThis as any).__mswStarted) {
-          worker.start({
-            onUnhandledRequest: "bypass",
-          }).then(() => {
-            (globalThis as any).__mswStarted = true;
+      import("@/mocks/browser")
+        .then(({ worker }) => {
+          if (!(globalThis as any).__mswStarted) {
+            return worker
+              .start({ onUnhandledRequest: "bypass" })
+              .then(() => {
+                (globalThis as any).__mswStarted = true;
+                setMswReady(true);
+              })
+              .catch((err: unknown) => {
+                console.warn("[MSW] Failed to start service worker:", err);
+                setMswReady(true);
+              });
+          } else {
             setMswReady(true);
-          });
-        } else {
+          }
+        })
+        .catch((err: unknown) => {
+          console.warn("[MSW] Failed to import browser mock:", err);
           setMswReady(true);
-        }
-      });
+        });
     } else {
       setMswReady(true);
     }
@@ -56,6 +66,7 @@ export function AppProviders(props: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ToastContainer />
       {props.children}
       {process.env.NODE_ENV !== "production" ? (
         <ReactQueryDevtools initialIsOpen={false} />
