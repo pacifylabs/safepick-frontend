@@ -1,35 +1,80 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDelegatePickupRequests } from '@/hooks/useDelegate';
 import { format, formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import DelegateRightPanel from '@/components/delegate/DelegateRightPanel';
+import Toast from '@/components/ui/Toast';
 import { getInitials } from '@/lib/utils';
-import { Bell, QrCode, LogOut, XCircle } from 'lucide-react';
+import { Bell, QrCode, LogOut, XCircle, Smartphone, Timer, CheckCircle } from 'lucide-react';
+import { usePickupStore } from '@/stores/pickup.store';
+import { QrOverlay } from '@/components/delegate/QrOverlay';
 
 const PickupsPage = () => {
   const router = useRouter();
   const [tab, setTab] = useState('active');
   const [historyFilter, setHistoryFilter] = useState('ALL');
+  const [activeToast, setActiveToast] = useState<{ title: string; message: string; type: 'success' | 'error' | 'info' } | null>(null);
 
+  const { qrOverlayAuthorizationId, setQrOverlayAuthorizationId } = usePickupStore();
   const { data: pickupRequests, isLoading } = useDelegatePickupRequests();
 
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "PICKUP_APPROVED") {
+        setActiveToast({
+          title: "Pickup Approved!",
+          message: `Parent authorized release of ${event.data.childName}.`,
+          type: "success"
+        });
+      } else if (event.data?.type === "PICKUP_DENIED") {
+        setActiveToast({
+          title: "Pickup Denied",
+          message: `Parent denied release of ${event.data.childName}.`,
+          type: "error"
+        });
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
+
+  const getStatusStyles = (status: string) => {
+    switch (status) {
+      case 'PENDING_GATE': return { label: 'At Gate', bg: 'bg-[#EF9F27]/10', text: '#EF9F27', icon: Timer };
+      case 'AWAITING_PARENT': return { label: 'Awaiting Parent', bg: 'bg-[#185FA5]/10', text: '#185FA5', icon: Smartphone };
+      case 'APPROVED': return { label: 'Approved', bg: 'bg-[#0FA37F]/10', text: '#0FA37F', icon: CheckCircle };
+      case 'DENIED': return { label: 'Denied', bg: 'bg-[#D85A30]/10', text: '#D85A30', icon: XCircle };
+      default: return { label: status, bg: 'bg-white/10', text: '#FFFFFF', icon: Bell };
+    }
+  };
+
   const activeRequests = useMemo(() => 
-    pickupRequests?.filter((req: any) => req.status === 'PENDING_GATE') || [],
+    pickupRequests?.filter((req: any) => ['PENDING_GATE', 'AWAITING_PARENT', 'APPROVED'].includes(req.status)) || [],
     [pickupRequests]
   );
 
   const historyRequests = useMemo(() => {
-    const past = pickupRequests?.filter((req: any) => req.status !== 'PENDING_GATE') || [];
+    const past = pickupRequests?.filter((req: any) => !['PENDING_GATE', 'AWAITING_PARENT', 'APPROVED'].includes(req.status)) || [];
     if (historyFilter === 'ALL') return past;
     return past.filter((req: any) => req.status === historyFilter);
   }, [pickupRequests, historyFilter]);
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <main className="flex-1 bg-[#E8EAF0] px-4 py-5 space-y-4 md:px-5 md:py-6 md:space-y-5">
+      {activeToast && (
+        <div className="fixed top-6 right-6 z-[100] w-[340px]">
+          <Toast
+            title={activeToast.title}
+            message={activeToast.message}
+            type={activeToast.type}
+            onClose={() => setActiveToast(null)}
+          />
+        </div>
+      )}
+      <main className="flex-1 bg-[#E8EAF0] px-4 py-5 md:px-8 md:py-8 overflow-y-auto">
         <div>
           <p className="font-dm-sans text-[0.68rem] text-[#6B7280] mb-1">
             <span className="cursor-pointer hover:text-[#0FA37F]" onClick={() => router.push('/delegate/dashboard')}>
@@ -46,7 +91,7 @@ const PickupsPage = () => {
           </p>
         </div>
 
-        <div className="flex gap-0 bg-white rounded-[10px] border border-[rgba(11,26,44,0.07)] p-1 w-full md:w-fit">
+        <div className="mt-6 flex gap-0 bg-white rounded-[10px] border border-[rgba(11,26,44,0.07)] p-1 w-full md:w-fit">
           <button onClick={() => setTab('active')} className={`flex-1 md:flex-none text-center px-3 md:px-5 py-[7px] rounded-[8px] cursor-pointer font-dm-sans text-[0.78rem] md:text-[0.8rem] font-medium transition-all ${
             tab === 'active' ? 'bg-[#0B1A2C] text-white' : 'text-[#6B7280] hover:text-[#0B1A2C]'
           }`}>
@@ -65,45 +110,65 @@ const PickupsPage = () => {
         </div>
 
         {tab === 'active' && (
-          <div className="space-y-3">
+          <div className="mt-6 space-y-3">
             {isLoading ? (
               <>
                 <div className="h-[88px] bg-white animate-pulse rounded-[12px]"></div>
                 <div className="h-[88px] bg-white animate-pulse rounded-[12px]"></div>
               </>
             ) : activeRequests.length > 0 ? (
-              activeRequests.map((request: any) => (
-                <motion.div 
-                  key={request.id} 
-                  initial={{ opacity: 0, y: -8 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  transition={{ duration: 0.3 }}
-                  className="bg-[#E1F5EE] border border-[rgba(15,163,127,0.22)] rounded-[14px] p-4"
-                >
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-[10px] h-[10px] rounded-full bg-[#0FA37F] border-2 border-[rgba(15,163,127,0.3)] animate-pulse"></div>
-                    <span className="font-dm-sans text-[0.65rem] md:text-[0.68rem] font-medium text-[#0F6E56] uppercase tracking-[0.08em]">GATE IS READY</span>
-                    <span className="font-dm-sans text-[0.65rem] md:text-[0.68rem] text-[#6B7280] ml-auto">
-                      {formatDistanceToNow(new Date(request.requestedAt), { addSuffix: true })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-[38px] h-[38px] md:w-[40px] md:h-[40px] bg-[#1D9E75] rounded-full flex items-center justify-center text-white text-[0.7rem] md:text-[0.72rem] font-medium">
-                      {getInitials(request.child.fullName)}
+              activeRequests.map((request: any) => {
+                const styles = getStatusStyles(request.status);
+                const StatusIcon = styles.icon;
+                
+                return (
+                  <motion.div 
+                    key={request.id} 
+                    initial={{ opacity: 0, y: -8 }} 
+                    animate={{ opacity: 1, y: 0 }} 
+                    transition={{ duration: 0.3 }}
+                    className={`${
+                      request.status === 'APPROVED' 
+                        ? 'bg-[#E1F5EE] border-[#0FA37F]/20' 
+                        : request.status === 'DENIED'
+                        ? 'bg-[#FAECE7] border-[#D85A30]/20'
+                        : 'bg-white border-[rgba(11,26,44,0.07)]'
+                    } border rounded-[14px] p-4 shadow-sm`}
+                  >
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full ${styles.bg}`}>
+                        <StatusIcon className="w-3 h-3" style={{ color: styles.text }} />
+                        <span className="font-dm-sans text-[0.6rem] font-bold uppercase tracking-[0.05em]" style={{ color: styles.text }}>
+                          {styles.label}
+                        </span>
+                      </div>
+                      <span className="font-dm-sans text-[0.65rem] md:text-[0.68rem] text-[#6B7280] ml-auto">
+                        {formatDistanceToNow(new Date(request.requestedAt), { addSuffix: true })}
+                      </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-dm-sans text-[0.82rem] md:text-[0.875rem] font-medium text-[#0B1A2C] truncate">{request.child.fullName}</p>
-                      <p className="font-dm-sans text-[0.7rem] md:text-[0.75rem] text-[#6B7280] mt-[2px] truncate">
-                        {request.school.name} &middot; {request.school.address}
-                      </p>
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-[38px] h-[38px] md:w-[40px] md:h-[40px] bg-[#1D9E75] rounded-full flex items-center justify-center text-white text-[0.7rem] md:text-[0.72rem] font-medium">
+                        {getInitials(request.child.fullName)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-dm-sans text-[0.82rem] md:text-[0.875rem] font-medium text-[#0B1A2C] truncate">{request.child.fullName}</p>
+                        <p className="font-dm-sans text-[0.7rem] md:text-[0.75rem] text-[#6B7280] mt-[2px] truncate">
+                          {request.school.name} &middot; {request.school.address}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <button onClick={() => router.push(`/delegate/gate?authorizationId=${request.authorizationId}`)} className="w-full bg-[#0FA37F] rounded-[10px] py-[10px] md:py-[11px] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#0d9472] transition-colors">
-                    <QrCode className="stroke-white w-4 h-4" />
-                    <span className="font-dm-sans text-[0.8rem] md:text-[0.82rem] font-medium text-white">Show my QR code</span>
-                  </button>
-                </motion.div>
-              ))
+                    {request.status !== 'APPROVED' && request.status !== 'DENIED' && (
+                      <button 
+                        onClick={() => setQrOverlayAuthorizationId(request.authorizationId)} 
+                        className="w-full bg-[#0FA37F] rounded-[10px] py-[10px] md:py-[11px] flex items-center justify-center gap-2 cursor-pointer hover:bg-[#0d9472] transition-colors shadow-sm active:scale-[0.98]"
+                      >
+                        <QrCode className="stroke-white w-4 h-4" />
+                        <span className="font-dm-sans text-[0.8rem] md:text-[0.82rem] font-medium text-white">Show my QR code</span>
+                      </button>
+                    )}
+                  </motion.div>
+                );
+              })
             ) : (
               <div className="flex flex-col items-center py-10 md:py-12 text-center">
                 <div className="w-16 h-16 bg-[#E1F5EE] rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -120,16 +185,16 @@ const PickupsPage = () => {
         )}
 
         {tab === 'history' && (
-          <div>
+          <div className="mt-6">
             <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mb-3">
               {['ALL', 'COMPLETED', 'DENIED'].map(filter => (
                 <button 
                   key={filter} 
                   onClick={() => setHistoryFilter(filter)}
-                  className={`rounded-full px-4 py-[7px] font-dm-sans text-[0.75rem] font-medium whitespace-nowrap cursor-pointer ${
+                  className={`rounded-full px-4 py-[7px] font-dm-sans text-[0.75rem] font-medium whitespace-nowrap cursor-pointer transition-all ${
                     historyFilter === filter
-                      ? 'bg-[#0B1A2C] text-white'
-                      : 'bg-white text-[#6B7280] border border-[rgba(11,26,44,0.07)]'
+                      ? 'bg-[#0B1A2C] text-white shadow-md'
+                      : 'bg-white text-[#6B7280] border border-[rgba(11,26,44,0.07)] hover:bg-gray-50'
                   }`}>
                   {filter.charAt(0) + filter.slice(1).toLowerCase()}
                 </button>
@@ -143,7 +208,7 @@ const PickupsPage = () => {
                 </>
               ) : historyRequests.length > 0 ? (
                 historyRequests.map((request: any) => (
-                  <div key={request.id} className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] p-3 md:p-[14px] flex items-center gap-3">
+                  <div key={request.id} className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] p-3 md:p-[14px] flex items-center gap-3 shadow-sm">
                     <div className={`w-[32px] h-[32px] md:w-[34px] md:h-[34px] rounded-[9px] flex items-center justify-center flex-shrink-0 ${
                       request.status === 'COMPLETED' ? 'bg-[#E1F5EE]' : 'bg-[#FAECE7]'
                     }`}>
@@ -175,6 +240,13 @@ const PickupsPage = () => {
       <div className="hidden lg:flex">
         <DelegateRightPanel />
       </div>
+
+      {qrOverlayAuthorizationId && (
+        <QrOverlay 
+          authorizationId={qrOverlayAuthorizationId} 
+          onClose={() => setQrOverlayAuthorizationId(null)} 
+        />
+      )}
     </div>
   );
 };

@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { 
+  ArrowRight,
+  CheckCircle, 
+  Clock, 
+  Smartphone, 
+  Fingerprint, 
+  ShieldAlert,
+  XCircle
+} from "lucide-react";
 import { VerificationSession } from "@/types/verification.types";
 
 interface SessionStatusBannerProps {
@@ -14,12 +22,16 @@ export function SessionStatusBanner({ session }: SessionStatusBannerProps) {
       case "QR_VERIFIED":
       case "OTP_VERIFIED":
       case "BIOMETRIC_VERIFIED":
-        return { label: "Verified", color: "bg-[#0FA37F]/20 text-[#0FA37F]", pulsing: false };
+      case "APPROVED":
+        return { label: "Authorized", color: "bg-[#0FA37F]/20 text-[#0FA37F]", pulsing: false };
       case "AWAITING_PARENT":
         return { label: "Awaiting Parent", color: "bg-[#EF9F27]/20 text-[#EF9F27]", pulsing: true };
       case "RULES_VIOLATED":
       case "REJECTED":
-        return { label: "Rejected", color: "bg-[#D85A30]/20 text-[#D85A30]", pulsing: false };
+      case "DENIED":
+        return { label: "Denied", color: "bg-[#D85A30]/20 text-[#D85A30]", pulsing: false };
+      case "TIMED_OUT":
+        return { label: "Expired", color: "bg-[#EF9F27]/20 text-[#EF9F27]", pulsing: false };
       default:
         return { label: "Pending", color: "bg-white/10 text-white/60", pulsing: true };
     }

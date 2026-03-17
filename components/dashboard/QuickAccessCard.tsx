@@ -10,6 +10,7 @@ interface QuickAccessCardProps {
   iconColor: string;
   title: string;
   meta: string;
+  metaColor?: string;
   onClick: () => void;
 }
 
@@ -19,6 +20,7 @@ export const QuickAccessCard: React.FC<QuickAccessCardProps> = ({
   iconColor,
   title,
   meta,
+  metaColor,
   onClick,
 }) => {
   return (
@@ -36,7 +38,7 @@ export const QuickAccessCard: React.FC<QuickAccessCardProps> = ({
       <p className="font-body text-[0.875rem] font-semibold text-[#0B1A2C] mb-1">
         {title}
       </p>
-      <p className="font-body text-[0.75rem] text-[#6B7280]">{meta}</p>
+      <p className={`font-body text-[0.75rem] ${metaColor || "text-[#6B7280]"}`}>{meta}</p>
     </motion.div>
   );
 };

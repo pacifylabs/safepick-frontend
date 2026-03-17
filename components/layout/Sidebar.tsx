@@ -18,7 +18,9 @@ import {
   Calendar,
   Bell,
   Building,
-  History
+  History,
+  FolderOpen,
+  MapPin,
 } from "lucide-react";
 
 interface NavItem {
@@ -27,6 +29,7 @@ interface NavItem {
   label: string;
   emergency?: boolean;
   badge?: boolean;
+  disabled?: boolean;
 }
 
 interface SidebarProps {
@@ -36,10 +39,12 @@ interface SidebarProps {
 
 const defaultParentItems: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/children", icon: Users, label: "My Children" },
-  { href: "/dashboard/delegates", icon: UserCheck, label: "Delegates" },
+  { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
+  { href: "/dashboard/delegates", icon: Users, label: "Delegates" },
+  { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
   { href: "/dashboard/attendance", icon: CalendarCheck, label: "Attendance" },
-  { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency", emergency: true },
+  { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency" },
+  { href: "/dashboard/track", icon: MapPin, label: "Track", disabled: true },
 ];
 
 const defaultDelegateItems: NavItem[] = [
@@ -98,15 +103,22 @@ export function Sidebar({ items, role = "PARENT" }: SidebarProps) {
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={item.disabled ? "#" : item.href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-body text-[0.875rem] font-medium transition-all duration-150 ${
-                  isActive
-                    ? "bg-teal/15 text-teal border-l-2 border-teal"
-                    : "text-white/50 hover:text-white hover:bg-white/5"
+                  item.disabled
+                    ? "opacity-40 cursor-not-allowed pointer-events-none"
+                    : isActive
+                      ? "bg-teal/15 text-teal border-l-2 border-teal"
+                      : "text-white/50 hover:text-white hover:bg-white/5"
                 }`}
               >
                 <Icon size={18} />
-                <span>{item.label}</span>
+                <span className="flex-1">{item.label}</span>
+                {item.disabled && (
+                  <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
+                    Soon
+                  </span>
+                )}
                 {item.emergency && (
                   <div className="w-2 h-2 rounded-full bg-coral ml-auto" />
                 )}

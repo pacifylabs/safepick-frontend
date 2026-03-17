@@ -13,7 +13,9 @@ import {
   Calendar,
   Bell,
   Building,
-  History
+  History,
+  FolderOpen,
+  MapPin,
 } from "lucide-react";
 
 interface NavItem {
@@ -21,6 +23,7 @@ interface NavItem {
   icon: LucideIcon;
   label: string;
   badge?: boolean;
+  disabled?: boolean;
 }
 
 interface MobileNavProps {
@@ -29,11 +32,12 @@ interface MobileNavProps {
 }
 
 const defaultNavItems: NavItem[] = [
-  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
-  { href: "/dashboard/children", icon: Users, label: "Children" },
-  { href: "/dashboard/delegates", icon: UserCheck, label: "Delegates" },
-  { href: "/dashboard/attendance", icon: CalendarCheck, label: "History" },
-  { href: "/dashboard/emergency", icon: ShieldAlert, label: "Panic" },
+  { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
+  { href: "/dashboard/delegates", icon: Users, label: "Delegates" },
+  { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
+  { href: "/dashboard/attendance", icon: CalendarCheck, label: "Attendance" },
+  { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency" },
+  { href: "/dashboard/track", icon: MapPin, label: "Track", disabled: true },
 ];
 
 const defaultDelegateItems: NavItem[] = [
@@ -58,14 +62,22 @@ export function MobileNav({ items, role = "PARENT" }: MobileNavProps) {
           <Link
             key={item.href}
             href={item.href}
+            onClick={(e) => item.disabled && e.preventDefault()}
             className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all relative ${
-              isActive ? "text-teal" : "text-muted"
+              item.disabled 
+                ? "opacity-40 cursor-not-allowed pointer-events-none" 
+                : isActive ? "text-teal" : "text-muted"
             }`}
           >
             <Icon size={20} />
             <span className="font-body text-[0.62rem] font-medium">{item.label}</span>
             {item.badge && (
               <div className="absolute top-1.5 right-3 w-1.5 h-1.5 rounded-full bg-teal" />
+            )}
+            {item.disabled && (
+              <div className="absolute -top-1 -right-1 bg-[#F2F0EB] text-[#6B7280] rounded-full px-1 py-0 text-[0.45rem] font-medium">
+                Soon
+              </div>
             )}
           </Link>
         );

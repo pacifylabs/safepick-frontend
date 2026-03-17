@@ -178,6 +178,32 @@ export default function DelegateLayout({
       </nav>
 
       <div className="flex-1 lg:ml-[220px] flex flex-col min-h-screen">
+        {/* --- MOBILE TOP BAR --- */}
+        <header className="lg:hidden bg-[#0B1A2C] px-4 py-3 flex items-center justify-between sticky top-0 z-30 border-b border-white/[0.05]">
+          <div className="flex items-center gap-2">
+            <div className="w-[6px] h-[6px] bg-[#0FA37F] rounded-full"></div>
+            <span className="font-['Fraunces'] text-[1rem] font-semibold text-white tracking-[-0.02em]">
+              SafePick
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-white/[0.04]">
+              <div className="w-[26px] h-[26px] rounded-full bg-[#1D9E75] flex items-center justify-center text-white text-[0.6rem] font-medium flex-shrink-0">
+                {getInitials(delegate?.fullName)}
+              </div>
+              <p className="text-[0.7rem] font-medium text-white font-['DM_Sans'] truncate max-w-[80px]">
+                {delegate?.fullName?.split(' ')[0] ?? "Delegate"}
+              </p>
+            </div>
+            <button 
+              onClick={handleSignOut}
+              className="p-2 rounded-lg bg-white/[0.04] text-white/40 hover:text-[#D85A30] transition-colors"
+            >
+              <LogOut className="w-[14px] h-[14px]" />
+            </button>
+          </div>
+        </header>
+
         <div className="flex flex-1">
           <main className="flex-1 pb-20 lg:pb-0">{children}</main>
         </div>

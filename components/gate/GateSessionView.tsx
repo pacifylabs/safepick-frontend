@@ -8,7 +8,10 @@ import {
   Fingerprint, 
   ArrowRight,
   ShieldAlert,
-  Loader2
+  Loader2,
+  XCircle,
+  Clock,
+  AlertCircle
 } from "lucide-react";
 import { VerificationSession } from "@/types/verification.types";
 import { SessionStatusBanner } from "./SessionStatusBanner";
@@ -16,6 +19,9 @@ import { FallbackBanner } from "./FallbackBanner";
 import { Button } from "@/components/ui/Button";
 import { useSubmitOtp, useSubmitBiometric } from "@/hooks/useVerification";
 import { useVerificationStore } from "@/stores/verification.store";
+import { usePickupRequest } from "@/hooks/usePickupRequest";
+import { useRouter } from "next/navigation";
+import { format } from "date-fns";
 
 interface GateSessionViewProps {
   session: VerificationSession;
@@ -292,40 +298,12 @@ export function GateSessionView({ session, onSessionEnd }: GateSessionViewProps)
 
       case "AWAITING_PARENT":
         return (
-          <motion.div 
-            key="awaiting-parent"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="flex-1 flex flex-col items-center justify-center text-center px-16"
-          >
-            <div className="relative mb-12">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="w-48 h-48 rounded-full border-4 border-white/5 border-t-[#0FA37F]"
-              />
-              <motion.div
-                animate={{ scale: [1, 1.1, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <Smartphone className="w-16 h-16 text-[#0FA37F]" />
-              </motion.div>
-            </div>
-
-            <h2 className="font-display text-5xl font-semibold text-white mb-4">Waiting for parent</h2>
-            <p className="text-white/60 text-2xl max-w-2xl leading-relaxed mb-12">
-              Authorization request sent to <span className="text-white font-medium">{session.parentName || "the parent"}</span>. 
-              Please ask the delegate to wait.
-            </p>
-
-            <div className="flex flex-col items-center gap-4">
-              <span className="text-white/20 uppercase tracking-[0.2em] font-bold">Session Expires In</span>
-              <div className="font-display text-7xl font-bold text-white tracking-tight">
-                02:45
-              </div>
-            </div>
-          </motion.div>
+          <GateAuthorizationView
+            sessionId={session.id}
+            delegate={session.delegate}
+            child={session.child}
+            onSessionEnd={onSessionEnd}
+          />
         );
 
       default:
@@ -350,6 +328,204 @@ export function GateSessionView({ session, onSessionEnd }: GateSessionViewProps)
         <AnimatePresence mode="wait">
           {renderStep()}
         </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function GateAuthorizationView({ 
+  sessionId, 
+  delegate, 
+  child, 
+  onSessionEnd 
+}: { 
+  sessionId: string; 
+  delegate: any; 
+  child: any; 
+  onSessionEnd: () => void;
+}) {
+  const router = useRouter();
+  // Using the sessionId as pickupRequestId for the demo/sprint
+  const { data: request, isLoading, isError } = usePickupRequest(sessionId);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-6">
+        <Loader2 className="w-16 h-16 text-[#0FA37F] animate-spin" />
+        <p className="font-display text-2xl text-white/40">Initializing authorization...</p>
+      </div>
+    );
+  }
+
+  if (isError || !request) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-6">
+        <AlertCircle className="w-20 h-20 text-[#D85A30]" />
+        <h2 className="font-display text-4xl font-semibold text-white">Authorization Error</h2>
+        <p className="text-white/60 text-xl">Could not establish real-time link with parent.</p>
+        <Button variant="primary" onClick={() => window.location.reload()} className="mt-4 h-16 px-10 text-lg">
+          Retry Connection
+        </Button>
+      </div>
+    );
+  }
+
+  // Handle different pickup request states
+  if (request.status === "APPROVED") {
+    return (
+      <motion.div 
+        initial={{ backgroundColor: "#0B1A2C" }}
+        animate={{ backgroundColor: "#071A0E" }}
+        transition={{ duration: 0.6 }}
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.15, 1] }}
+          transition={{ duration: 0.5, type: "spring" }}
+        >
+          <CheckCircle className="w-32 h-32 text-[#0FA37F]" />
+        </motion.div>
+
+        <div className="text-center space-y-4">
+          <h2 className="font-display text-6xl font-semibold text-white">Release authorized</h2>
+          <p className="text-white/60 text-2xl">Approved by Primary Parent</p>
+        </div>
+
+        <div className="bg-white/5 rounded-[32px] p-8 mt-4 w-full max-w-[500px] border border-white/5">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-[#1D9E75] flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+              {child.photoUrl ? <img src={child.photoUrl} alt="" className="w-full h-full object-cover" /> : child.fullName[0]}
+            </div>
+            <div className="flex-1">
+              <p className="text-2xl text-white font-medium">{child.fullName}</p>
+              <p className="text-white/40 text-lg mt-1">May leave with {delegate.fullName}</p>
+            </div>
+          </div>
+          <div className="h-px bg-white/10 my-6" />
+          <div className="flex items-center gap-3 text-white/30">
+            <Clock className="w-5 h-5" />
+            <p className="text-lg">Approved at {format(new Date(), "h:mm a")}</p>
+          </div>
+        </div>
+
+        <Button 
+          variant="primary" 
+          className="h-20 px-12 text-xl rounded-2xl flex items-center gap-4 mt-4"
+          onClick={onSessionEnd}
+        >
+          Confirm child released
+          <ArrowRight className="w-6 h-6" />
+        </Button>
+      </motion.div>
+    );
+  }
+
+  if (request.status === "DENIED") {
+    return (
+      <motion.div 
+        initial={{ backgroundColor: "#0B1A2C" }}
+        animate={{ backgroundColor: "#1A0707" }}
+        transition={{ duration: 0.6 }}
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.15, 1] }}
+          transition={{ duration: 0.5, type: "spring" }}
+        >
+          <XCircle className="w-32 h-32 text-[#D85A30]" />
+        </motion.div>
+
+        <h2 className="font-display text-6xl font-semibold text-white">Release denied</h2>
+
+        <div className="bg-[#D85A30]/10 border border-[#D85A30]/30 rounded-[32px] p-8 max-w-[540px] w-full text-center space-y-4">
+          <p className="font-body text-2xl font-semibold text-[#D85A30]">Do NOT release this child.</p>
+          <p className="text-white/60 text-xl leading-relaxed">
+            The parent has denied this pickup request. An incident has been filed automatically. 
+            Keep {child.fullName} in school supervision.
+          </p>
+        </div>
+
+        <Button 
+          variant="ghost" 
+          className="text-white/40 hover:text-white text-xl"
+          onClick={() => router.push("/gate")}
+        >
+          Start new verification
+        </Button>
+      </motion.div>
+    );
+  }
+
+  if (request.status === "TIMED_OUT") {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-8 text-center px-16">
+        <Clock className="w-32 h-32 text-[#EF9F27] opacity-50" />
+        <h2 className="font-display text-5xl font-semibold text-white">Request expired</h2>
+        <div className="bg-[#EF9F27]/10 border border-[#EF9F27]/20 rounded-3xl p-8 max-w-2xl">
+          <p className="text-[#EF9F27] text-2xl font-medium mb-2">Escalating to backup contact</p>
+          <p className="text-white/60 text-xl leading-relaxed">
+            The primary parent did not respond in time. The secondary guardian has been notified for authorization.
+          </p>
+        </div>
+        <Button variant="ghost" onClick={() => router.push("/gate")} className="text-white/40 text-xl">
+          Return to Gate Home
+        </Button>
+      </div>
+    );
+  }
+
+  // Default AWAITING_PARENT state
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center text-center px-16">
+      <div className="bg-white/5 rounded-[40px] p-10 max-w-[520px] w-full border border-white/10 mb-12">
+        <div className="w-24 h-24 rounded-full bg-[#1D9E75] flex items-center justify-center text-white text-4xl font-bold mx-auto mb-6">
+          {delegate.photoUrl ? <img src={delegate.photoUrl} alt="" className="w-full h-full object-cover" /> : delegate.fullName[0]}
+        </div>
+        <h3 className="font-display text-3xl font-semibold text-white mb-2">{delegate.fullName}</h3>
+        <p className="text-white/40 uppercase tracking-widest text-lg font-medium mb-6">{delegate.relationship}</p>
+        
+        <div className="h-px bg-white/10 mb-6" />
+        
+        <p className="text-white/50 text-lg mb-2">Collecting</p>
+        <p className="font-display text-3xl font-semibold text-white mb-1">{child.fullName}</p>
+        <p className="text-white/30 text-lg">Greenfield Academy</p>
+      </div>
+
+      <div className="space-y-8 w-full max-w-[520px]">
+        <div className="flex items-center gap-4 justify-center">
+          {[0, 1, 2].map((i) => (
+            <motion.div
+              key={i}
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.15 }}
+              className="w-3 h-3 rounded-full bg-[#0FA37F]"
+            />
+          ))}
+          <span className="text-white/60 text-xl font-medium ml-2">Waiting for parent approval</span>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex justify-between items-end px-1">
+            <p className="text-white/30 text-lg uppercase tracking-widest font-bold">Request expires in</p>
+            <p className={`font-display text-2xl font-bold ${
+              request.secondsRemaining < 30 ? 'text-[#D85A30]' : 'text-white/60'
+            }`}>
+              {Math.floor(request.secondsRemaining / 60)}:{(request.secondsRemaining % 60).toString().padStart(2, '0')}
+            </p>
+          </div>
+          <div className="h-2.5 bg-white/10 rounded-full overflow-hidden w-full">
+            <motion.div 
+              initial={{ width: "100%" }}
+              animate={{ 
+                width: `${(request.secondsRemaining / 180) * 100}%`,
+                backgroundColor: request.secondsRemaining < 30 ? "#D85A30" : request.secondsRemaining < 60 ? "#EF9F27" : "#0FA37F"
+              }}
+              className="h-full rounded-full"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

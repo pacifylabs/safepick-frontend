@@ -24,6 +24,7 @@ import {
   LayoutGrid,
   List,
   LogOut,
+  MapPin,
   Menu,
   X,
 } from "lucide-react";
@@ -34,12 +35,26 @@ import { useUIStore } from "@/stores/ui.store";
 import { useChildren } from "@/hooks/useChildren";
 import { ChildDetailPanel } from "@/components/dashboard/ChildDetailPanel";
 import { Child } from "@/types/children.types";
+import { usePickupStore } from "@/stores/pickup.store";
+import { PickupRequestModal } from "@/components/pickup/PickupRequestModal";
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, clearSession } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const { activePickupRequestId, setActivePickupRequestId } = usePickupStore();
+
+  // FCM Foreground Listener Stub for Feature 09
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "PICKUP_REQUEST") {
+        setActivePickupRequestId(event.data.pickupRequestId);
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [setActivePickupRequestId]);
 
   const handleSignOut = () => {
     clearSession();
@@ -54,11 +69,15 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   } = useUIStore();
   const { data: childrenData = [] } = useChildren();
 
-  const navTabs = [
-    { href: "/dashboard", icon: FolderOpen, label: "Dashboard" },
-    { href: "/dashboard/activity", icon: Activity, label: "Activity" },
-    { href: "/dashboard/attendance", icon: CalendarDays, label: "Attendance" },
+  const topNavTabs: any[] = [];
+
+  const sidebarItems = [
+    { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
     { href: "/dashboard/delegates", icon: Users, label: "Delegates" },
+    { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
+    { href: "/dashboard/attendance", icon: CalendarDays, label: "Attendance" },
+    { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency" },
+    { href: "/dashboard/track", icon: MapPin, label: "Track", disabled: true },
   ];
 
   const sidebarChildren = childrenData.slice(0, 5);
@@ -118,21 +137,44 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
                 {/* Main Links */}
                 <div className="space-y-1">
-                  {navTabs.map((tab) => (
+                  <button
+                    onClick={() => {
+                      router.push("/dashboard");
+                      setMobileMenuOpen(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                      pathname === "/dashboard"
+                        ? "bg-[#EEF2FF] text-[#3730A3]"
+                        : "text-[#6B7280] hover:bg-[#F2F0EB]"
+                    }`}
+                  >
+                    <FolderOpen className="w-5 h-5" />
+                    <span className="text-[0.9rem] font-medium">Dashboard</span>
+                  </button>
+                  {sidebarItems.map((item) => (
                     <button
-                      key={tab.href}
+                      key={item.href}
                       onClick={() => {
-                        router.push(tab.href);
-                        setMobileMenuOpen(false);
+                        if (!item.disabled) {
+                          router.push(item.href);
+                          setMobileMenuOpen(false);
+                        }
                       }}
                       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
-                        pathname === tab.href
-                          ? "bg-[#EEF2FF] text-[#3730A3]"
-                          : "text-[#6B7280] hover:bg-[#F2F0EB]"
+                        item.disabled
+                          ? "opacity-40 cursor-not-allowed pointer-events-none"
+                          : pathname === item.href
+                            ? "bg-[#EEF2FF] text-[#3730A3]"
+                            : "text-[#6B7280] hover:bg-[#F2F0EB]"
                       }`}
                     >
-                      <tab.icon className="w-5 h-5" />
-                      <span className="text-[0.9rem] font-medium">{tab.label}</span>
+                      <item.icon className="w-5 h-5" />
+                      <span className="text-[0.9rem] font-medium flex-1 text-left">{item.label}</span>
+                      {item.disabled && (
+                        <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
+                          Soon
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -200,6 +242,12 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
       {/* TOP NAV BAR */}
       <header className="bg-white border-b border-black/[0.06] px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-40">
         <ToastContainer />
+        {activePickupRequestId && (
+          <PickupRequestModal
+            pickupRequestId={activePickupRequestId}
+            onClose={() => setActivePickupRequestId(null)}
+          />
+        )}
         <div className="flex items-center gap-3 md:gap-8">
           <button
             onClick={() => setMobileMenuOpen(true)}
@@ -211,26 +259,6 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
           <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
             <Logo variant="dark" size="md" />
           </Link>
-
-          <nav className="hidden md:flex items-center gap-1">
-            {navTabs.map((tab) => {
-              const isActive = pathname === tab.href;
-              return (
-                <button
-                  key={tab.href}
-                  onClick={() => router.push(tab.href)}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[0.875rem] font-medium transition-all duration-150 ${
-                    isActive
-                      ? "bg-[#0B1A2C] text-white"
-                      : "text-[#6B7280] hover:text-[#0B1A2C] hover:bg-[#F2F0EB]"
-                  }`}
-                >
-                  <tab.icon className="w-4 h-4" />
-                  {tab.label}
-                </button>
-              );
-            })}
-          </nav>
         </div>
 
         <div className="flex items-center gap-3">
@@ -277,19 +305,36 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
             <div className="flex flex-col gap-0.5 mt-2">
               {[
-                { icon: Clock, label: "Recent" },
-                { icon: Heart, label: "Favourites" },
-                { icon: Share2, label: "Shared" },
-                { icon: Tag, label: "Tags" },
-              ].map((item) => (
-                <div
-                  key={item.label}
-                  className="flex items-center gap-3 px-3 py-2 rounded-xl text-[0.875rem] text-[#6B7280] hover:bg-[#F2F0EB] hover:text-[#0B1A2C] cursor-pointer transition-colors"
-                >
-                  <item.icon className="w-4 h-4" />
-                  {item.label}
-                </div>
-              ))}
+                { icon: FolderOpen, label: "Children", href: "/dashboard/children" },
+                { icon: Users, label: "Delegates", href: "/dashboard/delegates" },
+                { icon: Bell, label: "Pickups", href: "/dashboard/pickups" },
+                { icon: CalendarDays, label: "Attendance", href: "/dashboard/attendance" },
+                { icon: ShieldAlert, label: "Emergency", href: "/dashboard/emergency" },
+                { icon: MapPin, label: "Track", href: "/dashboard/track", disabled: true },
+              ].map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.disabled ? "#" : item.href}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-xl text-[0.875rem] transition-colors ${
+                      item.disabled 
+                        ? "opacity-40 cursor-not-allowed pointer-events-none text-[#6B7280]" 
+                        : isActive
+                          ? "bg-[#EEF2FF] text-[#3730A3]"
+                          : "text-[#6B7280] hover:bg-[#F2F0EB] hover:text-[#0B1A2C] cursor-pointer"
+                    }`}
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span className="flex-1">{item.label}</span>
+                    {item.disabled && (
+                      <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
+                        Soon
+                      </span>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
 
             <div className="w-full h-px bg-[#F2F0EB] my-3" />
@@ -413,26 +458,33 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         </aside>
       </div>
 
-      {/* MOBILE BOTTOM NAV */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-black/[0.06] flex items-center justify-around px-2 py-2 pb-safe z-50">
         {[
-          { icon: FolderOpen, label: "Dashboard", href: "/dashboard" },
-          { icon: Activity, label: "Activity", href: "/dashboard/activity" },
-          { icon: CalendarDays, label: "Attendance", href: "/dashboard/attendance" },
+          { icon: FolderOpen, label: "Children", href: "/dashboard/children" },
           { icon: Users, label: "Delegates", href: "/dashboard/delegates" },
-          { icon: ShieldAlert, label: "Emergency", href: "/emergency" },
+          { icon: Bell, label: "Pickups", href: "/dashboard/pickups" },
+          { icon: CalendarDays, label: "Attendance", href: "/dashboard/attendance" },
+          { icon: ShieldAlert, label: "Emergency", href: "/dashboard/emergency" },
+          { icon: MapPin, label: "Track", href: "/dashboard/track", disabled: true },
         ].map((item) => {
           const isActive = pathname === item.href;
           return (
             <button
               key={item.label}
-              onClick={() => router.push(item.href)}
-              className={`flex flex-col items-center gap-0.5 px-3 ${
-                isActive ? "text-[#0FA37F]" : "text-[#6B7280]"
+              onClick={() => !item.disabled && router.push(item.href)}
+              className={`flex flex-col items-center gap-0.5 px-3 transition-colors ${
+                item.disabled 
+                  ? "opacity-40 cursor-not-allowed pointer-events-none text-[#6B7280]" 
+                  : isActive ? "text-[#0FA37F]" : "text-[#6B7280]"
               }`}
             >
               <item.icon className="w-5 h-5" />
               <span className="text-[0.6rem] font-medium">{item.label}</span>
+              {item.disabled && (
+                <span className="absolute top-1 right-2 bg-[#F2F0EB] text-[#6B7280] rounded-full px-1 py-0 text-[0.45rem] font-medium">
+                  Soon
+                </span>
+              )}
             </button>
           );
         })}

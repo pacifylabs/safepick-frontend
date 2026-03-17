@@ -14,11 +14,14 @@ import {
   List,
   Plus,
   AlertCircle,
+  Bell,
+  ArrowRight,
 } from "lucide-react";
 import { useChildren } from "@/hooks/useChildren";
 import { useDelegates } from "@/hooks/useDelegates";
 import { useUIStore } from "@/stores/ui.store";
 import { useDelegatesStore } from "@/stores/delegates.store";
+import { usePickupStore } from "@/stores/pickup.store";
 import { QuickAccessCard } from "@/components/dashboard/QuickAccessCard";
 import { AvatarStack } from "@/components/dashboard/AvatarStack";
 import { InviteStatusBanner } from "@/components/delegates/InviteStatusBanner";
@@ -39,6 +42,7 @@ export default function DashboardPage() {
   } = useUIStore();
 
   const { dismissedBanners, dismissBanner } = useDelegatesStore();
+  const { activePickupRequestId } = usePickupStore();
 
   useEffect(() => {
     setPageTitle("Files");
@@ -60,6 +64,15 @@ export default function DashboardPage() {
       iconBg: "bg-[#E1F5EE]",
       iconColor: "text-[#0FA37F]",
       onClick: () => router.push("/dashboard/delegates"),
+    },
+    {
+      title: "Pickups",
+      meta: activePickupRequestId ? "1 needs response" : "All clear",
+      metaColor: activePickupRequestId ? "text-[#D85A30]" : "text-[#6B7280]",
+      icon: Bell,
+      iconBg: activePickupRequestId ? "bg-[#FAECE7]" : "bg-[#F2F0EB]",
+      iconColor: activePickupRequestId ? "text-[#D85A30]" : "text-[#6B7280]",
+      onClick: () => router.push("/dashboard/pickups"),
     },
     {
       title: "Attendance",
@@ -84,8 +97,8 @@ export default function DashboardPage() {
   if (isLoading) {
     return (
       <div className="px-6 py-6 space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((i) => (
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-[100px] animate-pulse bg-white border border-black/[0.06] rounded-2xl" />
           ))}
         </div>
@@ -111,13 +124,44 @@ export default function DashboardPage() {
 
   return (
     <div className="px-6 py-6 space-y-6">
+      {/* PICKUP NOTIFICATION BANNER */}
+      <AnimatePresence>
+        {activePickupRequestId && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="bg-[#FAECE7] border border-[#D85A30]/20 rounded-2xl p-4 flex items-center justify-between shadow-sm"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#D85A30]/10 flex items-center justify-center">
+                <Bell className="w-5 h-5 text-[#D85A30]" />
+              </div>
+              <div>
+                <p className="font-body font-bold text-navy text-sm">Pickup request waiting</p>
+                <p className="font-body text-xs text-[#D85A30]">A delegate is waiting at the school gate</p>
+              </div>
+            </div>
+            <Button 
+              variant="primary" 
+              size="sm" 
+              className="bg-[#D85A30] hover:bg-[#c44d27] border-none text-white gap-2"
+              onClick={() => router.push('/dashboard/pickups')}
+            >
+              Review now
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* QUICK ACCESS ROW */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-body text-[1rem] font-semibold text-[#0B1A2C]">Quick Access</h2>
           <MoreHorizontal className="w-4 h-4 text-[#6B7280] cursor-pointer" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {quickAccessItems.map((item) => (
             <QuickAccessCard key={item.title} {...item} />
           ))}
@@ -285,7 +329,7 @@ export default function DashboardPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {children.map((child) => (
             <motion.div
               key={child.id}

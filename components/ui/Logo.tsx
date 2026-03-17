@@ -4,6 +4,7 @@ export interface LogoProps {
   variant?: "light" | "dark";
   size?: "sm" | "md" | "lg";
   className?: string;
+  onClick?: () => void;
 }
 
 const sizeMap = {
@@ -12,15 +13,15 @@ const sizeMap = {
   lg: { text: "text-[1.8rem]", icon: "w-10 h-10", svg: "22" }
 };
 
-export function Logo(props: LogoProps) {
-  const variant = props.variant ?? "light";
-  const size = props.size ?? "md";
-  const className = props.className ?? "";
+export function Logo({ variant = "light", size = "md", className = "", onClick }: LogoProps) {
   const t = sizeMap[size];
   const colorClass = variant === "light" ? "text-white" : "text-navy";
 
   return (
-    <div className={`inline-flex items-center gap-2 ${className}`}>
+    <div 
+      className={`inline-flex items-center gap-2 ${className}`}
+      onClick={onClick}
+    >
       <span className={`rounded-lg bg-teal flex items-center justify-center ${t.icon}`}>
         <svg 
           width={t.svg} 

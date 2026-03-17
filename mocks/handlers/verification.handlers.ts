@@ -28,14 +28,17 @@ export const verificationHandlers = [
     const url = new URL(request.url);
     const authId = url.searchParams.get("authorizationId");
 
-    if (authId === "INVALID") {
-      return new HttpResponse(null, { status: 403, statusText: "AUTHORIZATION_NOT_ACTIVE" });
+    if (authId === "invalid") {
+      return new HttpResponse(
+        JSON.stringify({ error: "AUTHORIZATION_NOT_ACTIVE" }),
+        { status: 403 }
+      );
     }
 
     await delay(500);
     return HttpResponse.json({
       qrToken: "tok_67890",
-      qrPayload: "vsn_01HXYZ_valid",
+      qrPayload: "SP-QR:eyJmock",
       expiresAt: new Date(Date.now() + 15 * 60 * 1000).toISOString(),
       delegateName: "David Mensah",
       childName: "Zara Osei",
