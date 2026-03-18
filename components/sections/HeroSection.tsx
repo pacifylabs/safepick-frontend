@@ -1,101 +1,185 @@
+"use client";
+
+import React from "react";
+import { motion } from "framer-motion";
+import { ShieldCheck, CheckCircle, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { SectionLabel } from "@/components/ui/SectionLabel";
+import Image from "next/image";
+import Link from "next/link";
+
+const heroImageUrl = "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=900&q=80";
 
 export function HeroSection() {
-    return (
-        <section className="relative min-h-screen flex items-center overflow-hidden bg-off-white pt-16">
-            {/* Decorative background blobs */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-teal/5 blur-[80px] -translate-y-1/3 translate-x-1/4 pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] rounded-full bg-teal/5 blur-[60px] translate-y-1/3 -translate-x-1/4 pointer-events-none" />
+  const scrollToHowItWorks = () => {
+    const element = document.getElementById("how-it-works");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
-            <div className="relative max-w-7xl mx-auto px-6 py-24 md:py-32 grid md:grid-cols-2 gap-16 items-center">
-                {/* Left copy */}
-                <div>
-                    <SectionLabel>Child safety, reimagined</SectionLabel>
-                    <h1 className="mb-6">
-                        You decide <em>who</em> picks up your child.
-                    </h1>
-                    <p className="text-base md:text-lg text-muted leading-relaxed mb-8 max-w-lg">
-                        SafePick verifies every school pickup in real-time — with multi-step identity checks, instant parent notifications, and a full audit trail. So you always know who collected your child.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <Button variant="primary" size="lg" href="/signup">
-                            Get started
-                        </Button>
-                        <Button variant="outline" size="lg" href="/login">
-                            See how it works
-                        </Button>
-                    </div>
+  return (
+    <section className="min-h-screen flex items-center bg-[var(--bg-page)] pt-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-12 md:gap-0">
+        {/* LEFT COLUMN */}
+        <div className="flex-1 pr-0 md:pr-16 text-center md:text-left">
+          {/* Section Label */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 bg-[#0FA37F]/10 border border-[#0FA37F]/20 rounded-full px-4 py-2 mb-6"
+          >
+            <ShieldCheck className="w-4 h-4 text-[#0FA37F]" />
+            <span className="text-[0.78rem] font-medium text-[#0FA37F] font-body">
+              Trusted child pickup verification platform
+            </span>
+          </motion.div>
 
-                    {/* Trust bar */}
-                    <div className="mt-10 flex items-center gap-10 flex-wrap">
-                        {[
-                            { value: "3s", label: "Avg. verification time" },
-                            { value: "99%", label: "Pickup accuracy" },
-                            { value: "0", label: "Unauthorised releases" }
-                        ].map((stat) => (
-                            <div key={stat.label} className="flex flex-col">
-                                <span className="text-2xl font-semibold text-navy font-display">{stat.value}</span>
-                                <span className="text-[0.7rem] uppercase tracking-widest text-teal-mid font-medium">{stat.label}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-display text-[3.5rem] md:text-[5rem] font-semibold text-[var(--text-primary)] leading-[1.0] tracking-[-0.03em] mb-6"
+          >
+            Every pickup,<br />
+            <span className="italic text-[#0FA37F]">verified.</span><br />
+            Every child,<br />
+            safe.
+          </motion.h1>
 
-                {/* Right visual — app preview card */}
-                <div className="relative hidden md:flex justify-center items-center">
-                    {/* Floating card 1 — notification */}
-                    <div className="absolute top-0 right-8 bg-white rounded-2xl shadow-card-hover p-4 w-64 animate-fade-in">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div className="w-8 h-8 rounded-full bg-teal/15 flex items-center justify-center">
-                                <span className="text-base">🔔</span>
-                            </div>
-                            <div>
-                                <p className="text-xs font-semibold text-navy">Pickup request</p>
-                                <p className="text-[11px] text-muted-text">Uncle James · 2:58 PM</p>
-                            </div>
-                        </div>
-                        <div className="flex gap-2 mt-3">
-                            <button className="flex-1 text-xs bg-teal text-white font-semibold py-1.5 rounded-lg">Approve ✓</button>
-                            <button className="flex-1 text-xs border border-red-200 text-red-500 font-semibold py-1.5 rounded-lg">Deny</button>
-                        </div>
-                    </div>
+          {/* Subtext */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="font-body text-[1.125rem] text-[var(--text-secondary)] max-w-[480px] mx-auto md:mx-0 leading-relaxed mb-8"
+          >
+            SafePick gives parents real-time control over who picks up their child from school. Delegates, QR codes, and instant approval — all in one place.
+          </motion.p>
 
-                    {/* Main card */}
-                    <div className="bg-navy rounded-3xl p-6 w-72 shadow-2xl mt-16">
-                        <div className="flex items-center justify-between mb-6">
-                            <span className="text-xs font-bold tracking-widest text-teal uppercase">Today's pickups</span>
-                            <span className="text-xs text-white/40">Wed, 13 Mar</span>
-                        </div>
-                        {[
-                            { name: "Amelia Chen", delegate: "Dad", time: "3:00 PM", status: "Verified", color: "bg-teal/20 text-teal" },
-                            { name: "Liam Cooper", delegate: "Aunt Sarah", time: "3:15 PM", status: "Pending", color: "bg-cream/20 text-yellow-300" },
-                            { name: "Zoe Adeyemi", delegate: "Mum", time: "3:30 PM", status: "Scheduled", color: "bg-white/10 text-white/60" }
-                        ].map((entry) => (
-                            <div key={entry.name} className="flex items-center justify-between py-3 border-b border-white/10 last:border-0">
-                                <div>
-                                    <p className="text-sm font-semibold text-white">{entry.name}</p>
-                                    <p className="text-xs text-white/50">{entry.delegate} · {entry.time}</p>
-                                </div>
-                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${entry.color}`}>
-                                    {entry.status}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap justify-center md:justify-start gap-4 mb-10"
+          >
+            <Link href="/signup">
+              <motion.div whileHover={{ scale: 1.03 }}>
+                <Button
+                  variant="primary"
+                  className="bg-[#0FA37F] text-white rounded-full px-8 py-4 font-display text-[1rem] font-semibold hover:bg-[#1D9E75] border-none"
+                >
+                  Protect your child →
+                </Button>
+              </motion.div>
+            </Link>
+            <Button
+              variant="outline"
+              onClick={scrollToHowItWorks}
+              className="bg-transparent border border-[var(--border-strong)] text-[var(--text-primary)] rounded-full px-8 py-4 font-body text-[0.9375rem] font-medium hover:bg-[var(--bg-muted)]"
+            >
+              See how it works
+            </Button>
+          </motion.div>
 
-                    {/* Floating card 2 — success */}
-                    <div className="absolute bottom-4 left-0 bg-white rounded-2xl shadow-card p-3 w-52 animate-fade-in">
-                        <div className="flex items-center gap-2">
-                            <span className="w-7 h-7 rounded-full bg-teal flex items-center justify-center text-sm text-white">✓</span>
-                            <div>
-                                <p className="text-xs font-semibold text-navy">Child released safely</p>
-                                <p className="text-[11px] text-muted-text">Amelia — 3:02 PM</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          {/* Trust Badges */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-wrap justify-center md:justify-start items-center gap-6 mt-10"
+          >
+            {[
+              "No account needed for schools",
+              "Real-time parent approval",
+              "KYC-verified delegates",
+            ].map((badge) => (
+              <div key={badge} className="flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-[#0FA37F]" />
+                <span className="font-body text-[0.82rem] text-[var(--text-secondary)]">
+                  {badge}
+                </span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="flex-1 relative w-full"
+        >
+          {/* Image Container */}
+          <motion.div
+            animate={{ y: [0, -12, 0] }}
+            transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+            className="relative rounded-[32px] overflow-hidden h-[500px] md:h-[700px] shadow-2xl"
+          >
+            <Image
+              src={heroImageUrl}
+              alt="Parent holding child's hand walking to school"
+              width={900}
+              height={700}
+              priority
+              className="object-cover w-full h-full"
+            />
+          </motion.div>
+
+          {/* Floating Stat Card 1 */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.8 }}
+            className="absolute -left-4 md:-left-8 bottom-12 md:bottom-24 bg-[var(--bg-surface)] rounded-2xl p-4 shadow-xl border border-[var(--border)] flex items-center gap-3 z-10"
+          >
+            <div className="w-10 h-10 rounded-xl bg-[#E1F5EE] flex items-center justify-center">
+              <ShieldCheck className="text-[#0FA37F] w-5 h-5" />
             </div>
-        </section>
-    );
+            <div>
+              <p className="font-display text-[1.5rem] font-semibold text-[var(--text-primary)] leading-none">98%</p>
+              <p className="font-body text-[0.72rem] text-[var(--text-secondary)] mt-1">Pickup accuracy</p>
+            </div>
+          </motion.div>
+
+          {/* Floating Stat Card 2 */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 1.0 }}
+            className="absolute -right-2 md:-right-4 top-16 bg-[var(--bg-surface)] rounded-2xl p-4 shadow-xl border border-[var(--border)] flex items-center gap-3 z-10"
+          >
+            <div className="w-10 h-10 rounded-xl bg-[#FAEEDA] flex items-center justify-center">
+              <QrCode className="text-[#EF9F27] w-5 h-5" />
+            </div>
+            <div>
+              <p className="font-display text-[1.5rem] font-semibold text-[var(--text-primary)] leading-none">2.4s</p>
+              <p className="font-body text-[0.72rem] text-[var(--text-secondary)] mt-1">Avg verification</p>
+            </div>
+          </motion.div>
+
+          {/* Floating Notification Card */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1.2 }}
+            className="absolute left-4 top-20 bg-[#0B1A2C] rounded-2xl p-3 shadow-xl flex items-center gap-3 z-10 border border-white/5"
+          >
+            <motion.div
+              animate={{ opacity: [1, 0.3, 1] }}
+              transition={{ repeat: Infinity, duration: 1.5 }}
+              className="w-2 h-2 bg-[#0FA37F] rounded-full"
+            />
+            <div>
+              <p className="font-body text-[0.72rem] text-white font-medium">Pickup approved</p>
+              <p className="font-body text-[0.65rem] text-white/50">Zara · Greenfield Academy</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
 }

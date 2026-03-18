@@ -20,8 +20,10 @@ import { Button } from "@/components/ui/Button";
 import { useSubmitOtp, useSubmitBiometric } from "@/hooks/useVerification";
 import { useVerificationStore } from "@/stores/verification.store";
 import { usePickupRequest } from "@/hooks/usePickupRequest";
+import { useSubmitOverrideCode, useHoldChild } from "@/hooks/useOverride";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { useRef } from "react";
 
 interface GateSessionViewProps {
   session: VerificationSession;
@@ -347,6 +349,75 @@ function GateAuthorizationView({
   const router = useRouter();
   // Using the sessionId as pickupRequestId for the demo/sprint
   const { data: request, isLoading, isError } = usePickupRequest(sessionId);
+  const submitOverride = useSubmitOverrideCode();
+  const holdChild = useHoldChild();
+
+  const [overrideCode, setOverrideCode] = useState("");
+  const [holdProgress, setHoldProgress] = useState(0);
+  const [isHolding, setIsHolding] = useState(false);
+
+  const holdInterval = useRef<NodeJS.Timeout | null>(null);
+
+  const handleStartHold = () => {
+    setIsHolding(true);
+    setHoldProgress(0);
+    holdInterval.current = setInterval(() => {
+      setHoldProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(holdInterval.current!);
+          handleHoldChild();
+          return 100;
+        }
+        return prev + 2.5; // 100% in 1000ms (40 steps of 25ms)
+      });
+    }, 25);
+  };
+
+  const handleStopHold = () => {
+    if (holdInterval.current) clearInterval(holdInterval.current);
+    setIsHolding(false);
+    setHoldProgress(0);
+  };
+
+  const handleHoldChild = async () => {
+    try {
+      await holdChild.mutateAsync({
+        pickupRequestId: sessionId,
+        reason: "No override code available. Both guardians unreachable.",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleSubmitOverride = async () => {
+    if (overrideCode.length < 14) return;
+    try {
+      await submitOverride.mutateAsync({
+        pickupRequestId: sessionId,
+        payload: {
+          overrideCode,
+          schoolAdminId: "staff_01", // In real app, get from auth
+        },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const formatOverrideCode = (value: string) => {
+    const cleaned = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
+    let formatted = cleaned;
+    if (cleaned.startsWith("SAFE")) {
+      if (cleaned.length > 4) {
+        formatted = cleaned.slice(0, 4) + "-" + cleaned.slice(4);
+      }
+      if (cleaned.length > 8) {
+        formatted = formatted.slice(0, 9) + "-" + formatted.slice(9, 13);
+      }
+    }
+    return formatted.slice(0, 14);
+  };
 
   if (isLoading) {
     return (
@@ -371,7 +442,7 @@ function GateAuthorizationView({
   }
 
   // Handle different pickup request states
-  if (request.status === "APPROVED") {
+  if (request.status === "APPROVED" || request.status === "APPROVED_VIA_OVERRIDE") {
     return (
       <motion.div 
         initial={{ backgroundColor: "#0B1A2C" }}
@@ -389,7 +460,9 @@ function GateAuthorizationView({
 
         <div className="text-center space-y-4">
           <h2 className="font-display text-6xl font-semibold text-white">Release authorized</h2>
-          <p className="text-white/60 text-2xl">Approved by Primary Parent</p>
+          <p className="text-white/60 text-2xl">
+            {request.status === "APPROVED_VIA_OVERRIDE" ? "Approved via Emergency Override" : "Approved by Parent"}
+          </p>
         </div>
 
         <div className="bg-white/5 rounded-[32px] p-8 mt-4 w-full max-w-[500px] border border-white/5">
@@ -442,7 +515,7 @@ function GateAuthorizationView({
         <div className="bg-[#D85A30]/10 border border-[#D85A30]/30 rounded-[32px] p-8 max-w-[540px] w-full text-center space-y-4">
           <p className="font-body text-2xl font-semibold text-[#D85A30]">Do NOT release this child.</p>
           <p className="text-white/60 text-xl leading-relaxed">
-            The parent has denied this pickup request. An incident has been filed automatically. 
+            The request has been denied. An incident has been filed automatically. 
             Keep {child.fullName} in school supervision.
           </p>
         </div>
@@ -458,21 +531,196 @@ function GateAuthorizationView({
     );
   }
 
-  if (request.status === "TIMED_OUT") {
+  if (request.status === "AWAITING_SECONDARY") {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-8 text-center px-16">
-        <Clock className="w-32 h-32 text-[#EF9F27] opacity-50" />
-        <h2 className="font-display text-5xl font-semibold text-white">Request expired</h2>
-        <div className="bg-[#EF9F27]/10 border border-[#EF9F27]/20 rounded-3xl p-8 max-w-2xl">
-          <p className="text-[#EF9F27] text-2xl font-medium mb-2">Escalating to backup contact</p>
-          <p className="text-white/60 text-xl leading-relaxed">
-            The primary parent did not respond in time. The secondary guardian has been notified for authorization.
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-16">
+        <div className="absolute top-8 right-8">
+          <div className="flex items-center gap-2 bg-[#FAEEDA] px-4 py-2 rounded-full border border-[#EF9F27]/30">
+            <div className="w-2 h-2 rounded-full bg-[#EF9F27] animate-pulse" />
+            <span className="font-body text-sm font-bold text-[#BA7517] uppercase tracking-wider">Awaiting secondary guardian</span>
+          </div>
+        </div>
+
+        <div className="bg-[#FAEEDA] border border-[#EF9F27]/30 rounded-2xl p-6 mb-8 max-w-[480px] w-full flex items-center gap-4">
+          <Clock className="w-6 h-6 text-[#EF9F27] flex-shrink-0" />
+          <p className="font-body text-left text-[#8A5A00] leading-relaxed">
+            Primary parent did not respond. Secondary guardian has been notified via SMS and WhatsApp.
           </p>
         </div>
-        <Button variant="ghost" onClick={() => router.push("/gate")} className="text-white/40 text-xl">
-          Return to Gate Home
-        </Button>
+
+        <div className="bg-white/5 rounded-[40px] p-10 max-w-[480px] w-full border border-white/10 mb-12">
+          <div className="w-24 h-24 rounded-full bg-[#1D9E75] flex items-center justify-center text-white text-4xl font-bold mx-auto mb-6">
+            {delegate.photoUrl ? <img src={delegate.photoUrl} alt="" className="w-full h-full object-cover" /> : delegate.fullName[0]}
+          </div>
+          <h3 className="font-display text-3xl font-semibold text-white mb-2">{delegate.fullName}</h3>
+          <p className="text-white/40 uppercase tracking-widest text-lg font-medium mb-6">{delegate.relationship}</p>
+          <div className="h-px bg-white/10 mb-6" />
+          <p className="text-white/50 text-lg mb-2">Collecting</p>
+          <p className="font-display text-3xl font-semibold text-white mb-1">{child.fullName}</p>
+          <p className="text-white/30 text-lg">{request.school.name}</p>
+        </div>
+
+        <div className="w-full max-w-[480px] space-y-4">
+          <div className="flex justify-between items-end px-1">
+            <p className="text-white/30 text-lg uppercase tracking-widest font-bold">Secondary response expires in</p>
+            <p className="font-display text-2xl font-bold text-[#EF9F27]">
+              {Math.floor(request.secondsRemaining / 60)}:{(request.secondsRemaining % 60).toString().padStart(2, '0')}
+            </p>
+          </div>
+          <div className="h-2.5 bg-white/10 rounded-full overflow-hidden w-full">
+            <motion.div 
+              initial={{ width: "100%" }}
+              animate={{ width: `${(request.secondsRemaining / 180) * 100}%` }}
+              className="h-full rounded-full bg-[#EF9F27]"
+            />
+          </div>
+          <div className="flex items-center gap-3 justify-center pt-4">
+            {[0, 1, 2].map((i) => (
+              <motion.div
+                key={i}
+                animate={{ opacity: [0.3, 1, 0.3] }}
+                transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                className="w-2.5 h-2.5 rounded-full bg-[#EF9F27]"
+              />
+            ))}
+            <span className="text-[#EF9F27] text-lg font-medium">Waiting for secondary guardian</span>
+          </div>
+        </div>
       </div>
+    );
+  }
+
+  if (request.status === "TIMED_OUT") {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center text-center px-16">
+        <div className="absolute top-8 right-8">
+          <div className="flex items-center gap-2 bg-[#FAECE7] px-4 py-2 rounded-full border border-[#D85A30]/30">
+            <div className="w-2 h-2 rounded-full bg-[#D85A30] animate-pulse" />
+            <span className="font-body text-sm font-bold text-[#D85A30] uppercase tracking-wider">Both guardians unreachable</span>
+          </div>
+        </div>
+
+        <div className="bg-[#D85A30]/10 border border-[#D85A30]/30 rounded-2xl p-6 mb-8 max-w-[480px] w-full flex items-center gap-4 text-left">
+          <AlertTriangle className="w-6 h-6 text-[#D85A30] flex-shrink-0" />
+          <div>
+            <p className="font-body text-[0.875rem] font-bold text-[#D85A30]">Neither guardian responded</p>
+            <p className="font-body text-[0.78rem] text-[#D85A30]/70 mt-0.5">Enter the emergency override code or hold the child.</p>
+          </div>
+        </div>
+
+        <div className="w-full max-w-[480px] space-y-8">
+          <div>
+            <p className="font-body text-[0.72rem] font-bold uppercase tracking-widest text-white/30 mb-3 text-left">
+              EMERGENCY OVERRIDE CODE
+            </p>
+            <input
+              type="text"
+              placeholder="SAFE-0000-XXXX"
+              value={overrideCode}
+              onChange={(e) => setOverrideCode(formatOverrideCode(e.target.value))}
+              className={`bg-white/[0.07] border rounded-[14px] px-5 py-6 w-full text-center font-display text-[2rem] font-semibold text-white tracking-[0.2em] uppercase placeholder:text-white/10 focus:outline-none transition-all ${
+                submitOverride.isError ? "border-[#D85A30] ring-4 ring-[#D85A30]/10" : "border-white/10 focus:border-[#0FA37F] focus:ring-4 focus:ring-[#0FA37F]/10"
+              }`}
+            />
+            {submitOverride.isError && (
+              <p className="font-body text-[0.875rem] text-[#D85A30] mt-3">Invalid, expired, or already used code.</p>
+            )}
+            <Button 
+              variant="primary" 
+              fullWidth 
+              className="h-20 text-xl rounded-2xl mt-4"
+              onClick={handleSubmitOverride}
+              loading={submitOverride.isPending}
+              disabled={overrideCode.length < 14}
+            >
+              Submit override code
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="h-px bg-white/10 flex-1" />
+            <span className="font-body text-sm text-white/20 uppercase font-bold tracking-widest">or</span>
+            <div className="h-px bg-white/10 flex-1" />
+          </div>
+
+          <div className="space-y-4">
+            <p className="font-body text-[0.82rem] text-white/40">No override code available?</p>
+            <div className="relative overflow-hidden rounded-2xl">
+              <button
+                className={`w-full h-20 rounded-2xl font-body text-xl font-bold flex items-center justify-center gap-3 transition-all ${
+                  holdChild.isPending ? "bg-[#D85A30]/50 cursor-not-allowed" : "bg-[#D85A30]/10 border border-[#D85A30]/30 text-[#D85A30] hover:bg-[#D85A30]/20"
+                }`}
+                onMouseDown={handleStartHold}
+                onMouseUp={handleStopHold}
+                onMouseLeave={handleStopHold}
+                onTouchStart={handleStartHold}
+                onTouchEnd={handleStopHold}
+              >
+                {holdChild.isPending ? (
+                  <>
+                    <Loader2 className="w-6 h-6 animate-spin" />
+                    <span>Filing incident...</span>
+                  </>
+                ) : (
+                  <>
+                    <ShieldAlert className="w-6 h-6" />
+                    <span>Hold child — file incident</span>
+                  </>
+                )}
+              </button>
+              {isHolding && (
+                <div 
+                  className="absolute bottom-0 left-0 h-2 bg-[#D85A30] transition-all duration-25" 
+                  style={{ width: `${holdProgress}%` }}
+                />
+              )}
+            </div>
+            <p className="font-body text-[0.75rem] text-white/20">Hold button for 1s to confirm child hold.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (request.status === "CHILD_HELD") {
+    return (
+      <motion.div 
+        initial={{ backgroundColor: "#0B1A2C" }}
+        animate={{ backgroundColor: "#1A0707" }}
+        transition={{ duration: 0.6 }}
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
+      >
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: [0, 1.15, 1] }}
+          transition={{ duration: 0.5, type: "spring" }}
+        >
+          <ShieldAlert className="w-32 h-32 text-[#D85A30]" />
+        </motion.div>
+
+        <h2 className="font-display text-6xl font-semibold text-white">Child is being held</h2>
+
+        <div className="bg-[#D85A30]/10 border border-[#D85A30]/30 rounded-[32px] p-10 max-w-[540px] w-full text-center space-y-4">
+          <p className="font-body text-2xl font-bold text-[#D85A30]">Keep {child.fullName} under supervision.</p>
+          <p className="text-white/60 text-xl leading-relaxed">
+            An incident has been automatically filed. The parent has been notified. 
+            Do not release the child until further notice.
+          </p>
+          {request.incidentId && (
+            <div className="bg-white/5 rounded-xl px-4 py-2 w-fit mx-auto mt-4">
+              <p className="font-body text-[0.875rem] text-white/40">Incident ref: {request.incidentId}</p>
+            </div>
+          )}
+        </div>
+
+        <Button 
+          variant="ghost" 
+          className="text-white/40 hover:text-white text-xl"
+          onClick={() => router.push("/school/gate")}
+        >
+          Return to gate home
+        </Button>
+      </motion.div>
     );
   }
 
@@ -490,7 +738,7 @@ function GateAuthorizationView({
         
         <p className="text-white/50 text-lg mb-2">Collecting</p>
         <p className="font-display text-3xl font-semibold text-white mb-1">{child.fullName}</p>
-        <p className="text-white/30 text-lg">Greenfield Academy</p>
+        <p className="text-white/30 text-lg">{request.school.name}</p>
       </div>
 
       <div className="space-y-8 w-full max-w-[520px]">
@@ -530,3 +778,4 @@ function GateAuthorizationView({
     </div>
   );
 }
+

@@ -105,19 +105,19 @@ export default function LoginPage() {
       </form>
 
       <div className="relative my-6 sm:my-8 flex items-center justify-center">
-        <div className="absolute w-full border-t border-white/10" />
-        <span className="relative bg-[#0B1A2C] px-4 text-xs sm:text-sm text-white/30">or</span>
+        <div className="absolute w-full border-t border-[var(--auth-border)]" />
+        <span className="relative bg-[var(--auth-bg)] px-4 text-xs sm:text-sm text-[var(--auth-text-muted)]">or</span>
       </div>
 
-      <p className="text-center font-body text-xs sm:text-sm text-white/50">
+      <p className="text-center font-body text-xs sm:text-sm text-[var(--auth-text-muted)]">
         Don&apos;t have an account?{" "}
         <Link href="/signup" className="font-medium text-teal hover:underline">
           Sign up
         </Link>
       </p>
 
-      <div className="mt-8 pt-6 border-t border-white/5 text-center">
-        <p className="font-body text-xs sm:text-sm text-white/40">
+      <div className="mt-8 pt-6 border-t border-[var(--auth-border)] text-center">
+        <p className="font-body text-xs sm:text-sm text-[var(--auth-text-muted)]">
           Are you a delegate?{" "}
           <Link href="/delegate/login" className="font-medium text-[#0FA37F] hover:underline">
             Delegate sign in

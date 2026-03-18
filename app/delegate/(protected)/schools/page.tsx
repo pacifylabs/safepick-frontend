@@ -31,27 +31,27 @@ const SchoolsPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <main className="flex-1 bg-[#E8EAF0] px-4 py-5 space-y-4 md:px-5 md:py-6 md:space-y-5">
+      <main className="flex-1 bg-[var(--bg-page)] px-4 py-5 space-y-4 md:px-5 md:py-6 md:space-y-5">
         <div>
-          <p className="font-dm-sans text-[0.68rem] text-[#6B7280] mb-1">
+          <p className="font-dm-sans text-[0.68rem] text-[var(--text-secondary)] mb-1">
             <span className="cursor-pointer hover:text-[#0FA37F]" onClick={() => router.push('/delegate/dashboard')}>
               Dashboard
             </span>
-            <span className="text-[#6B7280]/50 mx-1">/</span>
-            <span className="text-[#0B1A2C]">Schools</span>
+            <span className="text-[var(--text-secondary)]/50 mx-1">/</span>
+            <span className="text-[var(--text-primary)]">Schools</span>
           </p>
-          <h1 className="font-fraunces text-[1.2rem] md:text-[1.4rem] font-semibold text-[#0B1A2C] tracking-[-0.03em]">
+          <h1 className="font-fraunces text-[1.2rem] md:text-[1.4rem] font-semibold text-[var(--text-primary)] tracking-[-0.03em]">
             Schools
           </h1>
-          <p className="font-dm-sans text-[0.75rem] md:text-[0.78rem] text-[#6B7280]">
+          <p className="font-dm-sans text-[0.75rem] md:text-[0.78rem] text-[var(--text-secondary)]">
             {schoolsWithChildren.length} school{schoolsWithChildren.length !== 1 ? 's' : ''} you are authorized at
           </p>
         </div>
 
         {isLoading ? (
           <div className="space-y-4">
-            <div className="h-[180px] md:h-[200px] bg-white animate-pulse rounded-[14px]"></div>
-            <div className="h-[180px] md:h-[200px] bg-white animate-pulse rounded-[14px]"></div>
+            <div className="h-[180px] md:h-[200px] bg-[var(--bg-surface)] animate-pulse rounded-[14px]"></div>
+            <div className="h-[180px] md:h-[200px] bg-[var(--bg-surface)] animate-pulse rounded-[14px]"></div>
           </div>
         ) : schoolsWithChildren.length > 0 ? (
           <div className="flex flex-col gap-4">
@@ -64,18 +64,18 @@ const SchoolsPage = () => {
             <div className="w-16 h-16 bg-[#E1F5EE] rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Building className="w-8 h-8 stroke-[#0FA37F]" />
             </div>
-            <h2 className="font-fraunces text-xl font-semibold text-[#0B1A2C]">No schools yet</h2>
-            <p className="font-dm-sans text-sm text-[#6B7280] mt-2">Schools appear once a parent authorizes you.</p>
+            <h2 className="font-fraunces text-xl font-semibold text-[var(--text-primary)]">No schools yet</h2>
+            <p className="font-dm-sans text-sm text-[var(--text-secondary)] mt-2">Schools appear once a parent authorizes you.</p>
           </div>
         )}
 
         <div className="bg-[#E6F1FB] rounded-[12px] p-3.5 md:p-4 border border-[rgba(24,95,165,0.15)] flex items-start gap-3 mt-4">
           <Info className="w-4 h-4 stroke-[#185FA5] flex-shrink-0 mt-[2px]" />
           <div>
-            <p className="font-dm-sans text-[0.75rem] md:text-[0.78rem] font-medium text-[#0B1A2C] mb-1">
+            <p className="font-dm-sans text-[0.75rem] md:text-[0.78rem] font-medium text-[var(--text-primary)] mb-1">
               Need access to another school?
             </p>
-            <p className="font-dm-sans text-[0.72rem] md:text-[0.75rem] text-[#6B7280] leading-relaxed">
+            <p className="font-dm-sans text-[0.72rem] md:text-[0.75rem] text-[var(--text-secondary)] leading-relaxed">
               Ask the parent to add you as a delegate for their child at that school.
             </p>
           </div>

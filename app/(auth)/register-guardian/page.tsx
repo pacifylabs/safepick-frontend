@@ -72,10 +72,10 @@ export default function RegisterGuardianPage() {
           </svg>
         </div>
         <div>
-          <h4 className="font-body text-[0.78rem] sm:text-[0.82rem] font-medium text-white mb-0.5 sm:mb-1">
+          <h4 className="font-body text-[0.78rem] sm:text-[0.82rem] font-medium text-[var(--auth-text)] mb-0.5 sm:mb-1">
             {inviterName} added you as a trusted guardian
           </h4>
-          <p className="font-body text-[0.74rem] sm:text-[0.78rem] text-white/50 leading-relaxed">
+          <p className="font-body text-[0.74rem] sm:text-[0.78rem] text-[var(--auth-text-muted)] leading-relaxed">
             Create your account to receive pickup requests when they're unavailable.
           </p>
         </div>
@@ -83,13 +83,13 @@ export default function RegisterGuardianPage() {
 
       <div className="mb-6 sm:mb-8">
         <span className="font-body text-[0.75rem] font-medium uppercase tracking-widest text-teal-mid">
-          JOIN SAFEPICK
+          SECURE ONBOARDING
         </span>
-        <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
-          You're a trusted <i className="text-teal-mid not-italic">guardian</i>
+        <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-[var(--auth-text)]">
+          Set up your <i className="text-teal-mid not-italic">account</i>
         </h1>
-        <p className="mt-2 sm:mt-3 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
-          Complete your account to start protecting the children in your care.
+        <p className="mt-2 sm:mt-3 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
+          Create your password to securely manage pickups.
         </p>
       </div>
 
@@ -124,24 +124,25 @@ export default function RegisterGuardianPage() {
           error={errors.password?.message}
         />
 
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          loading={isSubmitting}
-          className="mt-4 sm:mt-6"
-        >
-          Create guardian account
-        </Button>
+        <div className="mt-6 sm:mt-8 pt-6 border-t border-[var(--auth-border)]">
+          <Button
+            type="submit"
+            variant="primary"
+            fullWidth
+            loading={isSubmitting}
+          >
+            Create account
+          </Button>
+        </div>
       </form>
 
-      <p className="mt-6 sm:mt-8 text-center font-body text-[0.7rem] sm:text-[0.75rem] text-white/30 leading-relaxed">
+      <p className="mt-6 sm:mt-8 text-center font-body text-[0.7rem] sm:text-[0.75rem] text-[var(--auth-text-muted)] leading-relaxed">
         By continuing you agree to{" "}
-        <Link href="/terms" className="text-white/50 hover:underline">
+        <Link href="/terms" className="underline hover:text-[var(--auth-text)] transition-colors">
           Terms
         </Link>{" "}
         and{" "}
-        <Link href="/privacy" className="text-white/50 hover:underline">
+        <Link href="/privacy" className="underline hover:text-[var(--auth-text)] transition-colors">
           Privacy Policy
         </Link>
       </p>

@@ -47,3 +47,64 @@
         scrollbar-width: none;
     }
 }
+
+:root {
+  --bg-page: #F2F0EB;
+  --bg-surface: #FFFFFF;
+  --bg-surface-2: #F8F7F4;
+  --bg-sidebar: #0B1A2C;
+  --bg-muted: #E8E6E1;
+  --text-primary: #0B1A2C;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-inverse: #FFFFFF;
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.12);
+
+  /* Auth + standalone pages (light mode) */
+  --auth-bg: #0B1A2C;
+  --auth-surface: rgba(255, 255, 255, 0.05);
+  --auth-border: rgba(255, 255, 255, 0.10);
+  --auth-text: #FFFFFF;
+  --auth-text-muted: rgba(255, 255, 255, 0.50);
+
+  /* Brand — never changes */
+  --teal: #0FA37F;
+  --teal-mid: #1D9E75;
+  --teal-light: #E1F5EE;
+  --amber: #EF9F27;
+  --amber-light: #FAEEDA;
+  --coral: #D85A30;
+  --navy: #0B1A2C;
+}
+
+.dark {
+  --bg-page: #0B1A2C;
+  --bg-surface: #0F2235;
+  --bg-surface-2: #152840;
+  --bg-sidebar: #071525;
+  --bg-muted: #1A3250;
+  --text-primary: #F0EDE8;
+  --text-secondary: #8B9BB4;
+  --text-muted: #5A7090;
+  --text-inverse: #0B1A2C;
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.10);
+
+  /* Auth + standalone pages — same in dark mode 
+        they are already dark navy, no change needed */
+  --auth-bg: #0B1A2C;
+  --auth-surface: rgba(255, 255, 255, 0.05);
+  --auth-border: rgba(255, 255, 255, 0.10);
+  --auth-text: #FFFFFF;
+  --auth-text-muted: rgba(255, 255, 255, 0.50);
+
+  /* Brand unchanged */
+  --teal: #0FA37F;
+  --teal-mid: #1D9E75;
+  --teal-light: rgba(14, 163, 127, 0.15);
+  --amber: #EF9F27;
+  --amber-light: rgba(239, 159, 39, 0.15);
+  --coral: #D85A30;
+  --navy: #0B1A2C;
+}

@@ -7,6 +7,7 @@ import { verificationHandlers } from "./verification.handlers";
 import { delegateAuthHandlers } from "./delegate-auth.handlers";
 import { auditHandlers } from "./audit.handlers";
 import { pickupHandlers } from "./pickup.handlers";
+import { secondaryGuardianHandlers } from "./secondary-guardian.handlers";
 
 export const handlers = [
   ...authHandlers,
@@ -16,6 +17,7 @@ export const handlers = [
   ...authorizationsHandlers,
   ...verificationHandlers,
   ...pickupHandlers,
+  ...secondaryGuardianHandlers,
   ...delegateAuthHandlers,
   ...auditHandlers,
 ];

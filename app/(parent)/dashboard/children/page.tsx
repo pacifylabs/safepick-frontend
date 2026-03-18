@@ -42,44 +42,26 @@ export default function ChildrenPage() {
   if (isLoading) {
     return (
       <div className="px-6 py-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="h-8 w-48 bg-[#F2F0EB] animate-pulse rounded-xl" />
-          <div className="h-10 w-32 bg-[#F2F0EB] animate-pulse rounded-xl" />
-        </div>
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-16 w-full bg-[#F2F0EB] animate-pulse rounded-xl border border-black/[0.04]"
-            />
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-[100px] animate-pulse bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl" />
           ))}
         </div>
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] h-[400px] animate-pulse" />
       </div>
     );
   }
 
   if (isError) {
     return (
-      <div className="px-6 py-8">
-        <div className="bg-[#FAECE7] border border-[#D85A30]/20 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
-          <div className="w-12 h-12 rounded-full bg-[#D85A30]/10 flex items-center justify-center">
-            <AlertCircle className="w-6 h-6 text-[#D85A30]" />
-          </div>
+      <div className="px-6 py-6">
+        <div className="bg-[#FAECE7] border border-[#D85A30]/30 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
+          <AlertCircle className="w-12 h-12 text-[#D85A30]" />
           <div>
-            <h3 className="font-display font-bold text-navy text-lg">Unable to load children</h3>
-            <p className="font-body text-sm text-navy/40 mt-1">
-              There was a problem connecting to the server.
-            </p>
+            <h3 className="font-body text-lg font-semibold text-[var(--text-primary)]">Unable to load children</h3>
+            <p className="text-[var(--text-secondary)] text-sm">Please check your connection and try again.</p>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="gap-2 border-[#D85A30]/20 text-[#D85A30] hover:bg-[#D85A30]/5"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Retry
-          </Button>
+          <Button variant="primary" onClick={() => refetch()}>Retry</Button>
         </div>
       </div>
     );
@@ -91,10 +73,10 @@ export default function ChildrenPage() {
         <div className="w-20 h-20 rounded-3xl bg-[#EEF2FF] flex items-center justify-center mb-6">
           <Baby className="w-10 h-10 text-[#4F46E5]" />
         </div>
-        <h2 className="font-display text-2xl font-bold text-navy mb-2">
+        <h2 className="font-display text-2xl font-bold text-[var(--text-primary)] mb-2">
           No children registered yet
         </h2>
-        <p className="font-body text-navy/40 max-w-[320px] mb-8 leading-relaxed">
+        <p className="font-body text-[var(--text-secondary)] max-w-[320px] mb-8 leading-relaxed">
           Add your children to start managing their school pickups and authorized delegates.
         </p>
         <Button
@@ -114,20 +96,20 @@ export default function ChildrenPage() {
       {/* HEADER & TOOLBAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl font-bold text-navy">My Children</h1>
-          <p className="font-body text-sm text-navy/40 mt-1">
+          <h1 className="font-display text-2xl font-bold text-[var(--text-primary)]">My Children</h1>
+          <p className="font-body text-sm text-[var(--text-secondary)] mt-1">
             {children.length} {children.length === 1 ? "child" : "children"} registered
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#F2F0EB] rounded-xl p-1 gap-1">
+          <div className="flex bg-[var(--bg-page)] rounded-xl p-1 gap-1">
             <button
               onClick={() => setViewMode("grid")}
               className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
                 viewMode === "grid"
-                  ? "bg-white shadow-sm text-navy"
-                  : "text-navy/40 hover:text-navy"
+                  ? "bg-[var(--bg-surface)] shadow-sm text-[var(--text-primary)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -136,8 +118,8 @@ export default function ChildrenPage() {
               onClick={() => setViewMode("list")}
               className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all ${
                 viewMode === "list"
-                  ? "bg-white shadow-sm text-navy"
-                  : "text-navy/40 hover:text-navy"
+                  ? "bg-[var(--bg-surface)] shadow-sm text-[var(--text-primary)]"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               <List className="w-4 h-4" />
@@ -157,24 +139,24 @@ export default function ChildrenPage() {
 
       {/* SEARCH */}
       <div className="relative group">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-navy/20 group-focus-within:text-teal transition-colors" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)] group-focus-within:text-teal transition-colors" />
         <input
           type="text"
           placeholder="Search children..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full h-12 bg-white border border-black/[0.06] rounded-2xl pl-11 pr-4 text-sm font-body outline-none focus:border-teal/30 focus:ring-4 focus:ring-teal/5 transition-all"
+          className="w-full h-12 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl pl-11 pr-4 text-sm font-body outline-none focus:border-teal/30 focus:ring-4 focus:ring-teal/5 transition-all"
         />
       </div>
 
       {/* CONTENT */}
       {viewMode === "list" ? (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden shadow-sm">
-          <div className="bg-[#F9F9F8] border-b border-black/[0.06] px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
+          <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center">
             {["Name", "Sharing", "School", "Modified"].map((h, idx) => (
               <span
                 key={h}
-                className={`font-body text-[0.75rem] font-bold text-navy/40 uppercase tracking-wider ${
+                className={`font-body text-[0.75rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider ${
                   idx === 3 ? "text-right" : ""
                 }`}
               >
@@ -184,13 +166,13 @@ export default function ChildrenPage() {
             <div className="w-8" />
           </div>
 
-          <div className="divide-y divide-black/[0.04]">
+          <div className="divide-y divide-[var(--border)]">
             {filteredChildren.map((child) => (
               <div
                 key={child.id}
                 onClick={() => router.push(`/dashboard/children/${child.id}`)}
                 className={`px-6 py-4 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center cursor-pointer transition-colors ${
-                  selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[#F9F9F8]"
+                  selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[var(--bg-surface-2)]"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -210,10 +192,10 @@ export default function ChildrenPage() {
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-body text-[0.875rem] font-bold text-navy truncate">
+                    <p className="font-body text-[0.875rem] font-bold text-[var(--text-primary)] truncate">
                       {child.fullName}
                     </p>
-                    <p className="font-body text-[0.72rem] text-navy/40">{child.grade}</p>
+                    <p className="font-body text-[0.72rem] text-[var(--text-secondary)]">{child.grade}</p>
                   </div>
                 </div>
 
@@ -227,7 +209,7 @@ export default function ChildrenPage() {
 
                 <div className="min-w-0">
                   {child.enrollmentStatus === "VERIFIED" && child.school ? (
-                    <p className="font-body text-[0.82rem] text-navy truncate">
+                    <p className="font-body text-[0.82rem] text-[var(--text-primary)] truncate">
                       {child.school.name}
                     </p>
                   ) : (
@@ -237,11 +219,11 @@ export default function ChildrenPage() {
                   )}
                 </div>
 
-                <p className="font-body text-[0.82rem] text-navy/40 text-right">
+                <p className="font-body text-[0.82rem] text-[var(--text-secondary)] text-right">
                   {format(new Date(child.createdAt), "MMM d, yyyy")}
                 </p>
 
-                <button className="p-1 hover:bg-[#F2F0EB] rounded-lg transition-colors text-navy/20 hover:text-navy">
+                <button className="p-1 hover:bg-[var(--bg-muted)] rounded-lg transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)]">
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
               </div>
@@ -254,7 +236,7 @@ export default function ChildrenPage() {
             <div
               key={child.id}
               onClick={() => router.push(`/dashboard/children/${child.id}`)}
-              className="bg-white rounded-2xl p-5 border border-black/[0.06] cursor-pointer hover:shadow-md transition-all shadow-sm"
+              className="bg-[var(--bg-surface)] rounded-2xl p-5 border border-[var(--border)] cursor-pointer hover:shadow-md transition-all shadow-sm"
             >
               <div className="flex items-start justify-between mb-4">
                 <div
@@ -272,26 +254,26 @@ export default function ChildrenPage() {
                     child.fullName[0]
                   )}
                 </div>
-                <button className="p-1 hover:bg-[#F2F0EB] rounded-lg transition-colors text-navy/20 hover:text-navy">
+                <button className="p-1 hover:bg-[var(--bg-muted)] rounded-lg transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)]">
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="mb-4">
-                <p className="font-display font-bold text-navy text-lg truncate">
+                <p className="font-display font-bold text-[var(--text-primary)] text-lg truncate">
                   {child.fullName}
                 </p>
-                <p className="font-body text-sm text-navy/40">{child.grade}</p>
+                <p className="font-body text-sm text-[var(--text-secondary)]">{child.grade}</p>
               </div>
 
-              <div className="flex items-center justify-between pt-4 border-t border-black/[0.04]">
+              <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
                 <div className="flex items-center gap-1.5">
                   <div
                     className={`w-1.5 h-1.5 rounded-full ${
                       child.enrollmentStatus === "VERIFIED" ? "bg-[#0FA37F]" : "bg-[#EF9F27]"
                     }`}
                   />
-                  <span className="text-[0.65rem] text-navy/40 font-bold uppercase tracking-widest">
+                  <span className="text-[0.65rem] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
                     {child.enrollmentStatus === "VERIFIED" ? "Verified" : "Pending"}
                   </span>
                 </div>

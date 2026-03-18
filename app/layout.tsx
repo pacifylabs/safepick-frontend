@@ -28,7 +28,19 @@ export const metadata: Metadata = {
 export default function RootLayout(props: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${dmSans.variable} scroll-smooth`}>
-      <body className="font-body antialiased bg-off-white text-navy">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function(){
+            try {
+              var t = localStorage.getItem('safepick-theme');
+              if (t==='dark' || (!t && 
+                window.matchMedia('(prefers-color-scheme:dark)').matches))
+                document.documentElement.classList.add('dark');
+            } catch(e){}
+          })();
+        `}} />
+      </head>
+      <body className="font-body antialiased bg-[var(--bg-page)] text-[var(--text-primary)]">
         <AppProviders>{props.children}</AppProviders>
       </body>
     </html>

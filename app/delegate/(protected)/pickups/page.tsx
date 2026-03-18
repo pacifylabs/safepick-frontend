@@ -6,7 +6,7 @@ import { useDelegatePickupRequests } from '@/hooks/useDelegate';
 import { format, formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import DelegateRightPanel from '@/components/delegate/DelegateRightPanel';
-import Toast from '@/components/ui/Toast';
+import { Toast } from '@/components/ui/Toast';
 import { getInitials } from '@/lib/utils';
 import { Bell, QrCode, LogOut, XCircle, Smartphone, Timer, CheckCircle } from 'lucide-react';
 import { usePickupStore } from '@/stores/pickup.store';
@@ -74,26 +74,26 @@ const PickupsPage = () => {
           />
         </div>
       )}
-      <main className="flex-1 bg-[#E8EAF0] px-4 py-5 md:px-8 md:py-8 overflow-y-auto">
+      <main className="flex-1 bg-[var(--bg-page)] px-4 py-5 md:px-8 md:py-8 overflow-y-auto">
         <div>
-          <p className="font-dm-sans text-[0.68rem] text-[#6B7280] mb-1">
+          <p className="font-dm-sans text-[0.68rem] text-[var(--text-secondary)] mb-1">
             <span className="cursor-pointer hover:text-[#0FA37F]" onClick={() => router.push('/delegate/dashboard')}>
               Dashboard
             </span>
-            <span className="text-[#6B7280]/50 mx-1">/</span>
-            <span className="text-[#0B1A2C]">Pickups</span>
+            <span className="text-[var(--text-secondary)]/50 mx-1">/</span>
+            <span className="text-[var(--text-primary)]">Pickups</span>
           </p>
-          <h1 className="font-fraunces text-[1.2rem] md:text-[1.4rem] font-semibold text-[#0B1A2C] tracking-[-0.03em]">
+          <h1 className="font-fraunces text-[1.2rem] md:text-[1.4rem] font-semibold text-[var(--text-primary)] tracking-[-0.03em]">
             Pickups
           </h1>
-          <p className="font-dm-sans text-[0.75rem] md:text-[0.78rem] text-[#6B7280]">
+          <p className="font-dm-sans text-[0.75rem] md:text-[0.78rem] text-[var(--text-secondary)]">
             Incoming requests and pickup history
           </p>
         </div>
 
-        <div className="mt-6 flex gap-0 bg-white rounded-[10px] border border-[rgba(11,26,44,0.07)] p-1 w-full md:w-fit">
+        <div className="mt-6 flex gap-0 bg-[var(--bg-surface)] rounded-[10px] border border-[var(--border)] p-1 w-full md:w-fit">
           <button onClick={() => setTab('active')} className={`flex-1 md:flex-none text-center px-3 md:px-5 py-[7px] rounded-[8px] cursor-pointer font-dm-sans text-[0.78rem] md:text-[0.8rem] font-medium transition-all ${
-            tab === 'active' ? 'bg-[#0B1A2C] text-white' : 'text-[#6B7280] hover:text-[#0B1A2C]'
+            tab === 'active' ? 'bg-[#0B1A2C] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}>
             Active requests
             {activeRequests.length > 0 && (
@@ -103,7 +103,7 @@ const PickupsPage = () => {
             )}
           </button>
           <button onClick={() => setTab('history')} className={`flex-1 md:flex-none text-center px-3 md:px-5 py-[7px] rounded-[8px] cursor-pointer font-dm-sans text-[0.78rem] md:text-[0.8rem] font-medium transition-all ${
-            tab === 'history' ? 'bg-[#0B1A2C] text-white' : 'text-[#6B7280] hover:text-[#0B1A2C]'
+            tab === 'history' ? 'bg-[#0B1A2C] text-white' : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
           }`}>
             Past pickups
           </button>
@@ -113,8 +113,8 @@ const PickupsPage = () => {
           <div className="mt-6 space-y-3">
             {isLoading ? (
               <>
-                <div className="h-[88px] bg-white animate-pulse rounded-[12px]"></div>
-                <div className="h-[88px] bg-white animate-pulse rounded-[12px]"></div>
+                <div className="h-[88px] bg-[var(--bg-surface)] animate-pulse rounded-[12px]"></div>
+                <div className="h-[88px] bg-[var(--bg-surface)] animate-pulse rounded-[12px]"></div>
               </>
             ) : activeRequests.length > 0 ? (
               activeRequests.map((request: any) => {
@@ -132,7 +132,7 @@ const PickupsPage = () => {
                         ? 'bg-[#E1F5EE] border-[#0FA37F]/20' 
                         : request.status === 'DENIED'
                         ? 'bg-[#FAECE7] border-[#D85A30]/20'
-                        : 'bg-white border-[rgba(11,26,44,0.07)]'
+                        : 'bg-[var(--bg-surface)] border-[var(--border)]'
                     } border rounded-[14px] p-4 shadow-sm`}
                   >
                     <div className="flex items-center gap-2 mb-3">
@@ -142,7 +142,7 @@ const PickupsPage = () => {
                           {styles.label}
                         </span>
                       </div>
-                      <span className="font-dm-sans text-[0.65rem] md:text-[0.68rem] text-[#6B7280] ml-auto">
+                      <span className="font-dm-sans text-[0.65rem] md:text-[0.68rem] text-[var(--text-secondary)] ml-auto">
                         {formatDistanceToNow(new Date(request.requestedAt), { addSuffix: true })}
                       </span>
                     </div>
@@ -151,8 +151,8 @@ const PickupsPage = () => {
                         {getInitials(request.child.fullName)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-dm-sans text-[0.82rem] md:text-[0.875rem] font-medium text-[#0B1A2C] truncate">{request.child.fullName}</p>
-                        <p className="font-dm-sans text-[0.7rem] md:text-[0.75rem] text-[#6B7280] mt-[2px] truncate">
+                        <p className="font-dm-sans text-[0.82rem] md:text-[0.875rem] font-medium text-[var(--text-primary)] truncate">{request.child.fullName}</p>
+                        <p className="font-dm-sans text-[0.7rem] md:text-[0.75rem] text-[var(--text-secondary)] mt-[2px] truncate">
                           {request.school.name} &middot; {request.school.address}
                         </p>
                       </div>
@@ -174,8 +174,8 @@ const PickupsPage = () => {
                 <div className="w-16 h-16 bg-[#E1F5EE] rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Bell className="w-8 h-8 stroke-[#0FA37F]" />
                 </div>
-                <h2 className="font-fraunces text-[1.3rem] md:text-[1.4rem] text-[#0B1A2C]">No pending requests</h2>
-                <p className="font-dm-sans text-[0.82rem] md:text-[0.875rem] text-[#6B7280] max-w-[240px] mx-auto mt-2">
+                <h2 className="font-fraunces text-[1.3rem] md:text-[1.4rem] text-[var(--text-primary)]">No pending requests</h2>
+                <p className="font-dm-sans text-[0.82rem] md:text-[0.875rem] text-[var(--text-secondary)] max-w-[240px] mx-auto mt-2">
                   When a school sends a request, it appears here.
                 </p>
                 <p className="font-dm-sans text-[0.72rem] text-[#0FA37F] mt-3">Checking every 5 seconds...</p>
@@ -194,7 +194,7 @@ const PickupsPage = () => {
                   className={`rounded-full px-4 py-[7px] font-dm-sans text-[0.75rem] font-medium whitespace-nowrap cursor-pointer transition-all ${
                     historyFilter === filter
                       ? 'bg-[#0B1A2C] text-white shadow-md'
-                      : 'bg-white text-[#6B7280] border border-[rgba(11,26,44,0.07)] hover:bg-gray-50'
+                      : 'bg-[var(--bg-surface)] text-[var(--text-secondary)] border border-[var(--border)] hover:bg-[var(--bg-muted)]'
                   }`}>
                   {filter.charAt(0) + filter.slice(1).toLowerCase()}
                 </button>
@@ -203,24 +203,24 @@ const PickupsPage = () => {
             <div className="space-y-2">
               {isLoading ? (
                 <>
-                  <div className="h-[64px] bg-white animate-pulse rounded-[12px]"></div>
-                  <div className="h-[64px] bg-white animate-pulse rounded-[12px]"></div>
+                  <div className="h-[64px] bg-[var(--bg-surface)] animate-pulse rounded-[12px]"></div>
+                  <div className="h-[64px] bg-[var(--bg-surface)] animate-pulse rounded-[12px]"></div>
                 </>
               ) : historyRequests.length > 0 ? (
                 historyRequests.map((request: any) => (
-                  <div key={request.id} className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] p-3 md:p-[14px] flex items-center gap-3 shadow-sm">
+                  <div key={request.id} className="bg-[var(--bg-surface)] rounded-[12px] border border-[var(--border)] p-3 md:p-[14px] flex items-center gap-3 shadow-sm">
                     <div className={`w-[32px] h-[32px] md:w-[34px] md:h-[34px] rounded-[9px] flex items-center justify-center flex-shrink-0 ${
                       request.status === 'COMPLETED' ? 'bg-[#E1F5EE]' : 'bg-[#FAECE7]'
                     }`}>
                       {request.status === 'COMPLETED' ? <LogOut className="stroke-[#0FA37F] w-5 h-5" /> : <XCircle className="stroke-[#D85A30] w-5 h-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-dm-sans text-[0.82rem] md:text-[0.85rem] font-medium text-[#0B1A2C] truncate">
+                      <p className="font-dm-sans text-[0.82rem] md:text-[0.85rem] font-medium text-[var(--text-primary)] truncate">
                         {request.child.fullName} &mdash; {request.status.toLowerCase()}
                       </p>
-                      <p className="font-dm-sans text-[0.7rem] md:text-[0.72rem] text-[#6B7280] mt-[2px] truncate">{request.school.name}</p>
+                      <p className="font-dm-sans text-[0.7rem] md:text-[0.72rem] text-[var(--text-secondary)] mt-[2px] truncate">{request.school.name}</p>
                     </div>
-                    <span className="font-dm-sans text-[0.68rem] md:text-[0.72rem] text-[#6B7280] text-right flex-shrink-0">
+                    <span className="font-dm-sans text-[0.68rem] md:text-[0.72rem] text-[var(--text-secondary)] text-right flex-shrink-0">
                       {format(new Date(request.requestedAt), 'MMM d, h:mm a')}
                     </span>
                   </div>
@@ -230,7 +230,7 @@ const PickupsPage = () => {
                   <div className="w-14 h-14 bg-[#E1F5EE] rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <LogOut className="w-7 h-7 stroke-[#0FA37F]" />
                   </div>
-                  <p className="font-dm-sans text-[#6B7280]">No past pickups yet</p>
+                  <p className="font-dm-sans text-[var(--text-secondary)]">No past pickups yet</p>
                 </div>
               )}
             </div>

@@ -68,10 +68,10 @@ export default function DashboardPage() {
     {
       title: "Pickups",
       meta: activePickupRequestId ? "1 needs response" : "All clear",
-      metaColor: activePickupRequestId ? "text-[#D85A30]" : "text-[#6B7280]",
+      metaColor: activePickupRequestId ? "text-[#D85A30]" : "text-[var(--text-secondary)]",
       icon: Bell,
-      iconBg: activePickupRequestId ? "bg-[#FAECE7]" : "bg-[#F2F0EB]",
-      iconColor: activePickupRequestId ? "text-[#D85A30]" : "text-[#6B7280]",
+      iconBg: activePickupRequestId ? "bg-[#FAECE7]" : "bg-[var(--bg-page)]",
+      iconColor: activePickupRequestId ? "text-[#D85A30]" : "text-[var(--text-secondary)]",
       onClick: () => router.push("/dashboard/pickups"),
     },
     {
@@ -82,14 +82,14 @@ export default function DashboardPage() {
       iconColor: "text-[#BA7517]",
       onClick: () => router.push("/dashboard/calendar"),
     },
-    {
-      title: "Emergency",
-      meta: panicActive ? "ACTIVE" : "All clear",
-      icon: ShieldAlert,
-      iconBg: "bg-[#FAECE7]",
-      iconColor: panicActive ? "text-[#D85A30]" : "text-[#6B7280]",
-      onClick: () => router.push("/emergency"),
-    },
+    // {
+    //   title: "Emergency",
+    //   meta: panicActive ? "ACTIVE" : "All clear",
+    //   icon: ShieldAlert,
+    //   iconBg: "bg-[#FAECE7]",
+    //   iconColor: panicActive ? "text-[#D85A30]" : "text-[var(--text-secondary)]",
+    //   onClick: () => router.push("/emergency"),
+    // },
   ];
 
   const isLoading = loadingChildren || loadingDelegates;
@@ -99,10 +99,10 @@ export default function DashboardPage() {
       <div className="px-6 py-6 space-y-6">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="h-[100px] animate-pulse bg-white border border-black/[0.06] rounded-2xl" />
+            <div key={i} className="h-[100px] animate-pulse bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl" />
           ))}
         </div>
-        <div className="bg-white rounded-2xl border border-black/[0.06] h-[400px] animate-pulse" />
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] h-[400px] animate-pulse" />
       </div>
     );
   }
@@ -113,8 +113,8 @@ export default function DashboardPage() {
         <div className="bg-[#FAECE7] border border-[#D85A30]/30 rounded-2xl p-8 flex flex-col items-center gap-4 text-center">
           <AlertCircle className="w-12 h-12 text-[#D85A30]" />
           <div>
-            <h3 className="font-body text-lg font-semibold text-[#0B1A2C]">Unable to load dashboard</h3>
-            <p className="text-[#6B7280] text-sm">Please check your connection and try again.</p>
+            <h3 className="font-body text-lg font-semibold text-[var(--text-primary)]">Unable to load dashboard</h3>
+            <p className="text-[var(--text-secondary)] text-sm">Please check your connection and try again.</p>
           </div>
           <Button variant="primary" onClick={() => refetch()}>Retry</Button>
         </div>
@@ -123,7 +123,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="px-6 py-6 space-y-6">
+    <div className="w-full px-6 py-8 space-y-6">
       {/* PICKUP NOTIFICATION BANNER */}
       <AnimatePresence>
         {activePickupRequestId && (
@@ -138,7 +138,7 @@ export default function DashboardPage() {
                 <Bell className="w-5 h-5 text-[#D85A30]" />
               </div>
               <div>
-                <p className="font-body font-bold text-navy text-sm">Pickup request waiting</p>
+                <p className="font-body font-bold text-[var(--text-primary)] text-sm">Pickup request waiting</p>
                 <p className="font-body text-xs text-[#D85A30]">A delegate is waiting at the school gate</p>
               </div>
             </div>
@@ -158,10 +158,10 @@ export default function DashboardPage() {
       {/* QUICK ACCESS ROW */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="font-body text-[1rem] font-semibold text-[#0B1A2C]">Quick Access</h2>
-          <MoreHorizontal className="w-4 h-4 text-[#6B7280] cursor-pointer" />
+          <h2 className="font-body text-[1rem] font-semibold text-[var(--text-primary)]">Quick Access</h2>
+          <MoreHorizontal className="w-4 h-4 text-[var(--text-secondary)] cursor-pointer" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {quickAccessItems.map((item) => (
             <QuickAccessCard key={item.title} {...item} />
           ))}
@@ -194,17 +194,17 @@ export default function DashboardPage() {
       {/* BREADCRUMB + TOOLBAR */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 font-body text-[0.875rem]">
-          <span className="text-[#6B7280] cursor-pointer hover:text-[#0B1A2C]" onClick={() => router.push("/dashboard")}>Home</span>
-          <ChevronRight className="w-3.5 h-3.5 text-[#6B7280]" />
-          <span className="text-[#0B1A2C] font-medium">My Children</span>
+          <span className="text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]" onClick={() => router.push("/dashboard")}>Home</span>
+          <ChevronRight className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+          <span className="text-[var(--text-primary)] font-medium">My Children</span>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#F2F0EB] rounded-xl p-1 gap-1">
+          <div className="flex bg-[var(--bg-muted)] rounded-xl p-1 gap-1">
             <button
               onClick={() => setViewMode("grid")}
               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
-                viewMode === "grid" ? "bg-white shadow-sm text-[#0B1A2C]" : "text-[#6B7280] hover:text-[#0B1A2C]"
+                viewMode === "grid" ? "bg-[var(--bg-surface)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -212,7 +212,7 @@ export default function DashboardPage() {
             <button
               onClick={() => setViewMode("list")}
               className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
-                viewMode === "list" ? "bg-white shadow-sm text-[#0B1A2C]" : "text-[#6B7280] hover:text-[#0B1A2C]"
+                viewMode === "list" ? "bg-[var(--bg-surface)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
               }`}
             >
               <List className="w-4 h-4" />
@@ -233,12 +233,12 @@ export default function DashboardPage() {
 
       {/* CHILDREN CONTENT */}
       {children.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-black/[0.06] p-12 flex flex-col items-center text-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-12 flex flex-col items-center text-center">
           <div className="w-16 h-16 rounded-2xl bg-[#EEF2FF] flex items-center justify-center mb-4">
             <FolderOpen className="w-8 h-8 text-[#4F46E5]" />
           </div>
-          <h3 className="font-body text-[1.1rem] font-semibold text-[#0B1A2C] mb-2">No children registered</h3>
-          <p className="font-body text-[0.875rem] text-[#6B7280] max-w-[280px] leading-relaxed mb-6">
+          <h3 className="font-body text-[1.1rem] font-semibold text-[var(--text-primary)] mb-2">No children registered</h3>
+          <p className="font-body text-[0.875rem] text-[var(--text-secondary)] max-w-[280px] leading-relaxed mb-6">
             Register your first child to start managing pickups, delegates, and attendance in one place.
           </p>
           <Button variant="primary" onClick={() => router.push("/dashboard/children/new")}>
@@ -246,12 +246,12 @@ export default function DashboardPage() {
           </Button>
         </div>
       ) : viewMode === "list" ? (
-        <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-          <div className="bg-[#F9F9F8] border-b border-black/[0.06] px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden">
+          <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center">
             {["Name", "Sharing", "School", "Modified"].map((h, idx) => (
               <span 
                 key={h} 
-                className={`font-body text-[0.75rem] font-medium text-[#6B7280] flex items-center gap-1 cursor-pointer hover:text-[#0B1A2C] select-none ${idx === 3 ? 'justify-end' : ''}`}
+                className={`font-body text-[0.75rem] font-medium text-[var(--text-secondary)] flex items-center gap-1 cursor-pointer hover:text-[var(--text-primary)] select-none ${idx === 3 ? 'justify-end' : ''}`}
               >
                 {h}
               </span>
@@ -259,13 +259,13 @@ export default function DashboardPage() {
             <div />
           </div>
 
-          <div className="divide-y divide-black/[0.04]">
+          <div className="divide-y divide-[var(--border)]">
             {children.map((child) => (
               <div
                 key={child.id}
                 onClick={() => openRightPanel(child.id)}
                 className={`px-6 py-3.5 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center cursor-pointer transition-colors duration-100 ${
-                  selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[#F9F9F8]"
+                  selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[var(--bg-surface-2)]"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -289,8 +289,8 @@ export default function DashboardPage() {
                       router.push(`/dashboard/children/${child.id}`);
                     }}
                   >
-                    <p className="font-body text-[0.875rem] font-medium text-[#0B1A2C] truncate">{child.fullName}</p>
-                    <p className="font-body text-[0.72rem] text-[#6B7280]">{child.grade}</p>
+                    <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)] truncate">{child.fullName}</p>
+                    <p className="font-body text-[0.72rem] text-[var(--text-secondary)]">{child.grade}</p>
                   </div>
                 </div>
 
@@ -307,7 +307,7 @@ export default function DashboardPage() {
 
                 <div className="min-w-0 flex items-center overflow-hidden">
                   {child.enrollmentStatus === "VERIFIED" ? (
-                    <p className="font-body text-[0.82rem] text-[#0B1A2C] truncate">{child.school?.name}</p>
+                    <p className="font-body text-[0.82rem] text-[var(--text-primary)] truncate">{child.school?.name}</p>
                   ) : (
                     <span className="bg-[#FAEEDA] text-[#BA7517] text-[0.72rem] px-2 py-0.5 rounded-full whitespace-nowrap inline-block max-w-full overflow-hidden text-ellipsis">
                       {child.enrollmentStatus === "PENDING_SCHOOL" ? "Setup needed" : "Verifying"}
@@ -315,12 +315,12 @@ export default function DashboardPage() {
                   )}
                 </div>
 
-                <p className="font-body text-[0.82rem] text-[#6B7280] truncate text-right">
+                <p className="font-body text-[0.82rem] text-[var(--text-secondary)] truncate text-right">
                   {format(new Date(child.createdAt), "MMM d, yyyy")}
                 </p>
 
                 <div className="relative">
-                  <button className="p-1 hover:bg-[#F2F0EB] rounded-lg transition-colors text-[#6B7280] hover:text-[#0B1A2C]">
+                  <button className="p-1 hover:bg-[var(--bg-muted)] rounded-lg transition-colors text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
                     <MoreHorizontal className="w-4 h-4" />
                   </button>
                 </div>
@@ -335,7 +335,7 @@ export default function DashboardPage() {
               key={child.id}
               whileHover={{ y: -2 }}
               onClick={() => openRightPanel(child.id)}
-              className="bg-white rounded-2xl p-4 border border-black/[0.06] cursor-pointer hover:shadow-md transition-all"
+              className="bg-[var(--bg-surface)] rounded-2xl p-4 border border-[var(--border)] cursor-pointer hover:shadow-md transition-all"
             >
               <div className="w-12 h-12 rounded-xl bg-[#EEF2FF] flex items-center justify-center mb-3">
                 {child.photoUrl ? (
@@ -344,16 +344,16 @@ export default function DashboardPage() {
                   <FolderOpen className="w-6 h-6 text-[#4F46E5]" />
                 )}
               </div>
-              <p className="font-body text-[0.875rem] font-semibold text-[#0B1A2C] mb-0.5 truncate">{child.fullName}</p>
-              <p className="font-body text-[0.72rem] text-[#6B7280] mb-3">{child.grade}</p>
+              <p className="font-body text-[0.875rem] font-semibold text-[var(--text-primary)] mb-0.5 truncate">{child.fullName}</p>
+              <p className="font-body text-[0.72rem] text-[var(--text-secondary)] mb-3">{child.grade}</p>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                   <div className={`w-1.5 h-1.5 rounded-full ${child.enrollmentStatus === "VERIFIED" ? "bg-[#0FA37F]" : "bg-[#EF9F27]"}`} />
-                  <span className="text-[0.65rem] text-[#6B7280] font-medium capitalize">
+                  <span className="text-[0.65rem] text-[var(--text-secondary)] font-medium capitalize">
                     {child.enrollmentStatus.toLowerCase().replace(/_/g, " ")}
                   </span>
                 </div>
-                <MoreHorizontal className="w-3.5 h-3.5 text-[#6B7280]" />
+                <MoreHorizontal className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
               </div>
             </motion.div>
           ))}

@@ -116,24 +116,24 @@ const DashboardPage = () => {
   const firstName = profile?.fullName.split(' ')[0] || 'Delegate';
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <main className="flex-1 bg-[#E8EAF0] px-4 py-5 space-y-4 md:px-5 md:py-6 md:space-y-5">
+      <main className="flex-1 bg-[var(--bg-page)] px-4 py-5 space-y-4 md:px-5 md:py-6 md:space-y-5">
         <div className="flex justify-between items-start">
           <div>
-            <p className="font-dm-sans text-[0.68rem] font-medium text-[#6B7280] uppercase tracking-[0.07em]">{greeting}</p>
-            <p className="font-fraunces text-[1.2rem] md:text-[1.4rem] font-semibold text-[#0B1A2C] tracking-[-0.03em]">
+            <p className="font-dm-sans text-[0.68rem] font-medium text-[var(--text-secondary)] uppercase tracking-[0.07em]">{greeting}</p>
+            <p className="font-fraunces text-[1.2rem] md:text-[1.4rem] font-semibold text-[var(--text-primary)] tracking-[-0.03em]">
               {firstName}, <em className="italic font-light text-[#1D9E75]">here's your day</em>
             </p>
-            <p className="font-dm-sans text-[0.72rem] text-[#6B7280] mt-[2px]">{todayFormatted}</p>
+            <p className="font-dm-sans text-[0.72rem] text-[var(--text-secondary)] mt-[2px]">{todayFormatted}</p>
           </div>
           <div className="flex gap-2">
-            <div className="w-9 h-9 bg-white rounded-[9px] border border-[rgba(11,26,44,0.07)] flex items-center justify-center relative cursor-pointer hover:bg-[#F2F0EB]">
-              <Bell className="w-[15px] h-[15px] stroke-[#6B7280]" />
+            <div className="w-9 h-9 bg-[var(--bg-surface)] rounded-[9px] border border-[var(--border)] flex items-center justify-center relative cursor-pointer hover:bg-[var(--bg-muted)]">
+              <Bell className="w-[15px] h-[15px] stroke-[var(--text-secondary)]" />
               {schedule && schedule.filter((p: any) => p.status === 'PENDING').length > 0 && (
-                <span className="w-[7px] h-[7px] bg-[#D85A30] rounded-full absolute top-[7px] right-[7px] border-[1.5px] border-white"></span>
+                <span className="w-[7px] h-[7px] bg-[#D85A30] rounded-full absolute top-[7px] right-[7px] border-[1.5px] border-[var(--bg-surface)]"></span>
               )}
             </div>
-            <div className="w-9 h-9 bg-white rounded-[9px] border border-[rgba(11,26,44,0.07)] flex items-center justify-center cursor-pointer hover:bg-[#F2F0EB]">
-              <Search className="w-[15px] h-[15px] stroke-[#6B7280]" />
+            <div className="w-9 h-9 bg-[var(--bg-surface)] rounded-[9px] border border-[var(--border)] flex items-center justify-center cursor-pointer hover:bg-[var(--bg-muted)]">
+              <Search className="w-[15px] h-[15px] stroke-[var(--text-secondary)]" />
             </div>
           </div>
         </div>
@@ -145,44 +145,44 @@ const DashboardPage = () => {
         </div>
 
         <div className="grid grid-cols-3 gap-[8px] md:gap-[10px]">
-            <div className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] p-[14px] flex items-center gap-3">
+            <div className="bg-[var(--bg-surface)] rounded-[12px] border border-[var(--border)] p-[14px] flex items-center gap-3">
                 <div className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[#E1F5EE]">
                     <Users className="w-5 h-5 stroke-[#0FA37F]" />
                 </div>
                 <div>
-                    <p className="font-fraunces text-[1.2rem] md:text-[1.35rem] font-semibold text-[#0B1A2C]">{authorizations?.length || 0}</p>
-                    <p className="font-dm-sans text-[0.68rem] text-[#6B7280] mt-[2px]">Children authorized</p>
+                    <p className="font-fraunces text-[1.2rem] md:text-[1.35rem] font-semibold text-[var(--text-primary)]">{authorizations?.length || 0}</p>
+                    <p className="font-dm-sans text-[0.68rem] text-[var(--text-secondary)] mt-[2px]">Children authorized</p>
                 </div>
             </div>
-            <div className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] p-[14px] flex items-center gap-3">
+            <div className="bg-[var(--bg-surface)] rounded-[12px] border border-[var(--border)] p-[14px] flex items-center gap-3">
                 <div className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[#FAEEDA]">
                     <CheckCircle className="w-5 h-5 stroke-[#EF9F27]" />
                 </div>
                 <div>
-                    <p className="font-fraunces text-[1.2rem] md:text-[1.35rem] font-semibold text-[#0B1A2C]">47</p>
-                    <p className="font-dm-sans text-[0.68rem] text-[#6B7280] mt-[2px]">Total pickups done</p>
+                    <p className="font-fraunces text-[1.2rem] md:text-[1.35rem] font-semibold text-[var(--text-primary)]">47</p>
+                    <p className="font-dm-sans text-[0.68rem] text-[var(--text-secondary)] mt-[2px]">Total pickups done</p>
                 </div>
             </div>
-            <div className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] p-[14px] flex items-center gap-3">
+            <div className="bg-[var(--bg-surface)] rounded-[12px] border border-[var(--border)] p-[14px] flex items-center gap-3">
                 <div className="w-[38px] h-[38px] rounded-[9px] flex items-center justify-center bg-[#E6F1FB]">
                     <Building className="w-5 h-5 stroke-[#185FA5]" />
                 </div>
                 <div>
-                    <p className="font-fraunces text-[1.2rem] md:text-[1.35rem] font-semibold text-[#0B1A2C]">{uniqueSchools}</p>
-                    <p className="font-dm-sans text-[0.68rem] text-[#6B7280] mt-[2px]">School linked</p>
+                    <p className="font-fraunces text-[1.2rem] md:text-[1.35rem] font-semibold text-[var(--text-primary)]">{uniqueSchools}</p>
+                    <p className="font-dm-sans text-[0.68rem] text-[var(--text-secondary)] mt-[2px]">School linked</p>
                 </div>
             </div>
         </div>
 
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-fraunces text-lg font-semibold text-[#0B1A2C]">Today's pickups</h3>
+            <h3 className="font-fraunces text-lg font-semibold text-[var(--text-primary)]">Today's pickups</h3>
             <a onClick={() => router.push('/delegate/schedule')} className="font-dm-sans text-sm text-[#0FA37F] cursor-pointer">View schedule &rarr;</a>
           </div>
           {isLoadingSchedule ? (
             <div className="space-y-2">
-                <div className="h-[72px] bg-white animate-pulse rounded-[12px]"></div>
-                <div className="h-[72px] bg-white animate-pulse rounded-[12px]"></div>
+                <div className="h-[72px] bg-[var(--bg-surface)] animate-pulse rounded-[12px]"></div>
+                <div className="h-[72px] bg-[var(--bg-surface)] animate-pulse rounded-[12px]"></div>
             </div>
           ) : schedule && schedule.length > 0 ? (
             <div className="flex flex-col gap-[8px]">
@@ -194,32 +194,32 @@ const DashboardPage = () => {
               )}
             </div>
           ) : (
-            <p className="text-center py-6 font-dm-sans text-[#6B7280]">No pickups today</p>
+            <p className="text-center py-6 font-dm-sans text-[var(--text-secondary)]">No pickups today</p>
           )}
         </div>
 
         <div>
           <div className="flex justify-between items-center mb-2">
-            <h3 className="font-fraunces text-lg font-semibold text-[#0B1A2C]">Recent activity</h3>
+            <h3 className="font-fraunces text-lg font-semibold text-[var(--text-primary)]">Recent activity</h3>
             <a onClick={() => router.push('/delegate/pickups')} className="font-dm-sans text-sm text-[#0FA37F] cursor-pointer">See all &rarr;</a>
           </div>
-          <div className="bg-white rounded-[12px] border border-[rgba(11,26,44,0.07)] px-[14px] py-0">
-            <div className="flex items-start gap-[10px] py-[10px] border-b border-[rgba(11,26,44,0.06)]">
+          <div className="bg-[var(--bg-surface)] rounded-[12px] border border-[var(--border)] px-[14px] py-0">
+            <div className="flex items-start gap-[10px] py-[10px] border-b border-[var(--border)]">
                 <div className="w-[30px] h-[30px] rounded-[8px] flex items-center justify-center bg-[#E1F5EE] flex-shrink-0">
                     <CheckCircle className="w-4 h-4 stroke-[#0FA37F]" />
                 </div>
                 <div>
-                    <p className="font-dm-sans text-[0.75rem] text-[#0B1A2C] leading-[1.4]">Zara Osei clocked in at Greenfield Academy</p>
-                    <p className="font-dm-sans text-[0.65rem] text-[#6B7280] mt-[2px]">Today &middot; 7:42am</p>
+                    <p className="font-dm-sans text-[0.75rem] text-[var(--text-primary)] leading-[1.4]">Zara Osei clocked in at Greenfield Academy</p>
+                    <p className="font-dm-sans text-[0.65rem] text-[var(--text-secondary)] mt-[2px]">Today &middot; 7:42am</p>
                 </div>
             </div>
-            <div className="flex items-start gap-[10px] py-[10px] border-b border-[rgba(11,26,44,0.06)]">
+            <div className="flex items-start gap-[10px] py-[10px] border-b border-[var(--border)]">
                 <div className="w-[30px] h-[30px] rounded-[8px] flex items-center justify-center bg-[#FAEEDA] flex-shrink-0">
                     <FileText className="w-4 h-4 stroke-[#EF9F27]" />
                 </div>
                 <div>
-                    <p className="font-dm-sans text-[0.75rem] text-[#0B1A2C] leading-[1.4]">Authorization updated by Amara Osei</p>
-                    <p className="font-dm-sans text-[0.65rem] text-[#6B7280] mt-[2px]">Yesterday &middot; 4:15pm</p>
+                    <p className="font-dm-sans text-[0.75rem] text-[var(--text-primary)] leading-[1.4]">Authorization updated by Amara Osei</p>
+                    <p className="font-dm-sans text-[0.65rem] text-[var(--text-secondary)] mt-[2px]">Yesterday &middot; 4:15pm</p>
                 </div>
             </div>
             <div className="flex items-start gap-[10px] py-[10px]">
@@ -227,8 +227,8 @@ const DashboardPage = () => {
                     <LogOut className="w-4 h-4 stroke-[#185FA5]" />
                 </div>
                 <div>
-                    <p className="font-dm-sans text-[0.75rem] text-[#0B1A2C] leading-[1.4]">Kofi Mensah pickup completed &middot; QR verified</p>
-                    <p className="font-dm-sans text-[0.65rem] text-[#6B7280] mt-[2px]">Mon &middot; 3:10pm</p>
+                    <p className="font-dm-sans text-[0.75rem] text-[var(--text-primary)] leading-[1.4]">Kofi Mensah pickup completed &middot; QR verified</p>
+                    <p className="font-dm-sans text-[0.65rem] text-[var(--text-secondary)] mt-[2px]">Mon &middot; 3:10pm</p>
                 </div>
             </div>
           </div>

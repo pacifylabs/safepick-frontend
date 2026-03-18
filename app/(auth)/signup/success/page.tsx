@@ -59,11 +59,11 @@ export default function SignupSuccessPage() {
       </div>
 
       <div className="mb-6 sm:mb-8 text-center">
-        <h1 className="font-display text-2xl sm:text-3xl font-semibold leading-tight text-white">
+        <h1 className="font-display text-2xl sm:text-3xl font-semibold leading-tight text-[var(--auth-text)]">
           You're all set, <br />
           <span className="text-teal-mid">{firstName}!</span>
         </h1>
-        <p className="mt-3 sm:mt-4 font-body text-[0.9rem] sm:text-[0.95rem] leading-relaxed text-white/50">
+        <p className="mt-3 sm:mt-4 font-body text-[0.9rem] sm:text-[0.95rem] leading-relaxed text-[var(--auth-text-muted)]">
           Welcome to SafePick. Let's register your first child.
         </p>
       </div>
@@ -78,10 +78,10 @@ export default function SignupSuccessPage() {
       </Button>
 
       <div className="mt-8 sm:mt-10 flex flex-col items-center">
-        <p className="mb-2 sm:mb-3 text-[0.7rem] sm:text-[0.75rem] font-medium tracking-wide text-white/30">
+        <p className="mb-2 sm:mb-3 text-[0.7rem] sm:text-[0.75rem] font-medium tracking-wide text-[var(--auth-text-muted)]">
           Taking you to dashboard in {countdown}s
         </p>
-        <div className="h-1 w-full rounded-full bg-white/10 overflow-hidden">
+        <div className="h-1 w-full rounded-full bg-[var(--auth-border)] overflow-hidden">
           <motion.div
             initial={{ width: "100%" }}
             animate={{ width: "0%" }}

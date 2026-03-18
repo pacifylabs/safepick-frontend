@@ -98,17 +98,17 @@ export default function ResetPasswordPage() {
             <div className="flex flex-col items-center gap-1 sm:gap-1.5">
               <div
                 className={`flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full text-[0.65rem] sm:text-xs font-semibold transition-colors duration-300 ${
-                  s.active ? "bg-teal text-white" : "border border-white/20 text-white/30"
+                  s.active ? "bg-teal text-white" : "border border-[var(--auth-border)] text-[var(--auth-text-muted)]"
                 }`}
               >
                 {i < (step === "NEW_PASSWORD" ? 1 : 0) || successMessage ? "✓" : i + 1}
               </div>
-              <span className={`text-[0.55rem] sm:text-[0.65rem] uppercase tracking-wider ${s.active ? "text-white" : "text-white/30"}`}>
+              <span className={`text-[0.55rem] sm:text-[0.65rem] uppercase tracking-wider ${s.active ? "text-white" : "text-[var(--auth-text-muted)]"}`}>
                 {s.label}
               </span>
             </div>
             {i < arr.length - 1 && (
-              <div className="mx-1 sm:mx-2 mb-4 sm:mb-6 h-[1px] flex-1 bg-white/10">
+              <div className="mx-1 sm:mx-2 mb-4 sm:mb-6 h-[1px] flex-1 bg-[var(--auth-surface)]">
                 <div
                   className="h-full bg-teal/50 transition-all duration-500"
                   style={{ width: i < (step === "NEW_PASSWORD" ? 1 : 0) || successMessage ? "100%" : "0%" }}
@@ -133,7 +133,7 @@ export default function ResetPasswordPage() {
             <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
               Enter the <i className="text-teal-mid not-italic">reset code</i>
             </h1>
-            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
+            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
               Enter the 6-digit code sent to <span className="font-medium text-white">{phone}</span>
             </p>
 
@@ -142,7 +142,7 @@ export default function ResetPasswordPage() {
               {hasOtpError && (
                 <p className="mt-2 sm:mt-3 text-[0.74rem] sm:text-[0.78rem] text-coral-light">Incorrect code. Please try again.</p>
               )}
-              <div className="mt-6 sm:mt-8 text-xs sm:text-sm text-white/40">
+              <div className="mt-6 sm:mt-8 text-xs sm:text-sm text-[var(--auth-text-muted)]">
                 Didn't receive it?{" "}
                 <button className="font-medium text-teal hover:underline">Resend code</button>
               </div>
@@ -160,7 +160,7 @@ export default function ResetPasswordPage() {
             <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
               Choose a new <i className="text-teal-mid not-italic">password</i>
             </h1>
-            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
+            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
               Make it strong. At least 8 characters.
             </p>
 
@@ -201,12 +201,12 @@ export default function ResetPasswordPage() {
                               : strength === 3
                               ? "bg-teal-mid"
                               : "bg-teal"
-                            : "bg-white/10"
+                            : "bg-[var(--auth-surface)]"
                         }`}
                       />
                     ))}
                   </div>
-                  <p className="mt-2 text-[0.65rem] sm:text-[0.7rem] text-white/30 uppercase tracking-widest">
+                  <p className="mt-2 text-[0.65rem] sm:text-[0.7rem] text-[var(--auth-text-muted)] uppercase tracking-widest">
                     {strength === 1 && "Weak"}
                     {strength === 2 && "Fair"}
                     {strength === 3 && "Good"}

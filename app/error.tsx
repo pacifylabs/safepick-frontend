@@ -14,12 +14,12 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-off-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-page)] px-4">
       <div className="text-center max-w-md">
-        <h2 className="text-2xl font-semibold text-navy font-display mb-3">
+        <h2 className="text-2xl font-semibold text-[var(--text-primary)] font-display mb-3">
           Something went wrong
         </h2>
-        <p className="text-sm text-muted mb-6">
+        <p className="text-sm text-[var(--text-secondary)] mb-6">
           {error.message || "An unexpected error occurred. Please try again."}
         </p>
         <button

@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAuthStore } from "@/stores/auth.store";
 import { getCurrentUser } from "@/services/auth.service";
 import { ToastContainer } from "@/components/ui/Toast";
+import { ThemeProvider } from "./ThemeProvider";
 
 const queryClient = new QueryClient();
 
@@ -66,11 +67,13 @@ export function AppProviders(props: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastContainer />
-      {props.children}
-      {process.env.NODE_ENV !== "production" ? (
-        <ReactQueryDevtools initialIsOpen={false} />
-      ) : null}
+      <ThemeProvider>
+        <ToastContainer />
+        {props.children}
+        {process.env.NODE_ENV !== "production" ? (
+          <ReactQueryDevtools initialIsOpen={false} />
+        ) : null}
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

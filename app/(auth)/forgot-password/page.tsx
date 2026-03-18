@@ -51,24 +51,10 @@ export default function ForgotPasswordPage() {
   return (
     <AuthCard>
       <button
-        onClick={() => router.push("/login")}
-        className="mb-4 sm:mb-6 flex items-center text-sm font-medium text-white/50 hover:text-white transition-colors"
+        onClick={() => router.back()}
+        className="mb-4 sm:mb-6 flex items-center text-sm font-medium text-[var(--auth-text-muted)] hover:text-[var(--auth-text)] transition-colors"
       >
-        <svg
-          viewBox="0 0 24 24"
-          width="18"
-          height="18"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2"
-        >
-          <line x1="19" y1="12" x2="5" y2="12" />
-          <polyline points="12 19 5 12 12 5" />
-        </svg>
-        Back to login
+        ← Back
       </button>
 
       <AnimatePresence mode="wait">
@@ -83,11 +69,11 @@ export default function ForgotPasswordPage() {
               <span className="font-body text-[0.75rem] font-medium uppercase tracking-widest text-teal-mid">
                 RESET PASSWORD
               </span>
-              <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
+              <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-[var(--auth-text)]">
                 Forgot your <i className="text-teal-mid not-italic">password?</i>
               </h1>
-              <p className="mt-2 sm:mt-3 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
-                Enter the phone number on your account. We'll send you a reset code.
+              <p className="mt-2 sm:mt-3 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
+                Don&apos;t worry, it happens. Enter your phone number below and we&apos;ll send you a reset code.
               </p>
             </div>
 

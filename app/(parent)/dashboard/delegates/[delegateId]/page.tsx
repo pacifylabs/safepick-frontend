@@ -67,7 +67,7 @@ export default function DelegateProfilePage() {
         <div className="h-48 bg-[#0B1A2C] animate-pulse rounded-2xl" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-white animate-pulse rounded-2xl border border-black/[0.06]" />
+            <div key={i} className="h-32 bg-[var(--bg-surface)] animate-pulse rounded-2xl border border-[var(--border)]" />
           ))}
         </div>
       </div>
@@ -80,8 +80,8 @@ export default function DelegateProfilePage() {
         <div className="w-16 h-16 bg-[#FAECE7] rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertCircle className="w-8 h-8 text-[#D85A30]" />
         </div>
-        <h2 className="text-[1.25rem] font-semibold text-[#0B1A2C]">Delegate not found</h2>
-        <p className="text-[#6B7280] mb-6">This person may have been removed or the link is invalid.</p>
+        <h2 className="text-[1.25rem] font-semibold text-[var(--text-primary)]">Delegate not found</h2>
+        <p className="text-[var(--text-secondary)] mb-6">This person may have been removed or the link is invalid.</p>
         <Button variant="primary" onClick={() => router.push("/dashboard/delegates")}>
           Back to delegates
         </Button>
@@ -192,11 +192,11 @@ export default function DelegateProfilePage() {
     <div className="max-w-8xl mx-auto px-6 py-6 font-body">
       {/* BREADCRUMB */}
       <div className="flex items-center gap-2 mb-6 text-[0.875rem]">
-        <span className="text-[#6B7280] cursor-pointer hover:text-[#0B1A2C]" onClick={() => router.push("/dashboard")}>Home</span>
-        <ChevronRight className="w-3.5 h-3.5 text-[#6B7280]" />
-        <span className="text-[#6B7280] cursor-pointer hover:text-[#0B1A2C]" onClick={() => router.push("/dashboard/delegates")}>Delegates</span>
-        <ChevronRight className="w-3.5 h-3.5 text-[#6B7280]" />
-        <span className="text-[#0B1A2C] font-medium">{delegate.fullName}</span>
+        <span className="text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]" onClick={() => router.push("/dashboard")}>Home</span>
+        <ChevronRight className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+        <span className="text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]" onClick={() => router.push("/dashboard/delegates")}>Delegates</span>
+        <ChevronRight className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+        <span className="text-[var(--text-primary)] font-medium">{delegate.fullName}</span>
       </div>
 
       {/* HERO CARD */}
@@ -291,18 +291,18 @@ export default function DelegateProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="flex gap-6 border-b border-black/[0.06]">
+          <div className="flex gap-6 border-b border-[var(--border)]">
             {(["AUTHORIZATIONS", "HISTORY"] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
                 className={`pb-4 text-[0.9rem] font-medium transition-all relative ${
-                  activeTab === tab ? "text-[#0B1A2C]" : "text-[#6B7280] hover:text-[#0B1A2C]"
+                  activeTab === tab ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                 }`}
               >
                 {tab === "AUTHORIZATIONS" ? "Authorizations" : "Pickup History"}
                 {activeTab === tab && (
-                  <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0B1A2C]" />
+                  <motion.div layoutId="tab-underline" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--text-primary)]" />
                 )}
               </button>
             ))}
@@ -320,7 +320,7 @@ export default function DelegateProfilePage() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ height: 0, opacity: 0, marginBottom: 0, overflow: "hidden" }}
                       transition={{ duration: 0.4 }}
-                      className="bg-white border border-black/[0.06] rounded-2xl p-5"
+                      className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5"
                     >
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-4">
@@ -328,8 +328,8 @@ export default function DelegateProfilePage() {
                             {auth.childName[0]}
                           </div>
                           <div>
-                            <p className="font-semibold text-[#0B1A2C]">{auth.childName}</p>
-                            <p className="text-[0.78rem] text-[#6B7280]">
+                            <p className="font-semibold text-[var(--text-primary)]">{auth.childName}</p>
+                            <p className="text-[0.78rem] text-[var(--text-secondary)]">
                               {auth.authType === "RECURRING" 
                                 ? `${auth.allowedDays?.join(", ")} · ${auth.allowedTimeStart} – ${auth.allowedTimeEnd}` 
                                 : auth.authType === "ONE_TIME" 
@@ -343,21 +343,21 @@ export default function DelegateProfilePage() {
                             onClick={() => openConfirmSheet(auth.status === "ACTIVE" ? "SUSPEND" : "REACTIVATE", auth)}
                             disabled={updateAuthorization.isPending && selectedAuth?.id === auth.id}
                             className={`w-12 h-6 rounded-full transition-all relative ${
-                              auth.status === "ACTIVE" ? "bg-[#0FA37F]" : "bg-[#E8E6E1]"
+                              auth.status === "ACTIVE" ? "bg-[#0FA37F]" : "bg-[var(--bg-muted)]"
                             }`}
                           >
                             <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-sm flex items-center justify-center ${
                               auth.status === "ACTIVE" ? "right-1" : "left-1"
                             }`}>
                               {updateAuthorization.isPending && selectedAuth?.id === auth.id && (
-                                <div className="w-2.5 h-2.5 border-2 border-[#0B1A2C]/10 border-t-[#0B1A2C] rounded-full animate-spin" />
+                                <div className="w-2.5 h-2.5 border-2 border-[var(--text-primary)]/10 border-t-[var(--text-primary)] rounded-full animate-spin" />
                               )}
                             </div>
                           </button>
                           <Dropdown
                             align="right"
                             trigger={
-                              <button className="p-2 hover:bg-[#F2F0EB] rounded-lg text-[#6B7280] transition-colors">
+                              <button className="p-2 hover:bg-[var(--bg-muted)] rounded-lg text-[var(--text-secondary)] transition-colors">
                                 <MoreHorizontal className="w-4 h-4" />
                               </button>
                             }
@@ -368,7 +368,7 @@ export default function DelegateProfilePage() {
                           />
                         </div>
                       </div>
-                      <div className="flex items-center justify-between pt-4 border-t border-[#F2F0EB]">
+                      <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
                         <span className={`text-[0.7rem] font-bold px-2 py-0.5 rounded-full ${
                           auth.status === "ACTIVE" ? "bg-[#E1F5EE] text-[#0F6E56]" : "bg-[#FAEEDA] text-[#BA7517]"
                         }`}>
@@ -388,7 +388,7 @@ export default function DelegateProfilePage() {
                   ))
                 ) : (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-12 text-center">
-                    <p className="font-body text-[0.875rem] text-[#6B7280]">No active authorizations for this delegate.</p>
+                    <p className="font-body text-[0.875rem] text-[var(--text-secondary)]">No active authorizations for this delegate.</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -400,11 +400,11 @@ export default function DelegateProfilePage() {
                       <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center">
                         <CheckCircle className="w-4 h-4 text-[#0FA37F]" />
                       </div>
-                      <div className="flex-1 w-px bg-[#F2F0EB] my-1" />
+                      <div className="flex-1 w-px bg-[var(--bg-muted)] my-1" />
                     </div>
                     <div className="pb-6">
-                      <p className="text-[0.875rem] font-medium text-[#0B1A2C]">Successful Pickup</p>
-                      <p className="text-[0.78rem] text-[#6B7280]">Picked up Zara Osei · Mon, Mar {15-i} · 3:45 PM</p>
+                      <p className="text-[0.875rem] font-medium text-[var(--text-primary)]">Successful Pickup</p>
+                      <p className="text-[0.78rem] text-[var(--text-secondary)]">Picked up Zara Osei · Mon, Mar {15-i} · 3:45 PM</p>
                     </div>
                   </div>
                 ))}
@@ -415,12 +415,12 @@ export default function DelegateProfilePage() {
 
         <div className="space-y-6">
           {/* KYC FILE ACCESS */}
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[0.7rem] font-bold text-[#6B7280] uppercase tracking-wider mb-4">KYC Documents</h3>
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-6 shadow-sm">
+            <h3 className="text-[0.7rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-4">KYC Documents</h3>
             
             {delegate.kycAccessStatus === "GRANTED" ? (
               <div className="space-y-4">
-                <p className="text-[0.82rem] text-[#6B7280] mb-4">
+                <p className="text-[0.82rem] text-[var(--text-secondary)] mb-4">
                   Access to KYC documents has been granted by the admin.
                 </p>
                 <Button variant="outline" fullWidth className="flex items-center gap-2">
@@ -442,7 +442,7 @@ export default function DelegateProfilePage() {
               </div>
             ) : (
               <div className="space-y-4">
-                <p className="text-[0.82rem] text-[#6B7280] mb-4 leading-relaxed">
+                <p className="text-[0.82rem] text-[var(--text-secondary)] mb-4 leading-relaxed">
                   To view the identity documents submitted by this delegate, you must first request access.
                 </p>
                 <Button 
@@ -459,20 +459,20 @@ export default function DelegateProfilePage() {
             )}
           </div>
 
-          <div className="bg-white border border-black/[0.06] rounded-2xl p-6 shadow-sm">
-            <h3 className="text-[0.7rem] font-bold text-[#6B7280] uppercase tracking-wider mb-4">Contact Info</h3>
+          <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-6 shadow-sm">
+            <h3 className="text-[0.7rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-4">Contact Info</h3>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-[#6B7280]" />
-                <p className="text-[0.875rem] text-[#0B1A2C]">{delegate.phone}</p>
+                <Phone className="w-4 h-4 text-[var(--text-secondary)]" />
+                <p className="text-[0.875rem] text-[var(--text-primary)]">{delegate.phone}</p>
               </div>
               <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-[#6B7280]" />
-                <p className="text-[0.875rem] text-[#0B1A2C]">delegate@example.com</p>
+                <Mail className="w-4 h-4 text-[var(--text-secondary)]" />
+                <p className="text-[0.875rem] text-[var(--text-primary)]">delegate@example.com</p>
               </div>
               <div className="flex items-center gap-3">
-                <MapPin className="w-4 h-4 text-[#6B7280]" />
-                <p className="text-[0.875rem] text-[#0B1A2C]">Lagos, Nigeria</p>
+                <MapPin className="w-4 h-4 text-[var(--text-secondary)]" />
+                <p className="text-[0.875rem] text-[var(--text-primary)]">Lagos, Nigeria</p>
               </div>
             </div>
           </div>

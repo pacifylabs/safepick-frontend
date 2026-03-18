@@ -112,17 +112,17 @@ function DelegateKycContent() {
             <div className="flex flex-col items-center gap-1 sm:gap-1.5">
               <div
                 className={`flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full text-[0.65rem] sm:text-xs font-semibold transition-colors duration-300 ${
-                  s.active || i < currentStepIndex ? "bg-teal text-white" : "border border-white/20 text-white/30"
+                  s.active || i < currentStepIndex ? "bg-teal text-white" : "border border-[var(--auth-border)] text-[var(--auth-text-muted)]"
                 }`}
               >
                 {i < currentStepIndex || step === "SUBMITTED" ? "✓" : i + 1}
               </div>
-              <span className={`text-[0.55rem] sm:text-[0.65rem] uppercase tracking-wider ${s.active || i < currentStepIndex ? "text-white" : "text-white/30"}`}>
+              <span className={`text-[0.55rem] sm:text-[0.65rem] uppercase tracking-wider ${s.active || i < currentStepIndex ? "text-white" : "text-[var(--auth-text-muted)]"}`}>
                 {s.label}
               </span>
             </div>
             {i < arr.length - 1 && (
-              <div className="mx-1 sm:mx-2 mb-4 sm:mb-6 h-[1px] flex-1 bg-white/10">
+              <div className="mx-1 sm:mx-2 mb-4 sm:mb-6 h-[1px] flex-1 bg-[var(--auth-surface)]">
                 <div
                   className="h-full bg-teal/50 transition-all duration-500"
                   style={{ width: i < currentStepIndex || step === "SUBMITTED" ? "100%" : "0%" }}
@@ -147,7 +147,7 @@ function DelegateKycContent() {
             <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
               Verify your <i className="text-teal-mid not-italic">phone</i>
             </h1>
-            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
+            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
               We'll send a one-time code to confirm your number.
             </p>
 
@@ -159,7 +159,7 @@ function DelegateKycContent() {
                   placeholder="+234 801 234 5678"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-4 py-3 sm:py-3.5 bg-white/[0.07] border border-white/[0.12] rounded-[14px] text-white text-[0.9rem] outline-none focus:border-teal focus:ring-3 focus:ring-teal/25 transition-all"
+                  className="w-full px-4 py-3 sm:py-3.5 bg-[var(--auth-surface)] border border-[var(--auth-border)] rounded-[14px] text-white text-[0.9rem] outline-none focus:border-teal focus:ring-3 focus:ring-teal/25 transition-all"
                 />
               </div>
 
@@ -179,7 +179,7 @@ function DelegateKycContent() {
           >
             <button
               onClick={() => setStep("PHONE")}
-              className="mb-4 text-xs text-white/40 hover:text-white transition-colors flex items-center gap-1"
+              className="mb-4 text-xs text-[var(--auth-text-muted)] hover:text-white transition-colors flex items-center gap-1"
             >
               ← Back to phone
             </button>
@@ -189,7 +189,7 @@ function DelegateKycContent() {
             <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
               Check your <i className="text-teal-mid not-italic">messages</i>
             </h1>
-            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
+            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
               Enter the 6-digit code sent to <span className="text-white font-medium">{phone}</span>
             </p>
 
@@ -198,7 +198,7 @@ function DelegateKycContent() {
               {hasOtpError && (
                 <p className="mt-2 sm:mt-3 text-[0.74rem] sm:text-[0.78rem] text-coral-light">Incorrect code. Please try again.</p>
               )}
-              <div className="mt-6 sm:mt-8 text-xs sm:text-sm text-white/40 text-center">
+              <div className="mt-6 sm:mt-8 text-xs sm:text-sm text-[var(--auth-text-muted)] text-center">
                 Didn't receive it?{" "}
                 <button className="font-medium text-teal hover:underline">Resend code</button>
               </div>
@@ -219,7 +219,7 @@ function DelegateKycContent() {
             <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
               Your <i className="text-teal-mid not-italic">identity</i>
             </h1>
-            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
+            <p className="mt-2 sm:mt-3 mb-6 sm:mb-8 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
               We need to verify who you are. Kept private and encrypted.
             </p>
 
@@ -230,7 +230,7 @@ function DelegateKycContent() {
                 <label className="font-body text-[0.75rem] sm:text-[0.78rem] font-medium text-white/70">ID Type</label>
                 <select
                   {...register("idType")}
-                  className="w-full px-4 py-3 sm:py-3.5 bg-white/[0.07] border border-white/[0.12] rounded-[14px] text-white text-[0.9rem] outline-none focus:border-teal focus:ring-3 focus:ring-teal/25 transition-all appearance-none"
+                  className="w-full px-4 py-3 sm:py-3.5 bg-[var(--auth-surface)] border border-[var(--auth-border)] rounded-[14px] text-white text-[0.9rem] outline-none focus:border-teal focus:ring-3 focus:ring-teal/25 transition-all appearance-none"
                 >
                   <option value="" className="bg-navy">Select ID type</option>
                   <option value="NATIONAL_ID" className="bg-navy">National ID</option>
@@ -251,13 +251,13 @@ function DelegateKycContent() {
                     key={u.id}
                     onClick={() => handleUpload(u.id)}
                     className={`flex flex-col items-center justify-center rounded-[14px] border-2 border-dashed p-3 sm:p-4 text-center transition-all cursor-pointer ${
-                      uploads[u.id] ? "border-teal/50 bg-teal/5" : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]"
+                      uploads[u.id] ? "border-teal/50 bg-teal/5" : "border-[var(--auth-border)] bg-[var(--auth-surface)] hover:border-white/20 hover:bg-white/[0.08]"
                     }`}
                   >
                     {uploads[u.id] ? (
                       <div className="flex flex-col items-center gap-1">
                         <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-teal/20 text-teal text-xs">✓</div>
-                        <span className="text-[0.6rem] sm:text-[0.65rem] text-white/50 truncate w-full">{uploads[u.id]}</span>
+                        <span className="text-[0.6rem] sm:text-[0.65rem] text-[var(--auth-text-muted)] truncate w-full">{uploads[u.id]}</span>
                       </div>
                     ) : (
                       <>
@@ -267,7 +267,7 @@ function DelegateKycContent() {
                             <circle cx="12" cy="13" r="4" />
                           </svg>
                         </div>
-                        <span className="text-[0.65rem] sm:text-[0.7rem] text-white/40 leading-tight">Tap to upload<br />{u.label}</span>
+                        <span className="text-[0.65rem] sm:text-[0.7rem] text-[var(--auth-text-muted)] leading-tight">Tap to upload<br />{u.label}</span>
                       </>
                     )}
                   </div>
@@ -277,7 +277,7 @@ function DelegateKycContent() {
               <div
                 onClick={() => handleUpload("selfie")}
                 className={`flex flex-col items-center justify-center rounded-[14px] border-2 border-dashed p-4 sm:p-6 text-center transition-all cursor-pointer ${
-                  uploads.selfie ? "border-teal/50 bg-teal/5" : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/[0.08]"
+                  uploads.selfie ? "border-teal/50 bg-teal/5" : "border-[var(--auth-border)] bg-[var(--auth-surface)] hover:border-white/20 hover:bg-white/[0.08]"
                 }`}
               >
                 {uploads.selfie ? (
@@ -296,7 +296,7 @@ function DelegateKycContent() {
                         <circle cx="12" cy="7" r="4" />
                       </svg>
                     </div>
-                    <p className="text-[0.78rem] sm:text-[0.82rem] text-white/40">Take or upload a selfie</p>
+                    <p className="text-[0.78rem] sm:text-[0.82rem] text-[var(--auth-text-muted)]">Take or upload a selfie</p>
                     <p className="mt-0.5 text-[0.65rem] sm:text-[0.72rem] text-white/20 uppercase tracking-wider font-medium">Must clearly show your face</p>
                   </>
                 )}
@@ -317,11 +317,11 @@ function DelegateKycContent() {
               </svg>
             </div>
             <h2 className="font-display text-xl sm:text-2xl font-semibold text-white">Verification submitted</h2>
-            <p className="mx-auto mt-3 sm:mt-4 max-w-[300px] font-body text-[0.85rem] sm:text-[0.9rem] leading-relaxed text-white/50">
+            <p className="mx-auto mt-3 sm:mt-4 max-w-[300px] font-body text-[0.85rem] sm:text-[0.9rem] leading-relaxed text-[var(--auth-text-muted)]">
               Being reviewed. Parent notified once verified — usually within a few hours.
             </p>
 
-            <div className="mt-6 sm:mt-10 flex gap-3 sm:gap-4 rounded-[14px] bg-white/5 p-3 sm:p-4 text-left">
+            <div className="mt-6 sm:mt-10 flex gap-3 sm:gap-4 rounded-[14px] bg-[var(--auth-surface)] p-3 sm:p-4 text-left">
               <div className="flex-shrink-0 text-teal mt-0.5">
                 <svg viewBox="0 0 24 24" width="18" height="18" className="sm:w-5 sm:h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" />
@@ -333,7 +333,7 @@ function DelegateKycContent() {
               </p>
             </div>
             
-            <Button variant="ghost" fullWidth className="mt-6 sm:mt-8 text-white/40" onClick={() => router.push("/")}>
+            <Button variant="ghost" fullWidth className="mt-6 sm:mt-8 text-[var(--auth-text-muted)]" onClick={() => router.push("/")}>
               Done
             </Button>
           </motion.div>
@@ -349,8 +349,8 @@ export default function DelegateKycPage() {
       <Suspense
         fallback={
           <div className="py-12 text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-teal" />
-            <p className="font-body text-[0.9rem] text-white/50">Loading...</p>
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
+            <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Loading...</p>
           </div>
         }
       >

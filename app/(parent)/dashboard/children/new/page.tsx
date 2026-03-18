@@ -124,25 +124,25 @@ export default function NewChildPage() {
                     ? "bg-[#0B1A2C] text-white"
                     : idx < ["DETAILS", "GUARDIAN", "REVIEW"].indexOf(registrationStep)
                     ? "bg-[#0FA37F] text-white"
-                    : "bg-[#F2F0EB] text-[#6B7280]"
+                    : "bg-[var(--bg-page)] text-[var(--text-secondary)]"
                 }`}
               >
                 {idx + 1}
               </div>
               <span
                 className={`text-[0.75rem] font-medium ${
-                  registrationStep === s.id ? "text-[#0B1A2C]" : "text-[#6B7280]"
+                  registrationStep === s.id ? "text-[var(--text-primary)]" : "text-[var(--text-secondary)]"
                 }`}
               >
                 {s.label}
               </span>
             </div>
-            {idx < 2 && <div className="flex-1 h-px bg-[#F2F0EB]" />}
+            {idx < 2 && <div className="flex-1 h-px bg-[var(--bg-page)]" />}
           </React.Fragment>
         ))}
       </div>
 
-      <div className="bg-white rounded-2xl border border-black/[0.06] p-6 shadow-sm">
+      <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-6 shadow-sm">
         <AnimatePresence mode="wait">
           {registrationStep === "DETAILS" && (
             <motion.div
@@ -163,37 +163,37 @@ export default function NewChildPage() {
                   <p className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-[#0FA37F] mb-1">
                     CHILD INFORMATION
                   </p>
-                  <h2 className="text-[1.25rem] font-semibold text-[#0B1A2C] mb-1">
+                  <h2 className="text-[1.25rem] font-semibold text-[var(--text-primary)] mb-1">
                     Tell us about your child
                   </h2>
-                  <p className="text-[0.875rem] text-[#6B7280]">
+                  <p className="text-[0.875rem] text-[var(--text-secondary)]">
                     This information helps schools verify your child's identity.
                   </p>
                 </div>
 
                 <div className="flex flex-col items-center">
                   <div className="relative group">
-                    <div className="w-20 h-20 rounded-full bg-[#F2F0EB] border-2 border-dashed border-[#0B1A2C]/15 flex items-center justify-center group-hover:border-[#0FA37F] group-hover:bg-[#E1F5EE] transition-all cursor-pointer">
-                      <Camera className="w-7 h-7 text-[#6B7280]" />
+                    <div className="w-20 h-20 rounded-full bg-[var(--bg-page)] border-2 border-dashed border-[var(--text-primary)]/15 flex items-center justify-center group-hover:border-[#0FA37F] group-hover:bg-[#E1F5EE] transition-all cursor-pointer">
+                      <Camera className="w-7 h-7 text-[var(--text-secondary)]" />
                     </div>
-                    <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-[#0FA37F] flex items-center justify-center border-2 border-white">
+                    <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-[#0FA37F] flex items-center justify-center border-2 border-[var(--bg-surface)]">
                       <Pencil className="w-3 h-3 text-white" />
                     </div>
                   </div>
-                  <p className="text-[0.72rem] text-[#6B7280] mt-2">
+                  <p className="text-[0.72rem] text-[var(--text-secondary)] mt-2">
                     Tap to add photo (optional)
                   </p>
                 </div>
 
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">
+                    <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">
                       Child's full name
                     </label>
                     <input
                       {...register("fullName")}
                       placeholder="Zara Osei"
-                      className="w-full bg-[#F9F9F8] border border-black/[0.08] rounded-xl px-4 py-3 text-[#0B1A2C] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-white outline-none transition-all"
+                      className="w-full bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-[var(--bg-surface)] outline-none transition-all"
                     />
                     {errors.fullName && (
                       <p className="text-coral text-[0.74rem] mt-1 flex items-center gap-1">
@@ -204,14 +204,14 @@ export default function NewChildPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">
+                    <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">
                       Date of birth
                     </label>
                     <input
                       {...register("dateOfBirth")}
                       type="date"
                       max={new Date().toISOString().split("T")[0]}
-                      className="w-full bg-[#F9F9F8] border border-black/[0.08] rounded-xl px-4 py-3 text-[#0B1A2C] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-white outline-none transition-all"
+                      className="w-full bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-[var(--bg-surface)] outline-none transition-all"
                     />
                     {errors.dateOfBirth && (
                       <p className="text-coral text-[0.74rem] mt-1 flex items-center gap-1">
@@ -222,12 +222,12 @@ export default function NewChildPage() {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">
+                    <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">
                       Grade
                     </label>
                     <select
                       {...register("grade")}
-                      className="w-full bg-[#F9F9F8] border border-black/[0.08] rounded-xl px-4 py-3 text-[#0B1A2C] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-white outline-none transition-all appearance-none"
+                      className="w-full bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-[var(--bg-surface)] outline-none transition-all appearance-none"
                     >
                       <option value="">Select a grade</option>
                       {[
@@ -288,10 +288,10 @@ export default function NewChildPage() {
                   <p className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-[#0FA37F] mb-1">
                     SECONDARY GUARDIAN
                   </p>
-                  <h2 className="text-[1.25rem] font-semibold text-[#0B1A2C] mb-1">
+                  <h2 className="text-[1.25rem] font-semibold text-[var(--text-primary)] mb-1">
                     Who's your backup?
                   </h2>
-                  <p className="text-[0.875rem] text-[#6B7280]">
+                  <p className="text-[0.875rem] text-[var(--text-secondary)]">
                     This person will be able to manage pickups for your child.
                   </p>
                 </div>
@@ -304,7 +304,7 @@ export default function NewChildPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">
+                  <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">
                     Guardian's phone number
                   </label>
                   <input
@@ -314,7 +314,7 @@ export default function NewChildPage() {
                       if (e.target.value.length >= 7) setGuardianPhone(e.target.value);
                     }}
                     placeholder="+233 XX XXX XXXX"
-                    className="w-full bg-[#F9F9F8] border border-black/[0.08] rounded-xl px-4 py-3 text-[#0B1A2C] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-white outline-none transition-all"
+                    className="w-full bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[var(--text-primary)] text-[0.875rem] focus:border-[#0FA37F] focus:ring-2 focus:ring-[#0FA37F]/15 focus:bg-[var(--bg-surface)] outline-none transition-all"
                   />
                   {errors.secondaryGuardian?.phone && (
                     <p className="text-coral text-[0.74rem] mt-1 flex items-center gap-1">
@@ -333,8 +333,8 @@ export default function NewChildPage() {
                             {guardianLookup.user?.fullName.split(" ").map((n: string) => n[0]).join("")}
                           </div>
                           <div className="flex-1">
-                            <p className="text-[0.82rem] font-medium text-[#0B1A2C]">{guardianLookup.user?.fullName}</p>
-                            <p className="text-[0.72rem] text-[#6B7280]">SafePick member</p>
+                            <p className="text-[0.82rem] font-medium text-[var(--text-primary)]">{guardianLookup.user?.fullName}</p>
+                            <p className="text-[0.72rem] text-[var(--text-secondary)]">SafePick member</p>
                           </div>
                           <CheckCircle className="w-5 h-5 text-[#0FA37F]" />
                         </>
@@ -342,7 +342,7 @@ export default function NewChildPage() {
                         <>
                           <AlertCircle className="w-5 h-5 text-[#D85A30]" />
                           <div className="flex-1">
-                            <p className="text-[0.82rem] font-medium text-[#0B1A2C]">No account found</p>
+                            <p className="text-[0.82rem] font-medium text-[var(--text-primary)]">No account found</p>
                             <button type="button" className="text-[0.72rem] text-[#D85A30] font-semibold underline">Send invite link</button>
                           </div>
                         </>
@@ -375,12 +375,12 @@ export default function NewChildPage() {
                 <p className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-[#0FA37F] mb-1">
                   REVIEW
                 </p>
-                <h2 className="text-[1.25rem] font-semibold text-[#0B1A2C] mb-1">
+                <h2 className="text-[1.25rem] font-semibold text-[var(--text-primary)] mb-1">
                   Confirm registration
                 </h2>
               </div>
 
-              <div className="divide-y divide-[#F2F0EB]">
+              <div className="divide-y divide-[var(--bg-page)]">
                 {[
                   { label: "Child's name", value: formData.fullName, step: "DETAILS" },
                   { label: "Date of birth", value: formData.dateOfBirth, step: "DETAILS" },
@@ -389,8 +389,8 @@ export default function NewChildPage() {
                 ].map((row) => (
                   <div key={row.label} className="flex justify-between items-center py-4">
                     <div>
-                      <p className="text-[0.72rem] text-[#6B7280] mb-0.5">{row.label}</p>
-                      <p className="text-[0.875rem] font-medium text-[#0B1A2C]">{row.value}</p>
+                      <p className="text-[0.72rem] text-[var(--text-secondary)] mb-0.5">{row.label}</p>
+                      <p className="text-[0.875rem] font-medium text-[var(--text-primary)]">{row.value}</p>
                     </div>
                     <button
                       onClick={() => setRegistrationStep(row.step as Step)}
@@ -402,12 +402,12 @@ export default function NewChildPage() {
                 ))}
               </div>
 
-              <div className="bg-[#F9F9F8] rounded-xl p-4 flex items-center justify-between">
+              <div className="bg-[var(--bg-surface-2)] rounded-xl p-4 flex items-center justify-between">
                 <div>
-                  <p className="text-[0.78rem] text-[#6B7280]">SafePick ID will be assigned:</p>
-                  <p className="text-[1rem] font-bold text-[#0B1A2C]">SP-2026-XXXXX</p>
+                  <p className="text-[0.78rem] text-[var(--text-secondary)]">SafePick ID will be assigned:</p>
+                  <p className="text-[1rem] font-bold text-[var(--text-primary)]">SP-2026-XXXXX</p>
                 </div>
-                <Baby className="w-8 h-8 text-[#0B1A2C]/10" />
+                <Baby className="w-8 h-8 text-[var(--text-primary)]/10" />
               </div>
 
               <div className="flex gap-3 pt-2">

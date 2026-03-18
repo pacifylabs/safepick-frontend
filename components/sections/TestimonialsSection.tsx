@@ -1,123 +1,91 @@
-import { SectionLabel } from "@/components/ui/SectionLabel";
-import { Badge } from "@/components/ui/Badge";
-import type { Testimonial } from "@/types";
+"use client";
 
-const testimonials: Testimonial[] = [
-    {
-        id: "t1",
-        name: "Rachel O.",
-        role: "Mum of two, Lagos",
-        rating: 5,
-        tag: "Parent",
-        quote:
-            "I can't describe the relief. I got a notification the moment my brother-in-law arrived, approved it from my desk, and got a confirmation when Temi walked out. It's exactly what I needed.",
-        avatarInitials: "RO",
-        avatarColor: "bg-teal"
-    },
-    {
-        id: "t2",
-        name: "James A.",
-        role: "Dad, Abuja",
-        rating: 5,
-        tag: "Parent",
-        quote:
-            "Before SafePick, I was calling the school twice a week just to check. Now I get the notification before I even think to worry. The audit log is brilliant — I can see everything.",
-        avatarInitials: "JA",
-        avatarColor: "bg-navy"
-    },
-    {
-        id: "t3",
-        name: "Amaka E.",
-        role: "Primary caregiver, Port Harcourt",
-        rating: 5,
-        tag: "Guardian",
-        quote:
-            "We have four different people who collect the kids depending on the day. Keeping track was a nightmare. SafePick just handles it — everyone is verified, everything is logged.",
-        avatarInitials: "AE",
-        avatarColor: "bg-teal-700"
-    },
-    {
-        id: "t4",
-        name: "Chidi N.",
-        role: "Father, Enugu",
-        rating: 5,
-        tag: "Parent",
-        quote:
-            "The secondary guardian feature saved us when my phone ran out of battery once. The school didn't need to call anyone in a panic — my wife automatically got the notification. Seamless.",
-        avatarInitials: "CN",
-        avatarColor: "bg-navy-400"
-    }
+import React from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { Star } from "lucide-react";
+
+const testimonials = [
+  {
+    quote: "I used to worry every day at 3pm. SafePick changed that. I get a notification the moment David arrives at the gate and I approve from my office.",
+    author: "Amara Osei",
+    role: "Parent · Lagos",
+    initials: "AO",
+  },
+  {
+    quote: "Our school has completely eliminated unauthorized pickups. The QR system is fast, the parents love it, and our staff feel confident.",
+    author: "Mrs. Adeola Bello",
+    role: "School Administrator · Abuja",
+    initials: "AB",
+  },
+  {
+    quote: "As a driver for three different families, the SafePick app keeps my schedule organized and my QR code always ready. Very professional.",
+    author: "David Mensah",
+    role: "Authorized Delegate · Accra",
+    initials: "DM",
+  },
 ];
 
-function StarRating({ rating }: { rating: number }) {
-    return (
-        <div className="flex items-center gap-0.5 mb-3">
-            {Array.from({ length: 5 }).map((_, i) => (
-                <svg
-                    key={i}
-                    className={`w-4 h-4 ${i < rating ? "text-teal" : "text-sand-400"}`}
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                >
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-            ))}
+export function TestimonialsSection() {
+  const { ref, inView } = useInView({
+    threshold: 0.15,
+    triggerOnce: true,
+  });
+
+  return (
+    <section className="py-24 bg-[var(--bg-page)]" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <p className="font-body text-[0.72rem] font-bold uppercase tracking-widest text-[#0FA37F] mb-4">
+            WHAT PARENTS SAY
+          </p>
+          <h2 className="font-display text-[3rem] font-semibold text-[var(--text-primary)]">
+            Trusted by families
+          </h2>
         </div>
-    );
-}
 
-function TestimonialCard({ name, role, rating, tag, quote, avatarInitials, avatarColor }: Testimonial) {
-    return (
-        <div className="bg-white rounded-2xl p-6 border border-sand-400 shadow-card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 flex flex-col">
-            {/* Tag */}
-            {tag && <Badge variant="teal" className="self-start mb-4">{tag}</Badge>}
+        {/* Testimonials Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {testimonials.map((t, index) => (
+            <motion.div
+              key={t.author}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-3xl p-8 transition-shadow duration-300 hover:shadow-xl"
+            >
+              {/* Stars */}
+              <div className="flex gap-1 mb-6">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#EF9F27] text-[#EF9F27]" />
+                ))}
+              </div>
 
-            {/* Stars */}
-            <StarRating rating={rating} />
+              {/* Quote */}
+              <p className="font-body text-[0.9375rem] text-[var(--text-secondary)] leading-relaxed mb-8 italic">
+                "{t.quote}"
+              </p>
 
-            {/* Quote */}
-            <blockquote className="text-sm text-navy/80 leading-relaxed flex-1 mb-5">
-                "{quote}"
-            </blockquote>
-
-            {/* Author */}
-            <div className="flex items-center gap-3 pt-4 border-t border-sand-300">
-                <div
-                    className={`w-9 h-9 rounded-full ${avatarColor} flex items-center justify-center text-xs font-bold text-white flex-shrink-0`}
-                >
-                    {avatarInitials}
+              {/* Author */}
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-[#0B1A2C] flex items-center justify-center text-white font-display text-[0.875rem] font-semibold">
+                  {t.initials}
                 </div>
                 <div>
-                    <p className="text-sm font-semibold text-navy">{name}</p>
-                    <p className="text-xs text-muted-text">{role}</p>
+                  <p className="font-body text-[0.875rem] font-bold text-[var(--text-primary)]">
+                    {t.author}
+                  </p>
+                  <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">
+                    {t.role}
+                  </p>
                 </div>
-            </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
-    );
-}
-
-export function TestimonialsSection() {
-    return (
-        <section className="py-24 bg-sand-200">
-            <div className="max-w-7xl mx-auto px-6">
-                {/* Header */}
-                <div className="max-w-xl mb-14">
-                    <SectionLabel>Parent stories</SectionLabel>
-                    <h2 className="text-3xl md:text-4xl font-black text-navy tracking-tight mb-3">
-                        Calm. Trusty.
-                    </h2>
-                    <p className="text-muted-text leading-relaxed">
-                        Real parents sharing what it feels like to know exactly who collected their child — every single time.
-                    </p>
-                </div>
-
-                {/* Cards grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {testimonials.map((t) => (
-                        <TestimonialCard key={t.id} {...t} />
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+      </div>
+    </section>
+  );
 }

@@ -9,9 +9,11 @@ import Cookies from "js-cookie";
 import { 
   LayoutDashboard, 
   Users, 
+  Users2, 
   UserCheck, 
   CalendarCheck, 
   ShieldAlert,
+  ShieldCheck,
   LogOut,
   LucideIcon,
   Home,
@@ -40,7 +42,8 @@ interface SidebarProps {
 const defaultParentItems: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
-  { href: "/dashboard/delegates", icon: Users, label: "Delegates" },
+  { href: "/dashboard/delegates", icon: ShieldCheck, label: "Delegates" },
+  { href: "/dashboard/secondary-guardians", icon: Users2, label: "Guardians" },
   { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
   { href: "/dashboard/attendance", icon: CalendarCheck, label: "Attendance" },
   { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency" },
@@ -115,7 +118,7 @@ export function Sidebar({ items, role = "PARENT" }: SidebarProps) {
                 <Icon size={18} />
                 <span className="flex-1">{item.label}</span>
                 {item.disabled && (
-                  <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
+                  <span className="bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
                     Soon
                   </span>
                 )}

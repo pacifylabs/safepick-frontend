@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useDelegate";
 import { useDelegateAuthStore } from "@/stores/delegateAuth.store";
 import { SosButton } from "@/components/delegate/SosButton";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   LayoutDashboard,
   Users,
@@ -71,7 +72,7 @@ export default function DelegateLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#E8EAF0]">
+    <div className="flex min-h-screen bg-[var(--bg-page)]">
       <aside className="hidden lg:flex w-[220px] flex-shrink-0 bg-[#0B1A2C] flex-col fixed top-0 left-0 h-screen z-40">
         <div className="px-5 py-6 border-b border-white/[0.07]">
           <div className="flex items-center gap-2">
@@ -187,6 +188,7 @@ export default function DelegateLayout({
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <div className="flex items-center gap-2 px-2 py-1 rounded-lg bg-white/[0.04]">
               <div className="w-[26px] h-[26px] rounded-full bg-[#1D9E75] flex items-center justify-center text-white text-[0.6rem] font-medium flex-shrink-0">
                 {getInitials(delegate?.fullName)}

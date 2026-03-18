@@ -128,9 +128,9 @@ export default function VerifyPage() {
         </Button>
 
         <div className="mt-6 sm:mt-8 flex items-center justify-center gap-2 text-xs sm:text-sm">
-          <span className="text-white/40">Didn't receive it?</span>
+          <span className="text-[var(--auth-text-muted)]">Didn't receive it?</span>
           {cooldown > 0 ? (
-            <span className="text-white/30">Resend in 0:{cooldown.toString().padStart(2, "0")}</span>
+            <span className="text-[var(--auth-text-muted)]/60">Resend in 0:{cooldown.toString().padStart(2, "0")}</span>
           ) : (
             <button
               onClick={handleResend}

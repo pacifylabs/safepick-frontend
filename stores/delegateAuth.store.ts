@@ -23,8 +23,10 @@ export const useDelegateAuthStore = create(
       isAuthenticated: false,
       setDelegate: (delegate: DelegateAccount) =>
         set({ delegate, isAuthenticated: !!delegate }),
-      setTokens: (accessToken: string, refreshToken: string) =>
-        set({ accessToken, refreshToken }),
+      setTokens: (accessToken: string, refreshToken: string) => {
+        Cookies.set("delegate-access-token", accessToken, { expires: 7 });
+        set({ accessToken, refreshToken });
+      },
       clearDelegate: () => {
         Cookies.remove("delegate-access-token");
         set({

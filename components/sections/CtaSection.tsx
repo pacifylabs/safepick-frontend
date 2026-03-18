@@ -1,68 +1,49 @@
 "use client";
 
+import React from "react";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
+import Link from "next/link";
 
 export function CtaSection() {
-    return (
-        <section id="waitlist" className="py-24 bg-navy relative overflow-hidden">
-            {/* Decorative blobs */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-[600px] h-[300px] rounded-full bg-teal/15 blur-[120px]" />
-            </div>
-            <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-teal/10 blur-[80px] pointer-events-none" />
+  return (
+    <section className="py-24 bg-[#0B1A2C] relative overflow-hidden">
+      {/* Background Decoration */}
+      <div className="absolute -top-32 -right-32 w-96 h-96 bg-[#0FA37F]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 bg-[#EF9F27]/5 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="relative max-w-3xl mx-auto px-6 text-center">
-                {/* Eyebrow */}
-                <div className="inline-flex items-center gap-2 bg-teal/15 border border-teal/30 rounded-full px-4 py-1.5 mb-8">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal animate-pulse" />
-                    <span className="text-xs font-semibold text-teal tracking-widest uppercase">Early access open</span>
-                </div>
+      <div className="max-w-7xl mx-auto px-6 relative z-10 text-center">
+        <p className="font-body text-[0.72rem] font-bold uppercase tracking-widest text-[#0FA37F] mb-4">
+          GET STARTED
+        </p>
+        <h2 className="font-display text-[3.5rem] text-white font-semibold max-w-[600px] mx-auto leading-tight">
+          Your child's safety starts with one tap.
+        </h2>
+        <p className="font-body text-[1rem] text-white/50 max-w-[480px] mx-auto mt-6 mb-10 leading-relaxed">
+          Join thousands of parents who trust SafePick to protect their children at school pickup every day.
+        </p>
 
-                {/* Headline */}
-                <h2 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-6 leading-tight">
-                    Be the first to register your child with{" "}
-                    <span className="text-teal">SafePick</span>
-                </h2>
-
-                {/* Sub-copy */}
-                <p className="text-white/60 text-base md:text-lg leading-relaxed mb-10 max-w-xl mx-auto">
-                    Join thousands of parents and schools on the waitlist. We'll notify you the moment SafePick launches at your child's school.
-                </p>
-
-                {/* Email form */}
-                <form
-                    className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
-                    onSubmit={(e) => e.preventDefault()}
-                >
-                    <input
-                        type="email"
-                        placeholder="Enter your email address"
-                        className="flex-1 px-5 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder:text-white/40 text-sm focus:outline-none focus:border-teal focus:bg-white/15 transition-all"
-                    />
-                    <Button variant="primary" size="md" type="submit" className="whitespace-nowrap">
-                        Join waitlist →
-                    </Button>
-                </form>
-
-                {/* Social proof */}
-                <p className="mt-6 text-xs text-white/40">
-                    No spam. No credit card. Unsubscribe any time.
-                </p>
-
-                {/* Floating trust badges */}
-                <div className="mt-10 flex items-center justify-center gap-8 flex-wrap">
-                    {[
-                        { icon: "🔒", label: "End-to-end encrypted" },
-                        { icon: "🏫", label: "School-first design" },
-                        { icon: "✅", label: "KYC-verified delegates" }
-                    ].map((badge) => (
-                        <div key={badge.label} className="flex items-center gap-2">
-                            <span className="text-base">{badge.icon}</span>
-                            <span className="text-xs text-white/50 font-medium">{badge.label}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link href="/signup">
+            <motion.div whileHover={{ scale: 1.03 }}>
+              <Button
+                variant="primary"
+                className="bg-[#0FA37F] text-white rounded-full px-10 py-4 font-display text-[1rem] font-semibold hover:bg-[#1D9E75] border-none h-auto"
+              >
+                Create free account
+              </Button>
+            </motion.div>
+          </Link>
+          <Link href="#features">
+            <Button
+              variant="outline"
+              className="border border-white/20 text-white/70 rounded-full px-10 py-4 font-body text-[1rem] font-medium hover:bg-white/5 h-auto"
+            >
+              Learn more
+            </Button>
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
 }

@@ -48,14 +48,14 @@ function DelegateJoinContent() {
     <>
       {state === "VALIDATING" && (
         <div className="py-12 text-center">
-          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-teal" />
-          <p className="font-body text-[0.9rem] text-white/50">Verifying your invite...</p>
+          <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
+          <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Verifying your invite...</p>
         </div>
       )}
 
       {state === "VALID" && inviteData && (
         <>
-          <div className="mb-4 sm:mb-6 flex items-center gap-3 rounded-[14px] border border-white/10 bg-white/5 p-3 sm:p-4">
+          <div className="mb-4 sm:mb-6 flex items-center gap-3 rounded-[14px] border border-[var(--auth-border)] bg-[var(--auth-surface)] p-3 sm:p-4">
             <div className="flex h-8 w-8 sm:h-10 sm:w-10 flex-shrink-0 items-center justify-center rounded-full bg-teal-mid text-xs sm:text-sm font-semibold text-white uppercase">
               {inviteData.inviterName.charAt(0)}
             </div>
@@ -63,7 +63,7 @@ function DelegateJoinContent() {
               <p className="font-body text-[0.8rem] sm:text-[0.85rem] font-medium text-white">
                 {inviteData.inviterName} invited you
               </p>
-              <p className="font-body text-[0.7rem] sm:text-[0.75rem] text-white/50">to pick up their child</p>
+              <p className="font-body text-[0.7rem] sm:text-[0.75rem] text-[var(--auth-text-muted)]">to pick up their child</p>
             </div>
           </div>
 
@@ -88,12 +88,12 @@ function DelegateJoinContent() {
             </div>
 
             <div className="mt-3 sm:mt-4 flex flex-wrap gap-2">
-              <div className="rounded-full bg-white/10 px-2.5 sm:px-3 py-1 sm:py-1.5 text-[0.7rem] sm:text-[0.75rem] text-white/60">
+              <div className="rounded-full bg-[var(--auth-surface)] px-2.5 sm:px-3 py-1 sm:py-1.5 text-[0.7rem] sm:text-[0.75rem] text-[var(--auth-text-muted)]">
                 Role: {inviteData.relationship}
               </div>
             </div>
 
-            <p className="mt-4 sm:mt-6 text-[0.74rem] sm:text-[0.78rem] text-white/40">
+            <p className="mt-4 sm:mt-6 text-[0.74rem] sm:text-[0.78rem] text-[var(--auth-text-muted)]">
               Invite expires {new Date(inviteData.expiryDate).toLocaleDateString()}
             </p>
           </div>
@@ -107,7 +107,7 @@ function DelegateJoinContent() {
           </Button>
 
           <div className="mt-4 sm:mt-6 text-center">
-            <Link href="/" className="text-[0.75rem] sm:text-[0.8rem] text-white/30 hover:text-white/50 hover:underline">
+            <Link href="/" className="text-[0.75rem] sm:text-[0.8rem] text-[var(--auth-text-muted)] hover:text-white hover:underline">
               Not you? Ignore this invite.
             </Link>
           </div>
@@ -133,13 +133,13 @@ function DelegateJoinContent() {
             </svg>
           </div>
           <h2 className="font-display text-xl sm:text-2xl font-semibold text-white">Invite expired</h2>
-          <p className="mx-auto mt-2 sm:mt-3 max-w-[280px] font-body text-[0.85rem] sm:text-[0.9rem] leading-relaxed text-white/50">
+          <p className="mx-auto mt-2 sm:mt-3 max-w-[280px] font-body text-[0.85rem] sm:text-[0.9rem] leading-relaxed text-[var(--auth-text-muted)]">
             This link is no longer valid. Ask the parent to send a new one.
           </p>
           <Button
             variant="ghost"
             fullWidth
-            className="mt-6 sm:mt-8 text-white/40"
+            className="mt-6 sm:mt-8 text-[var(--auth-text-muted)]"
             onClick={() => router.push("/")}
           >
             Back to home
@@ -156,8 +156,8 @@ export default function DelegateJoinPage() {
       <Suspense
         fallback={
           <div className="py-12 text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-white/20 border-t-teal" />
-            <p className="font-body text-[0.9rem] text-white/50">Loading invitation...</p>
+            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
+            <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Loading invitation...</p>
           </div>
         }
       >

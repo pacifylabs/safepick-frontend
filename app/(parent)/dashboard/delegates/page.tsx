@@ -185,10 +185,10 @@ export default function DelegatesPage() {
   if (loadingDelegates) {
     return (
       <div className="p-6 space-y-6">
-        <div className="h-10 w-48 bg-white animate-pulse rounded-lg" />
+        <div className="h-10 w-48 bg-[var(--bg-surface)] animate-pulse rounded-lg" />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-48 bg-white animate-pulse rounded-2xl border border-black/[0.06]" />
+            <div key={i} className="h-48 bg-[var(--bg-surface)] animate-pulse rounded-2xl border border-[var(--border)]" />
           ))}
         </div>
       </div>
@@ -208,8 +208,8 @@ export default function DelegatesPage() {
           >
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
-                <h1 className="text-[1.5rem] font-semibold text-[#0B1A2C]">Delegates</h1>
-                <p className="text-[0.875rem] text-[#6B7280]">Manage who is authorized to pick up your children.</p>
+                <h1 className="text-[1.5rem] font-semibold text-[var(--text-primary)]">Delegates</h1>
+                <p className="text-[0.875rem] text-[var(--text-secondary)]">Manage who is authorized to pick up your children.</p>
               </div>
               <div className="flex items-center gap-3">
                 
@@ -243,19 +243,19 @@ export default function DelegatesPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-[0.875rem]">
                   <span
-                    className="text-[#6B7280] cursor-pointer hover:text-[#0B1A2C]"
+                    className="text-[var(--text-secondary)] cursor-pointer hover:text-[var(--text-primary)]"
                     onClick={() => router.push("/dashboard")}
                   >
                     Home
                   </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-[#6B7280]" />
-                  <span className="text-[#0B1A2C] font-medium">Delegates</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+                  <span className="text-[var(--text-primary)] font-medium">Delegates</span>
                 </div>
-                <div className="flex bg-[#F2F0EB] rounded-xl p-1 gap-1">
+                <div className="flex bg-[var(--bg-muted)] rounded-xl p-1 gap-1">
                   <button
                     onClick={() => setViewMode("GRID")}
                     className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
-                      viewMode === "GRID" ? "bg-white shadow-sm text-[#0B1A2C]" : "text-[#6B7280] hover:text-[#0B1A2C]"
+                      viewMode === "GRID" ? "bg-[var(--bg-surface)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     <LayoutGrid className="w-4 h-4" />
@@ -263,7 +263,7 @@ export default function DelegatesPage() {
                   <button
                     onClick={() => setViewMode("LIST")}
                     className={`w-9 h-9 rounded-lg flex items-center justify-center transition-all ${
-                      viewMode === "LIST" ? "bg-white shadow-sm text-[#0B1A2C]" : "text-[#6B7280] hover:text-[#0B1A2C]"
+                      viewMode === "LIST" ? "bg-[var(--bg-surface)] shadow-sm text-[var(--text-primary)]" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     <List className="w-4 h-4" />
@@ -272,12 +272,12 @@ export default function DelegatesPage() {
               </div>
                       
             {delegates.length === 0 && pendingInvites.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-black/[0.06] p-12 flex flex-col items-center text-center">
+              <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] p-12 flex flex-col items-center text-center">
                 <div className="w-16 h-16 rounded-2xl bg-[#EEF2FF] flex items-center justify-center mb-4">
                   <Users className="w-8 h-8 text-[#4F46E5]" />
                 </div>
-                <h3 className="font-body text-[1.1rem] font-semibold text-[#0B1A2C] mb-2">No delegates yet</h3>
-                <p className="font-body text-[0.875rem] text-[#6B7280] max-w-[280px] leading-relaxed mb-6">
+                <h3 className="font-body text-[1.1rem] font-semibold text-[var(--text-primary)] mb-2">No delegates yet</h3>
+                <p className="font-body text-[0.875rem] text-[var(--text-secondary)] max-w-[280px] leading-relaxed mb-6">
                   Authorize trusted drivers, nannies, or relatives to pick up your children safely.
                 </p>
                 <Button variant="primary" onClick={() => setView("INVITE")}>
@@ -299,23 +299,23 @@ export default function DelegatesPage() {
                 {pendingInvites.map((invite) => (
                   <div 
                     key={invite.id} 
-                    className="bg-[#F9F9F8] border border-dashed border-black/10 rounded-2xl p-5 flex flex-col justify-between"
+                    className="bg-[var(--bg-surface-2)] border border-dashed border-[var(--border-strong)] rounded-2xl p-5 flex flex-col justify-between"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-[#F2F0EB] flex items-center justify-center text-[#6B7280]">
+                        <div className="w-12 h-12 rounded-full bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-secondary)]">
                           <Clock className="w-6 h-6" />
                         </div>
                         <div>
-                          <p className="font-body text-[0.9rem] font-semibold text-[#6B7280]">Pending Invite</p>
-                          <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.7rem] font-medium capitalize">
+                          <p className="font-body text-[0.9rem] font-semibold text-[var(--text-secondary)]">Pending Invite</p>
+                          <span className="bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full px-2 py-0.5 text-[0.7rem] font-medium capitalize">
                             {invite.relationship.toLowerCase()}
                           </span>
                         </div>
                       </div>
                       <button 
                         onClick={() => revokeInvite(invite.id)}
-                        className="text-[#6B7280] hover:text-[#D85A30] p-1"
+                        className="text-[var(--text-secondary)] hover:text-[#D85A30] p-1"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -330,8 +330,8 @@ export default function DelegatesPage() {
                         ) : null;
                       })}
                     </div>
-                    <div className="pt-3 border-t border-black/5 flex items-center justify-between">
-                      <span className="text-[0.7rem] text-[#6B7280]">Expires in 48h</span>
+                    <div className="pt-3 border-t border-[var(--border)] flex items-center justify-between">
+                      <span className="text-[0.7rem] text-[var(--text-secondary)]">Expires in 48h</span>
                       <button 
                         onClick={() => {
                           navigator.clipboard.writeText(invite.inviteUrl);
@@ -346,28 +346,28 @@ export default function DelegatesPage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white rounded-2xl border border-black/[0.06] overflow-hidden">
-                <div className="bg-[#F9F9F8] border-b border-black/[0.06] px-6 py-3 grid grid-cols-[1.5fr_1fr_1.5fr_1fr_auto] gap-4 items-center">
+              <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden">
+                <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-6 py-3 grid grid-cols-[1.5fr_1fr_1.5fr_1fr_auto] gap-4 items-center">
                   {["Name", "Relationship", "Status", "Authorized For", ""].map((h) => (
-                    <span key={h} className="font-body text-[0.75rem] font-medium text-[#6B7280] uppercase tracking-wider">
+                    <span key={h} className="font-body text-[0.75rem] font-medium text-[var(--text-secondary)] uppercase tracking-wider">
                       {h}
                     </span>
                   ))}
                 </div>
-                <div className="divide-y divide-black/[0.04]">
+                <div className="divide-y divide-[var(--border)]">
                   {delegates.map((delegate) => (
                     <div
                       key={delegate.id}
                       onClick={() => router.push(`/dashboard/delegates/${delegate.id}`)}
-                      className="px-6 py-4 grid grid-cols-[1.5fr_1fr_1.5fr_1fr_auto] gap-4 items-center cursor-pointer hover:bg-[#F9F9F8] transition-colors"
+                      className="px-6 py-4 grid grid-cols-[1.5fr_1fr_1.5fr_1fr_auto] gap-4 items-center cursor-pointer hover:bg-[var(--bg-surface-2)] transition-colors"
                     >
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white text-[0.8rem] font-bold ${getChildColor(delegate.id)}`}>
                           {delegate.fullName[0]}
                         </div>
-                        <p className="text-[0.875rem] font-semibold text-[#0B1A2C] truncate">{delegate.fullName}</p>
+                        <p className="text-[0.875rem] font-semibold text-[var(--text-primary)] truncate">{delegate.fullName}</p>
                       </div>
-                      <p className="text-[0.82rem] text-[#6B7280] capitalize">
+                      <p className="text-[0.82rem] text-[var(--text-secondary)] capitalize">
                         {delegate.relationship.toLowerCase().replace("_", " ")}
                       </p>
                       <div>
@@ -381,19 +381,19 @@ export default function DelegatesPage() {
                         {delegate.authorizations.slice(0, 3).map((auth) => (
                           <div 
                             key={auth.childId} 
-                            className={`w-7 h-7 rounded-full border-2 border-white flex items-center justify-center text-[0.6rem] text-white font-bold ${getChildColor(auth.childId)}`}
+                            className={`w-7 h-7 rounded-full border-2 border-[var(--bg-surface)] flex items-center justify-center text-[0.6rem] text-white font-bold ${getChildColor(auth.childId)}`}
                             title={auth.childName}
                           >
                             {auth.childName[0]}
                           </div>
                         ))}
                         {delegate.authorizations.length > 3 && (
-                          <div className="w-7 h-7 rounded-full bg-[#F2F0EB] border-2 border-white flex items-center justify-center text-[0.6rem] text-[#6B7280] font-bold">
+                          <div className="w-7 h-7 rounded-full bg-[var(--bg-muted)] border-2 border-[var(--bg-surface)] flex items-center justify-center text-[0.6rem] text-[var(--text-secondary)] font-bold">
                             +{delegate.authorizations.length - 3}
                           </div>
                         )}
                       </div>
-                      <MoreHorizontal className="w-4 h-4 text-[#6B7280]" />
+                      <MoreHorizontal className="w-4 h-4 text-[var(--text-secondary)]" />
                     </div>
                   ))}
                 </div>
@@ -410,13 +410,13 @@ export default function DelegatesPage() {
           >
             <button
               onClick={() => setView("LIST")}
-              className="flex items-center text-[0.875rem] text-[#6B7280] hover:text-[#0B1A2C] mb-6 transition-colors"
+              className="flex items-center text-[0.875rem] text-[var(--text-secondary)] hover:text-[var(--text-primary)] mb-6 transition-colors"
             >
               <ChevronRight className="w-4 h-4 mr-1 rotate-180" />
               Back to delegates
             </button>
 
-            <div className="bg-white rounded-2xl p-8 border border-black/[0.06] shadow-sm">
+            <div className="bg-[var(--bg-surface)] rounded-2xl p-8 border border-[var(--border)] shadow-sm">
               <AnimatePresence mode="wait">
                 {inviteStep === "CONFIGURE" ? (
                   <motion.div
@@ -428,14 +428,14 @@ export default function DelegatesPage() {
                   >
                     <div>
                       <p className="text-[0.65rem] font-bold uppercase tracking-[0.1em] text-[#0FA37F] mb-1">NEW INVITE</p>
-                      <h2 className="text-[1.25rem] font-semibold text-[#0B1A2C] mb-1">Invite a delegate</h2>
-                      <p className="text-[0.875rem] text-[#6B7280]">They'll need to verify their identity before they can pick up your children.</p>
+                      <h2 className="text-[1.25rem] font-semibold text-[var(--text-primary)] mb-1">Invite a delegate</h2>
+                      <p className="text-[0.875rem] text-[var(--text-secondary)]">They'll need to verify their identity before they can pick up your children.</p>
                     </div>
 
                     <form onSubmit={handleSubmit(onInviteSubmit)} className="space-y-4">
                       {/* Children Selection */}
                       <div className="space-y-2">
-                        <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">Who can they pick up?</label>
+                        <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Who can they pick up?</label>
                         <Controller
                           name="childIds"
                           control={control}
@@ -455,13 +455,13 @@ export default function DelegatesPage() {
                                     className={`flex items-center gap-3 p-3 rounded-xl border transition-all text-left ${
                                       field.value.includes(child.id)
                                         ? "border-[#0FA37F] bg-[#E1F5EE]/30"
-                                        : "border-black/[0.08] bg-[#F9F9F8] hover:border-black/20"
+                                        : "border-[var(--border)] bg-[var(--bg-surface-2)] hover:border-[var(--border-strong)]"
                                     }`}
                                   >
                                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[0.7rem] text-white ${getChildColor(child.id)}`}>
                                       {child.fullName[0]}
                                     </div>
-                                    <span className="text-[0.82rem] font-medium text-[#0B1A2C] truncate">{child.fullName.split(" ")[0]}</span>
+                                    <span className="text-[0.82rem] font-medium text-[var(--text-primary)] truncate">{child.fullName.split(" ")[0]}</span>
                                   </button>
                                 ))}
                               </div>
@@ -478,7 +478,7 @@ export default function DelegatesPage() {
 
                       {/* Relationship */}
                       <div className="space-y-2">
-                        <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">Relationship</label>
+                        <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Relationship</label>
                         <Controller
                           name="relationship"
                           control={control}
@@ -486,8 +486,8 @@ export default function DelegatesPage() {
                             <>
                               <select
                                 {...field}
-                                className={`w-full bg-[#F9F9F8] border rounded-xl px-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F] ${
-                                  errors.relationship ? "border-coral" : "border-black/[0.08]"
+                                className={`w-full bg-[var(--bg-surface-2)] border rounded-xl px-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F] ${
+                                  errors.relationship ? "border-coral" : "border-[var(--border)]"
                                 }`}
                               >
                                 <option value="">Select relationship</option>
@@ -517,7 +517,7 @@ export default function DelegatesPage() {
                             exit={{ opacity: 0, height: 0 }}
                             className="space-y-2 overflow-hidden"
                           >
-                            <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">What's their relationship? (e.g. Brother, Sister, Uncle...)</label>
+                            <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">What's their relationship? (e.g. Brother, Sister, Uncle...)</label>
                             <Controller
                               name="specificRelationship"
                               control={control}
@@ -526,7 +526,7 @@ export default function DelegatesPage() {
                                   {...field}
                                   type="text"
                                   placeholder="e.g. Brother"
-                                  className="w-full bg-[#F9F9F8] border border-black/[0.08] rounded-xl px-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F]"
+                                  className="w-full bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-xl px-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F]"
                                 />
                               )}
                             />
@@ -537,20 +537,20 @@ export default function DelegatesPage() {
                       {/* Delegate Info */}
                       <div className="pt-2 space-y-4">
                         <div className="space-y-2">
-                          <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">Delegate Name</label>
+                          <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Delegate Name</label>
                           <Controller
                             name="delegateName"
                             control={control}
                             render={({ field }) => (
                               <>
                                 <div className="relative">
-                                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+                                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
                                   <input
                                     {...field}
                                     type="text"
                                     placeholder="Enter full name"
-                                    className={`w-full bg-[#F9F9F8] border rounded-xl pl-11 pr-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F] ${
-                                      errors.delegateName ? "border-coral" : "border-black/[0.08]"
+                                    className={`w-full bg-[var(--bg-surface-2)] border rounded-xl pl-11 pr-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F] ${
+                                      errors.delegateName ? "border-coral" : "border-[var(--border)]"
                                     }`}
                                   />
                                 </div>
@@ -566,20 +566,20 @@ export default function DelegatesPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">Phone Number</label>
+                          <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Phone Number</label>
                           <Controller
                             name="delegatePhone"
                             control={control}
                             render={({ field }) => (
                               <>
                                 <div className="relative">
-                                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+                                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-secondary)]" />
                                   <input
                                     {...field}
                                     type="tel"
                                     placeholder="+234..."
-                                    className={`w-full bg-[#F9F9F8] border rounded-xl pl-11 pr-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F] ${
-                                      errors.delegatePhone ? "border-coral" : "border-black/[0.08]"
+                                    className={`w-full bg-[var(--bg-surface-2)] border rounded-xl pl-11 pr-4 py-3 text-[0.875rem] outline-none focus:border-[#0FA37F] ${
+                                      errors.delegatePhone ? "border-coral" : "border-[var(--border)]"
                                     }`}
                                   />
                                 </div>
@@ -595,7 +595,7 @@ export default function DelegatesPage() {
                         </div>
 
                         <div className="space-y-2">
-                          <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">Gender</label>
+                          <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Gender</label>
                           <Controller
                             name="delegateGender"
                             control={control}
@@ -609,8 +609,8 @@ export default function DelegatesPage() {
                                       onClick={() => field.onChange(gender)}
                                       className={`py-2.5 rounded-xl border text-[0.82rem] font-medium transition-all ${
                                         field.value === gender
-                                          ? "border-[#0FA37F] bg-[#E1F5EE] text-[#0B1A2C]"
-                                          : "border-black/[0.08] bg-[#F9F9F8] text-[#6B7280] hover:border-black/20"
+                                          ? "border-[#0FA37F] bg-[#E1F5EE] text-[var(--text-primary)]"
+                                          : "border-[var(--border)] bg-[var(--bg-surface-2)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]"
                                       }`}
                                     >
                                       {gender.charAt(0) + gender.slice(1).toLowerCase()}
@@ -631,7 +631,7 @@ export default function DelegatesPage() {
 
                       {/* KYC Level */}
                       <div className="space-y-2">
-                        <label className="text-[0.78rem] font-medium text-[#0B1A2C]/70">Verification Level</label>
+                        <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Verification Level</label>
                         <Controller
                           name="kycLevel"
                           control={control}
@@ -643,13 +643,13 @@ export default function DelegatesPage() {
                                 className={`w-full flex items-start gap-3 p-3 rounded-xl border transition-all text-left ${
                                   field.value === "STANDARD"
                                     ? "border-[#0FA37F] bg-[#E1F5EE]/30"
-                                    : "border-black/[0.08] bg-[#F9F9F8]"
+                                    : "border-[var(--border)] bg-[var(--bg-surface-2)]"
                                 }`}
                               >
-                                <ShieldCheck className={`w-5 h-5 mt-0.5 ${field.value === "STANDARD" ? "text-[#0FA37F]" : "text-[#6B7280]"}`} />
+                                <ShieldCheck className={`w-5 h-5 mt-0.5 ${field.value === "STANDARD" ? "text-[#0FA37F]" : "text-[var(--text-secondary)]"}`} />
                                 <div>
-                                  <p className="text-[0.875rem] font-semibold text-[#0B1A2C]">Standard</p>
-                                  <p className="text-[0.72rem] text-[#6B7280]">Photo ID + Phone verification</p>
+                                  <p className="text-[0.875rem] font-semibold text-[var(--text-primary)]">Standard</p>
+                                  <p className="text-[0.72rem] text-[var(--text-secondary)]">Photo ID + Phone verification</p>
                                 </div>
                               </button>
                               <button
@@ -658,13 +658,13 @@ export default function DelegatesPage() {
                                 className={`w-full flex items-start gap-3 p-3 rounded-xl border transition-all text-left ${
                                   field.value === "ENHANCED"
                                     ? "border-[#0FA37F] bg-[#E1F5EE]/30"
-                                    : "border-black/[0.08] bg-[#F9F9F8]"
+                                    : "border-[var(--border)] bg-[var(--bg-surface-2)]"
                                 }`}
                               >
-                                <ShieldCheck className={`w-5 h-5 mt-0.5 ${field.value === "ENHANCED" ? "text-[#0FA37F]" : "text-[#6B7280]"}`} />
+                                <ShieldCheck className={`w-5 h-5 mt-0.5 ${field.value === "ENHANCED" ? "text-[#0FA37F]" : "text-[var(--text-secondary)]"}`} />
                                 <div>
-                                  <p className="text-[0.875rem] font-semibold text-[#0B1A2C]">Enhanced</p>
-                                  <p className="text-[0.72rem] text-[#6B7280]">Background check + Address verification</p>
+                                  <p className="text-[0.875rem] font-semibold text-[var(--text-primary)]">Enhanced</p>
+                                  <p className="text-[0.72rem] text-[var(--text-secondary)]">Background check + Address verification</p>
                                 </div>
                               </button>
                             </div>
@@ -693,20 +693,20 @@ export default function DelegatesPage() {
                     <div className="w-16 h-16 rounded-full bg-[#E1F5EE] flex items-center justify-center mb-4">
                       <CheckCircle className="w-8 h-8 text-[#0FA37F]" />
                     </div>
-                    <h2 className="text-[1.25rem] font-semibold text-[#0B1A2C] mb-2">Invite link ready!</h2>
-                    <p className="text-[0.875rem] text-[#6B7280] mb-8 max-w-[320px]">
+                    <h2 className="text-[1.25rem] font-semibold text-[var(--text-primary)] mb-2">Invite link ready!</h2>
+                    <p className="text-[0.875rem] text-[var(--text-secondary)] mb-8 max-w-[320px]">
                       Share this link with your delegate. It will expire in {inviteConfig.expiresInHours} hours.
                     </p>
 
-                    <div className="bg-[#F9F9F8] border border-black/[0.06] rounded-2xl p-6 mb-8 w-full flex flex-col items-center">
+                    <div className="bg-[var(--bg-surface-2)] border border-[var(--border)] rounded-2xl p-6 mb-8 w-full flex flex-col items-center">
                       <canvas ref={qrRef} className="mb-4" />
-                      <div className="flex items-center gap-2 w-full bg-white border border-black/[0.08] rounded-xl px-3 py-2.5">
-                        <p className="flex-1 text-[0.75rem] text-[#6B7280] truncate text-left">
+                      <div className="flex items-center gap-2 w-full bg-[var(--bg-surface)] border border-[var(--border)] rounded-xl px-3 py-2.5">
+                        <p className="flex-1 text-[0.75rem] text-[var(--text-secondary)] truncate text-left">
                           {createdInvite?.inviteUrl}
                         </p>
                         <button 
                           onClick={handleCopyLink}
-                          className="p-1.5 hover:bg-[#F2F0EB] rounded-lg text-[#4F46E5] transition-colors"
+                          className="p-1.5 hover:bg-[var(--bg-muted)] rounded-lg text-[#4F46E5] transition-colors"
                         >
                           <Copy className="w-4 h-4" />
                         </button>
@@ -723,8 +723,8 @@ export default function DelegatesPage() {
                       </Button>
                     </div>
 
-                    <div className="mt-6 w-full pt-6 border-t border-black/[0.06]">
-                      <p className="text-[0.75rem] font-medium text-[#6B7280] mb-4 uppercase tracking-wider">Share via Social Media</p>
+                    <div className="mt-6 w-full pt-6 border-t border-[var(--border)]">
+                      <p className="text-[0.75rem] font-medium text-[var(--text-secondary)] mb-4 uppercase tracking-wider">Share via Social Media</p>
                       <div className="flex justify-center gap-4">
                         <button
                           onClick={() => {

@@ -18,10 +18,10 @@ export default function AuthLayout(props: { children: ReactNode }) {
 
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm font-medium text-white/50 hover:text-white transition-all group"
+          className="flex items-center gap-2 text-sm font-medium text-[var(--auth-text-muted)] hover:text-[var(--auth-text)] transition-all group"
         >
           <span className="sm:inline hidden">Back to home</span>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 border border-white/10 group-hover:border-teal group-hover:bg-teal/10 transition-all">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--auth-surface)] border border-[var(--auth-border)] group-hover:border-teal group-hover:bg-teal/10 transition-all">
             <svg
               viewBox="0 0 24 24"
               width="16"

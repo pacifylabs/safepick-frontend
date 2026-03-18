@@ -101,24 +101,24 @@ export default function DelegateVerifyPage() {
 
   if (isNotVerified) {
     return (
-      <main className="min-h-screen bg-[#0B1A2C] flex flex-col items-center justify-center p-6">
+      <main className="min-h-screen bg-[var(--auth-bg)] flex flex-col items-center justify-center p-6">
         <AuthCard>
           <div className="flex flex-col items-center text-center">
             <div className="w-16 h-16 bg-[#EF9F27]/10 rounded-full flex items-center justify-center mb-6">
               <ShieldAlert className="text-[#EF9F27] w-10 h-10" />
             </div>
             
-            <h1 className="text-2xl font-semibold text-white mb-4 font-display">
+            <h1 className="text-2xl font-semibold text-[var(--auth-text)] mb-4 font-display">
               Verification pending
             </h1>
             
-            <p className="text-white/50 mb-8 leading-relaxed max-w-[280px]">
+            <p className="text-[var(--auth-text-muted)] mb-8 leading-relaxed max-w-[280px]">
               Your identity is still being reviewed. You'll receive an SMS once approved.
             </p>
 
             <Button
               variant="ghost"
-              className="text-white/70 hover:text-white"
+              className="text-[var(--auth-text-muted)] hover:text-white"
               onClick={() => router.push("/delegate/login")}
             >
               Back to login
@@ -130,11 +130,11 @@ export default function DelegateVerifyPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0B1A2C] flex flex-col items-center justify-center p-6">
+    <main className="min-h-screen bg-[var(--auth-bg)] flex flex-col items-center justify-center p-6">
       <AuthCard>
         <button
           onClick={() => router.back()}
-          className="text-white/40 hover:text-white mb-6 flex items-center gap-2 text-sm transition-colors"
+          className="text-[var(--auth-text-muted)] hover:text-white mb-6 flex items-center gap-2 text-sm transition-colors"
         >
           <ArrowLeft size={16} />
           Back
@@ -142,11 +142,11 @@ export default function DelegateVerifyPage() {
 
         <SectionLabel className="text-[#0FA37F]">VERIFY YOUR PHONE</SectionLabel>
         
-        <h1 className="text-3xl font-semibold text-white mt-4 mb-2 font-display">
+        <h1 className="text-3xl font-semibold text-[var(--auth-text)] mt-4 mb-2 font-display">
           Check your <i className="text-[#0FA37F] not-italic">phone</i>
         </h1>
         
-        <p className="text-white/50 mb-8 text-sm">
+        <p className="text-[var(--auth-text-muted)] mb-8 text-sm">
           We sent a code to <span className="text-white font-medium">{phone}</span>
         </p>
 

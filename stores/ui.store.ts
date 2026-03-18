@@ -8,6 +8,8 @@ interface UIState {
   viewMode: "list" | "grid";
   notificationCount: number;
   panicActive: boolean;
+  theme: "light" | "dark" | "system";
+  resolvedTheme: "light" | "dark";
 }
 
 interface UIActions {
@@ -17,17 +19,20 @@ interface UIActions {
   setViewMode: (mode: "list" | "grid") => void;
   setNotificationCount: (count: number) => void;
   setPanicActive: (active: boolean) => void;
+  setTheme: (theme: "light" | "dark" | "system") => void;
 }
 
 export const useUIStore = create(
   persist(
-    (set: any) => ({
+    (set: any, get: any) => ({
       pageTitle: "Dashboard",
       rightPanelOpen: false,
       selectedChildId: null,
       viewMode: "list",
       notificationCount: 0,
       panicActive: false,
+      theme: "system",
+      resolvedTheme: "light",
 
       setPageTitle: (title: string) => set({ pageTitle: title }),
       openRightPanel: (childId: string) => set({ rightPanelOpen: true, selectedChildId: childId }),
@@ -35,6 +40,24 @@ export const useUIStore = create(
       setViewMode: (mode: "list" | "grid") => set({ viewMode: mode }),
       setNotificationCount: (count: number) => set({ notificationCount: count }),
       setPanicActive: (active: boolean) => set({ panicActive: active }),
+      setTheme: (theme: "light" | "dark" | "system") => {
+        localStorage.setItem("safepick-theme", theme);
+        
+        let resolved: "light" | "dark" = "light";
+        if (theme === "system") {
+          resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        } else {
+          resolved = theme;
+        }
+
+        if (resolved === "dark") {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+
+        set({ theme, resolvedTheme: resolved });
+      },
     }),
     {
       name: "safepick-ui",

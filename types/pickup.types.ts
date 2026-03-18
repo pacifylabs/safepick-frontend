@@ -4,6 +4,7 @@ export const PickupStatusEnum = z.enum([
   "AWAITING_PARENT",
   "AWAITING_SECONDARY",
   "APPROVED",
+  "APPROVED_VIA_OVERRIDE",
   "DENIED",
   "TIMED_OUT",
   "CHILD_HELD",
@@ -13,6 +14,7 @@ export type PickupStatus = z.infer<typeof PickupStatusEnum>;
 
 export const TERMINAL_PICKUP_STATUSES = [
   "APPROVED",
+  "APPROVED_VIA_OVERRIDE",
   "DENIED",
   "TIMED_OUT",
   "CHILD_HELD",
@@ -70,6 +72,7 @@ export const RecentPickupItemSchema = z.object({
   schoolName: z.string(),
   timestamp: z.string(),
   incidentId: z.string().optional(),
+  respondedBy: z.string().optional(),
 });
 
 export const QrTokenSchema = z.object({

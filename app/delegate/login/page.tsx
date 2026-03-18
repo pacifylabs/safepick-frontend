@@ -61,7 +61,7 @@ export default function DelegateLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0B1A2C] flex flex-col items-center justify-center p-6">
+    <main className="min-h-screen bg-[var(--auth-bg)] flex flex-col items-center justify-center p-6">
       <div className="mb-12">
         <Logo variant="light" size="lg" />
       </div>
@@ -69,11 +69,11 @@ export default function DelegateLoginPage() {
       <AuthCard>
         <SectionLabel className="text-[#0FA37F]">DELEGATE LOGIN</SectionLabel>
         
-        <h1 className="text-3xl font-semibold text-white mt-4 mb-2 font-display">
+        <h1 className="text-3xl font-semibold text-[var(--auth-text)] mt-4 mb-2 font-display">
           Welcome back, <i className="text-[#0FA37F] not-italic">delegate</i>
         </h1>
         
-        <p className="text-white/50 mb-8 text-sm leading-relaxed">
+        <p className="text-[var(--auth-text-muted)] mb-8 text-sm leading-relaxed">
           Sign in to view your pickup schedule and QR codes.
         </p>
 
@@ -96,8 +96,8 @@ export default function DelegateLoginPage() {
           </Button>
         </form>
 
-        <div className="mt-8 pt-8 border-t border-white/10 flex flex-col items-center gap-4">
-          <p className="text-white/40 text-sm">
+        <div className="mt-8 pt-8 border-t border-[var(--auth-border)] flex flex-col items-center gap-4">
+          <p className="text-[var(--auth-text-muted)] text-sm">
             Not a delegate?{" "}
             <Link href="/login" className="text-[#0FA37F] font-medium hover:underline">
               Parent sign in

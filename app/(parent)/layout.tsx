@@ -37,6 +37,7 @@ import { ChildDetailPanel } from "@/components/dashboard/ChildDetailPanel";
 import { Child } from "@/types/children.types";
 import { usePickupStore } from "@/stores/pickup.store";
 import { PickupRequestModal } from "@/components/pickup/PickupRequestModal";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -92,7 +93,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   };
 
   return (
-    <div className="min-h-screen bg-[#EFEFED] flex flex-col font-body">
+    <div className="min-h-screen bg-[var(--bg-page)] flex flex-col font-body">
       {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -109,15 +110,15 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 left-0 w-[280px] bg-white z-[101] md:hidden flex flex-col shadow-2xl"
+              className="fixed inset-y-0 left-0 w-[280px] bg-[var(--bg-surface)] z-[101] md:hidden flex flex-col shadow-2xl"
             >
-              <div className="p-4 border-b border-black/[0.06] flex items-center justify-between">
+              <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
                 <Link href="/dashboard" className="hover:opacity-80 transition-opacity" onClick={() => setMobileMenuOpen(false)}>
                   <Logo variant="dark" size="sm" />
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
-                  className="p-1.5 hover:bg-[#F2F0EB] rounded-lg text-[#6B7280]"
+                  className="p-1.5 hover:bg-[var(--bg-muted)] rounded-lg text-[var(--text-secondary)]"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -125,13 +126,13 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
               <div className="flex-1 overflow-y-auto p-4 space-y-6">
                 {/* Profile Section */}
-                <div className="flex items-center gap-3 p-3 bg-[#F9F9F8] rounded-2xl border border-black/[0.04]">
+                <div className="flex items-center gap-3 p-3 bg-[var(--bg-surface-2)] rounded-2xl border border-[var(--border)]">
                   <div className="w-10 h-10 rounded-full bg-[#1D9E75] flex items-center justify-center text-white font-medium">
                     {user?.fullName?.[0]}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[0.9rem] font-semibold text-[#0B1A2C] truncate">{user?.fullName}</p>
-                    <p className="text-[0.75rem] text-[#6B7280] truncate">{user?.phone}</p>
+                    <p className="text-[0.9rem] font-semibold text-[var(--text-primary)] truncate">{user?.fullName}</p>
+                    <p className="text-[0.75rem] text-[var(--text-secondary)] truncate">{user?.phone}</p>
                   </div>
                 </div>
 
@@ -145,7 +146,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
                       pathname === "/dashboard"
                         ? "bg-[#EEF2FF] text-[#3730A3]"
-                        : "text-[#6B7280] hover:bg-[#F2F0EB]"
+                        : "text-[var(--text-secondary)] hover:bg-[var(--bg-muted)]"
                     }`}
                   >
                     <FolderOpen className="w-5 h-5" />
@@ -165,13 +166,13 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                           ? "opacity-40 cursor-not-allowed pointer-events-none"
                           : pathname === item.href
                             ? "bg-[#EEF2FF] text-[#3730A3]"
-                            : "text-[#6B7280] hover:bg-[#F2F0EB]"
+                            : "text-[var(--text-secondary)] hover:bg-[var(--bg-muted)]"
                       }`}
                     >
                       <item.icon className="w-5 h-5" />
                       <span className="text-[0.9rem] font-medium flex-1 text-left">{item.label}</span>
                       {item.disabled && (
-                        <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
+                        <span className="bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
                           Soon
                         </span>
                       )}
@@ -181,7 +182,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
                 {/* Protected Children List */}
                 <div className="pt-2">
-                  <p className="text-[0.65rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]/60 mb-2 px-3">
+                  <p className="text-[0.65rem] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)]/60 mb-2 px-3">
                     PROTECTED CHILDREN
                   </p>
                   <div className="space-y-1">
@@ -192,12 +193,12 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                           router.push(`/dashboard/children/${child.id}`);
                           setMobileMenuOpen(false);
                         }}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-[#F2F0EB] transition-colors"
+                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-[var(--bg-muted)] transition-colors"
                       >
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-medium text-white ${getChildColor(child.id)}`}>
                           {child.fullName[0]}
                         </div>
-                        <span className="text-[0.875rem] text-[#0B1A2C]">{child.fullName.split(" ")[0]}</span>
+                        <span className="text-[0.875rem] text-[var(--text-primary)]">{child.fullName.split(" ")[0]}</span>
                       </button>
                     ))}
                     <button
@@ -205,7 +206,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                         router.push("/dashboard/children/new");
                         setMobileMenuOpen(false);
                       }}
-                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[#6B7280] hover:bg-[#F2F0EB] border border-dashed border-black/10"
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] border border-dashed border-[var(--border-strong)]"
                     >
                       <Plus className="w-4 h-4" />
                       <span className="text-[0.875rem]">Add child</span>
@@ -215,13 +216,13 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
               </div>
 
               {/* Bottom Utility Actions */}
-              <div className="p-4 border-t border-black/[0.06] bg-[#F9F9F8] space-y-1">
+              <div className="p-4 border-t border-[var(--border)] bg-[var(--bg-surface-2)] space-y-1">
                 <button
                   onClick={() => {
                     // router.push("/settings");
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[#6B7280] hover:bg-[#F2F0EB]"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[var(--text-secondary)] hover:bg-[var(--bg-muted)]"
                 >
                   <Settings className="w-5 h-5" />
                   <span className="text-[0.9rem]">Settings</span>
@@ -240,7 +241,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
       </AnimatePresence>
 
       {/* TOP NAV BAR */}
-      <header className="bg-white border-b border-black/[0.06] px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-40">
+      <header className="bg-[var(--bg-surface)] border-b border-[var(--border)] px-4 md:px-6 py-3 flex items-center justify-between sticky top-0 z-40">
         <ToastContainer />
         {activePickupRequestId && (
           <PickupRequestModal
@@ -251,7 +252,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         <div className="flex items-center gap-3 md:gap-8">
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="md:hidden p-1.5 hover:bg-[#F2F0EB] rounded-lg text-[#6B7280]"
+            className="md:hidden p-1.5 hover:bg-[var(--bg-muted)] rounded-lg text-[var(--text-secondary)]"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -262,13 +263,15 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="hidden sm:flex items-center gap-2 bg-[#F2F0EB] rounded-xl px-3 py-2 w-[220px] cursor-text hover:bg-[#ECEAE5] transition-colors">
-            <Search className="w-4 h-4 text-[#6B7280]" />
-            <span className="text-[0.875rem] text-[#6B7280]">Search anything...</span>
+          <div className="hidden sm:flex items-center gap-2 bg-[var(--bg-muted)] rounded-xl px-3 py-2 w-[220px] cursor-text hover:bg-[var(--border-strong)] transition-colors">
+            <Search className="w-4 h-4 text-[var(--text-secondary)]" />
+            <span className="text-[0.875rem] text-[var(--text-secondary)]">Search anything...</span>
           </div>
 
-          <div className="w-9 h-9 rounded-xl bg-[#F2F0EB] flex items-center justify-center relative cursor-pointer hover:bg-[#ECEAE5]">
-            <Bell className="w-4 h-4 text-[#0B1A2C]" />
+          <ThemeToggle />
+
+          <div className="w-9 h-9 rounded-xl bg-[var(--bg-muted)] flex items-center justify-center relative cursor-pointer hover:bg-[var(--border-strong)]">
+            <Bell className="w-4 h-4 text-[var(--text-primary)]" />
             {notificationCount > 0 && (
               <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#D85A30] text-[0.6rem] text-white flex items-center justify-center">
                 {notificationCount}
@@ -290,7 +293,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
       <div className="flex flex-1 overflow-hidden">
         {/* LEFT SIDEBAR */}
-        <aside className="hidden md:flex w-[240px] flex-shrink-0 bg-white border-r border-black/[0.06] flex-col h-[calc(100vh-57px)] sticky top-[57px] overflow-y-auto">
+        <aside className="hidden md:flex w-[240px] flex-shrink-0 bg-[var(--bg-surface)] border-r border-[var(--border)] flex-col h-[calc(100vh-57px)] sticky top-[57px] overflow-y-auto">
           <div className="p-4">
             <div
               onClick={() => router.push("/dashboard")}
@@ -319,16 +322,16 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                     href={item.disabled ? "#" : item.href}
                     className={`flex items-center gap-3 px-3 py-2 rounded-xl text-[0.875rem] transition-colors ${
                       item.disabled 
-                        ? "opacity-40 cursor-not-allowed pointer-events-none text-[#6B7280]" 
+                        ? "opacity-40 cursor-not-allowed pointer-events-none text-[var(--text-secondary)]" 
                         : isActive
                           ? "bg-[#EEF2FF] text-[#3730A3]"
-                          : "text-[#6B7280] hover:bg-[#F2F0EB] hover:text-[#0B1A2C] cursor-pointer"
+                          : "text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)] cursor-pointer"
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
                     <span className="flex-1">{item.label}</span>
                     {item.disabled && (
-                      <span className="bg-[#F2F0EB] text-[#6B7280] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
+                      <span className="bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full px-2 py-0.5 text-[0.6rem] font-medium">
                         Soon
                       </span>
                     )}
@@ -337,9 +340,9 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
               })}
             </div>
 
-            <div className="w-full h-px bg-[#F2F0EB] my-3" />
+            <div className="w-full h-px bg-[var(--border)] my-3" />
 
-            <p className="text-[0.65rem] font-medium uppercase tracking-[0.1em] text-[#6B7280]/60 mb-2 px-3">
+            <p className="text-[0.65rem] font-medium uppercase tracking-[0.1em] text-[var(--text-secondary)]/60 mb-2 px-3">
               PROTECTED CHILDREN
             </p>
 
@@ -348,16 +351,16 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                 <div
                   key={child.id}
                   onClick={() => router.push(`/dashboard/children/${child.id}`)}
-                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer hover:bg-[#F2F0EB] transition-colors group"
+                  className="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--bg-muted)] transition-colors group"
                 >
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-medium text-white ${getChildColor(child.id)}`}>
                     {child.fullName[0]}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[0.82rem] font-medium text-[#0B1A2C] truncate">
+                    <p className="text-[0.82rem] font-medium text-[var(--text-primary)] truncate">
                       {child.fullName.split(" ")[0]}
                     </p>
-                    <p className="text-[0.68rem] text-[#6B7280]">{child.grade}</p>
+                    <p className="text-[0.68rem] text-[var(--text-secondary)]">{child.grade}</p>
                   </div>
                   <div
                     className={`w-2 h-2 rounded-full relative ${
@@ -377,16 +380,16 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
               <div
                 onClick={() => router.push("/dashboard/children/new")}
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer hover:bg-[#F2F0EB] border border-dashed border-[#0B1A2C]/10 mt-1"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--bg-muted)] border border-dashed border-[var(--text-primary)]/10 mt-1"
               >
-                <Plus className="w-4 h-4 text-[#6B7280]" />
-                <p className="text-[0.82rem] text-[#6B7280]">Add child</p>
+                <Plus className="w-4 h-4 text-[var(--text-secondary)]" />
+                <p className="text-[0.82rem] text-[var(--text-secondary)]">Add child</p>
               </div>
             </div>
           </div>
 
-          <div className="mt-auto p-4 border-t border-[#F2F0EB]">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer hover:bg-[#F2F0EB] text-[#6B7280] hover:text-[#0B1A2C]">
+          <div className="mt-auto p-4 border-t border-[var(--border)]">
+            <div className="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--bg-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
               <Settings className="w-4 h-4" />
               <span className="text-[0.875rem]">Settings</span>
             </div>
@@ -399,7 +402,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
               <span className="text-[0.875rem]">Sign out</span>
             </div>
 
-            <div className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer mt-1 ${panicActive ? "bg-[#FAECE7] text-[#D85A30]" : "text-[#6B7280] hover:bg-[#FAECE7] hover:text-[#D85A30]"}`}>
+            <div className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer mt-1 ${panicActive ? "bg-[#FAECE7] text-[#D85A30]" : "text-[var(--text-secondary)] hover:bg-[#FAECE7] hover:text-[#D85A30]"}`}>
               <ShieldAlert className="w-4 h-4" />
               <span className="text-[0.875rem]">Emergency</span>
               {panicActive && <div className="w-2 h-2 rounded-full bg-[#D85A30] ml-auto animate-pulse" />}
@@ -408,21 +411,21 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             <div className="mt-3 px-3">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5">
-                  <CircleDashed className="w-3.5 h-3.5 text-[#6B7280]" />
-                  <p className="text-[0.75rem] text-[#6B7280]">Children</p>
+                  <CircleDashed className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
+                  <p className="text-[0.75rem] text-[var(--text-secondary)]">Children</p>
                 </div>
                 <ChevronRight
-                  className="w-3.5 h-3.5 text-[#6B7280] cursor-pointer"
+                  className="w-3.5 h-3.5 text-[var(--text-secondary)] cursor-pointer"
                   onClick={() => router.push("/dashboard/children/new")}
                 />
               </div>
-              <div className="w-full h-1.5 bg-[#F2F0EB] rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-[var(--bg-muted)] rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#0FA37F] rounded-full transition-all duration-500"
                   style={{ width: `${Math.min((childrenData.length / 10) * 100, 100)}%` }}
                 />
               </div>
-              <p className="text-[0.7rem] text-[#6B7280] mt-1">
+              <p className="text-[0.7rem] text-[var(--text-secondary)] mt-1">
                 {childrenData.length} of 10 children registered
               </p>
             </div>
@@ -430,14 +433,14 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <main className="flex-1 overflow-y-auto relative bg-[#F9F9F8]">
+        <main className="flex-1 overflow-y-auto relative bg-[var(--bg-surface-2)]">
           {children}
         </main>
 
         {/* RIGHT DETAIL PANEL */}
         <aside className="hidden lg:block">
           <div
-            className={`h-[calc(100vh-57px)] sticky top-[57px] bg-white border-l border-black/[0.06] transition-all duration-300 ease-in-out overflow-hidden ${
+            className={`h-[calc(100vh-57px)] sticky top-[57px] bg-[var(--bg-surface)] border-l border-[var(--border)] transition-all duration-300 ease-in-out overflow-hidden ${
               rightPanelOpen ? "w-[300px]" : "w-0"
             }`}
           >
@@ -458,7 +461,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         </aside>
       </div>
 
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-black/[0.06] flex items-center justify-around px-2 py-2 pb-safe z-50">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-center justify-around px-2 py-2 pb-safe z-50">
         {[
           { icon: FolderOpen, label: "Children", href: "/dashboard/children" },
           { icon: Users, label: "Delegates", href: "/dashboard/delegates" },
@@ -474,14 +477,14 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
               onClick={() => !item.disabled && router.push(item.href)}
               className={`flex flex-col items-center gap-0.5 px-3 transition-colors ${
                 item.disabled 
-                  ? "opacity-40 cursor-not-allowed pointer-events-none text-[#6B7280]" 
-                  : isActive ? "text-[#0FA37F]" : "text-[#6B7280]"
+                  ? "opacity-40 cursor-not-allowed pointer-events-none text-[var(--text-secondary)]" 
+                  : isActive ? "text-[#0FA37F]" : "text-[var(--text-secondary)]"
               }`}
             >
               <item.icon className="w-5 h-5" />
               <span className="text-[0.6rem] font-medium">{item.label}</span>
               {item.disabled && (
-                <span className="absolute top-1 right-2 bg-[#F2F0EB] text-[#6B7280] rounded-full px-1 py-0 text-[0.45rem] font-medium">
+                <span className="absolute top-1 right-2 bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full px-1 py-0 text-[0.45rem] font-medium">
                   Soon
                 </span>
               )}

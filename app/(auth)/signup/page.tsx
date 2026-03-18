@@ -62,10 +62,10 @@ export default function SignupPage() {
         <span className="font-body text-[0.75rem] font-medium uppercase tracking-widest text-teal-mid">
           CREATE ACCOUNT
         </span>
-        <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
+        <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-[var(--auth-text)]">
           Your child's safety, <i className="text-teal-mid not-italic">here</i>
         </h1>
-        <p className="mt-2 sm:mt-3 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-white/50">
+        <p className="mt-2 sm:mt-3 font-body text-[0.85rem] sm:text-[0.9rem] font-light leading-relaxed text-[var(--auth-text-muted)]">
           Join thousands of parents protecting their children at the school gate.
         </p>
       </div>
@@ -121,11 +121,11 @@ export default function SignupPage() {
       </form>
 
       <div className="relative my-6 sm:my-8 flex items-center justify-center">
-        <div className="absolute w-full border-t border-white/10" />
-        <span className="relative bg-[#0B1A2C] px-4 text-xs sm:text-sm text-white/30">or</span>
+        <div className="absolute w-full border-t border-[var(--auth-border)]" />
+        <span className="relative bg-[var(--auth-bg)] px-4 text-xs sm:text-sm text-[var(--auth-text-muted)]">or</span>
       </div>
 
-      <p className="text-center font-body text-xs sm:text-sm text-white/50">
+      <p className="text-center font-body text-xs sm:text-sm text-[var(--auth-text-muted)]">
         Already have an account?{" "}
         <Link href="/login" className="font-medium text-teal hover:underline">
           Sign in

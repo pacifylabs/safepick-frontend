@@ -1,101 +1,99 @@
-import { SectionLabel } from "@/components/ui/SectionLabel";
-import type { HowItWorksItem } from "@/types";
+"use client";
 
-const steps: HowItWorksItem[] = [
-    {
-        id: "register",
-        step: 1,
-        icon: "👨‍👩‍👧",
-        title: "Register your child",
-        description:
-            "Create a profile, link to your school, and add a mandatory secondary guardian. Takes less than 3 minutes."
-    },
-    {
-        id: "invite",
-        step: 2,
-        icon: "🔗",
-        title: "Invite & verify delegates",
-        description:
-            "Send a secure link to anyone who may ever collect your child. They complete a one-time KYC — you approve per child."
-    },
-    {
-        id: "pickup",
-        step: 3,
-        icon: "📲",
-        title: "Pickup day — you're in control",
-        description:
-            "The delegate scans in at the gate. You get a real-time notification and approve with one tap. Logged and done."
-    },
-    {
-        id: "audit",
-        step: 4,
-        icon: "📊",
-        title: "Review the full history",
-        description:
-            "Every pickup is in your timeline — who, when, how verified. Always visible, always downloadable."
-    }
+import React from "react";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
+import { 
+  UserPlus, 
+  Users, 
+  QrCode, 
+  CheckCircle 
+} from "lucide-react";
+
+const steps = [
+  {
+    number: 1,
+    title: "Parent registers child",
+    description: "Add your child's details and link them to their school.",
+    icon: UserPlus,
+  },
+  {
+    number: 2,
+    title: "Invite a delegate",
+    description: "Send an invite to your driver, nanny or family member. They verify their identity via KYC.",
+    icon: Users,
+  },
+  {
+    number: 3,
+    title: "Delegate shows QR at gate",
+    description: "The delegate displays their dynamic QR code. School staff scans it at the gate.",
+    icon: QrCode,
+  },
+  {
+    number: 4,
+    title: "You approve in one tap",
+    description: "You receive a push notification and approve or deny the release from anywhere in real time.",
+    icon: CheckCircle,
+  },
 ];
 
 export function HowItWorksSection() {
-    return (
-        <section id="how-it-works" className="py-24 bg-navy relative overflow-hidden">
-            {/* Decorative blobs */}
-            <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-teal/10 blur-[80px] pointer-events-none" />
-            <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-teal/5 blur-[60px] pointer-events-none" />
+  const { ref, inView } = useInView({
+    threshold: 0.15,
+    triggerOnce: true,
+  });
 
-            <div className="relative max-w-7xl mx-auto px-6">
-                {/* Header */}
-                <div className="max-w-2xl mb-16">
-                    <SectionLabel light>How it works</SectionLabel>
-                    <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight mb-4">
-                        Everything a parent actually needs
-                    </h2>
-                    <p className="text-white/60 leading-relaxed">
-                        SafePick is designed around the reality of school life — not just ideal conditions. Four simple steps. Zero gaps.
-                    </p>
-                </div>
+  return (
+    <section id="how-it-works" className="py-24 bg-[var(--bg-surface)]" ref={ref}>
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-20">
+          <p className="font-body text-[0.72rem] font-bold uppercase tracking-widest text-[#0FA37F] mb-4">
+            HOW IT WORKS
+          </p>
+          <h2 className="font-display text-[3rem] font-semibold text-[var(--text-primary)]">
+            Safe pickup in four steps
+          </h2>
+        </div>
 
-                {/* Steps grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {steps.map((step) => (
-                        <div
-                            key={step.id}
-                            className="group relative bg-white/5 border border-white/10 rounded-2xl p-6 hover:bg-white/8 hover:border-teal/30 transition-all duration-300"
-                        >
-                            {/* Step number */}
-                            <div className="absolute top-6 right-6 text-xs font-bold text-white/20 group-hover:text-teal/40 transition-colors">
-                                {String(step.step).padStart(2, "0")}
-                            </div>
+        {/* Steps Grid */}
+        <div className="flex flex-col md:flex-row gap-12 md:gap-0 relative">
+          {steps.map((step, index) => (
+            <motion.div
+              key={step.number}
+              initial={{ opacity: 0, y: 20 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.5, delay: index * 0.15 }}
+              className="flex-1 text-center px-6 relative z-10"
+            >
+              {/* Connector Line (Desktop) */}
+              {index > 0 && (
+                <div className="hidden md:block absolute left-[-50%] top-6 w-full h-[2px] bg-gradient-to-r from-transparent via-[#0FA37F]/30 to-transparent -z-10" />
+              )}
 
-                            {/* Icon */}
-                            <div className="w-12 h-12 rounded-xl bg-teal/15 border border-teal/20 flex items-center justify-center text-2xl mb-5">
-                                {step.icon}
-                            </div>
+              {/* Step Number Circle */}
+              <div className="w-12 h-12 rounded-full bg-[#0FA37F] mx-auto mb-6 flex items-center justify-center shadow-lg shadow-[#0FA37F]/20">
+                <span className="font-display text-[1.25rem] font-semibold text-white">
+                  {step.number}
+                </span>
+              </div>
 
-                            {/* Content */}
-                            <h3 className="text-lg font-bold text-white mb-3">{step.title}</h3>
-                            <p className="text-sm text-white/60 leading-relaxed">{step.description}</p>
+              {/* Step Icon */}
+              <step.icon className="text-[var(--text-secondary)] w-8 h-8 mx-auto mb-4" />
 
-                            {/* Teal accent line on hover */}
-                            <div className="absolute bottom-0 left-6 right-6 h-0.5 bg-teal scale-x-0 group-hover:scale-x-100 transition-transform duration-300 rounded-full" />
-                        </div>
-                    ))}
-                </div>
+              {/* Step Heading */}
+              <h3 className="font-body text-[0.9375rem] font-bold text-[var(--text-primary)] mb-3">
+                {step.title}
+              </h3>
 
-                {/* Bottom connector hint */}
-                <div className="mt-16 flex items-center justify-center gap-3">
-                    {steps.map((step, i) => (
-                        <div key={step.id} className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-teal/20 border border-teal/30 flex items-center justify-center text-xs font-bold text-teal">
-                                {step.step}
-                            </div>
-                            {i < steps.length - 1 && (
-                                <div className="w-10 h-0.5 bg-white/10" />
-                            )}
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </section>
-    );
+              {/* Step Body */}
+              <p className="font-body text-[0.82rem] text-[var(--text-secondary)] leading-relaxed">
+                {step.description}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

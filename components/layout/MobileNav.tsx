@@ -16,6 +16,8 @@ import {
   History,
   FolderOpen,
   MapPin,
+  ShieldCheck,
+  Users2,
 } from "lucide-react";
 
 interface NavItem {
@@ -33,7 +35,8 @@ interface MobileNavProps {
 
 const defaultNavItems: NavItem[] = [
   { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
-  { href: "/dashboard/delegates", icon: Users, label: "Delegates" },
+  { href: "/dashboard/delegates", icon: ShieldCheck, label: "Delegates" },
+  { href: "/dashboard/secondary-guardians", icon: Users2, label: "Guardians" },
   { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
   { href: "/dashboard/attendance", icon: CalendarCheck, label: "Attendance" },
   { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency" },
@@ -53,7 +56,7 @@ export function MobileNav({ items, role = "PARENT" }: MobileNavProps) {
   const navItems = items || (role === "DELEGATE" ? defaultDelegateItems : defaultNavItems);
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-black/5 flex items-center justify-around px-2 py-2 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[var(--bg-surface)] border-t border-[var(--border)] flex items-center justify-around px-2 py-2 pb-safe shadow-[0_-4px_12px_rgba(0,0,0,0.03)]">
       {navItems.map((item) => {
         const isActive = pathname === item.href;
         const Icon = item.icon;
@@ -66,7 +69,7 @@ export function MobileNav({ items, role = "PARENT" }: MobileNavProps) {
             className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all relative ${
               item.disabled 
                 ? "opacity-40 cursor-not-allowed pointer-events-none" 
-                : isActive ? "text-teal" : "text-muted"
+                : isActive ? "text-teal" : "text-[var(--text-secondary)]"
             }`}
           >
             <Icon size={20} />
@@ -75,7 +78,7 @@ export function MobileNav({ items, role = "PARENT" }: MobileNavProps) {
               <div className="absolute top-1.5 right-3 w-1.5 h-1.5 rounded-full bg-teal" />
             )}
             {item.disabled && (
-              <div className="absolute -top-1 -right-1 bg-[#F2F0EB] text-[#6B7280] rounded-full px-1 py-0 text-[0.45rem] font-medium">
+              <div className="absolute -top-1 -right-1 bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full px-1 py-0 text-[0.45rem] font-medium">
                 Soon
               </div>
             )}
