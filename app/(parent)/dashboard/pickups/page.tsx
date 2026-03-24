@@ -3,9 +3,10 @@
 import { usePickupStore } from "@/stores/pickup.store";
 import { useRecentPickupRequests } from "@/hooks/usePickupRequest";
 import { PickupRequestCard } from "@/components/pickup/PickupRequestCard";
-import { ShieldCheck, Clock, CheckCircle, XCircle, Key, ShieldOff } from "lucide-react";
+import { ShieldCheck, Clock, CheckCircle, XCircle, Key, ShieldOff, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function ParentPickupsPage() {
   const { activePickupRequestId, setActivePickupRequestId } = usePickupStore();
@@ -15,8 +16,15 @@ export default function ParentPickupsPage() {
     <div className="w-full px-6 py-8">
       {/* Page title row */}
       <div className="mb-6">
-        <p className="font-display text-[1.75rem] font-semibold text-[var(--text-primary)]">Pickups</p>
-        <p className="font-body text-[0.875rem] text-[var(--text-secondary)] mt-1">Manage authorizations and view pickup history</p>
+        <h1 className="text-[1.5rem] font-semibold text-[var(--text-primary)]">Pickups</h1>
+        <p className="text-[0.875rem] text-[var(--text-secondary)]">Manage authorizations and view pickup history</p>
+      </div>
+
+      {/* BREADCRUMB */}
+      <div className="flex items-center gap-2 text-[var(--text-secondary)] text-[0.875rem] mb-6">
+        <Link href="/dashboard" className="hover:text-[var(--text-primary)] transition-colors">Home</Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-[var(--text-primary)] transition-colors font-bold">Pickups</span>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

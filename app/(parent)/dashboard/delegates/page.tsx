@@ -38,7 +38,6 @@ import { useDelegatesStore } from "@/stores/delegates.store";
 import { DelegateCard } from "@/components/delegates/DelegateCard";
 import { InviteStatusBanner } from "@/components/delegates/InviteStatusBanner";
 import { Button } from "@/components/ui/Button";
-import { Relationship } from "@/types/delegates.types";
 
 export default function DelegatesPage() {
   const router = useRouter();
@@ -53,6 +52,7 @@ export default function DelegatesPage() {
 
   const [viewMode, setViewMode] = useState<"GRID" | "LIST">("GRID");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showErrorModal, setShowErrorModal] = useState(false);
 
   const {
     view,
@@ -108,6 +108,12 @@ export default function DelegatesPage() {
         setInviteStep("SHARE");
       },
     });
+  };
+
+  const onInviteError = (errors: any) => {
+    if (Object.keys(errors).length > 0) {
+      setShowErrorModal(true);
+    }
   };
 
   const [qrCodeData, setQrCodeData] = useState<string>("");
@@ -196,7 +202,7 @@ export default function DelegatesPage() {
   }
 
   return (
-    <div className="p-6 max-w-8xl mx-auto font-body">
+    <div className="p-6 max-w-8xl font-body">
       <AnimatePresence mode="wait">
         {view === "LIST" ? (
           <motion.div
@@ -432,7 +438,7 @@ export default function DelegatesPage() {
                       <p className="text-[0.875rem] text-[var(--text-secondary)]">They'll need to verify their identity before they can pick up your children.</p>
                     </div>
 
-                    <form onSubmit={handleSubmit(onInviteSubmit)} className="space-y-4">
+                    <form onSubmit={handleSubmit(onInviteSubmit, onInviteError)} className="space-y-4">
                       {/* Children Selection */}
                       <div className="space-y-2">
                         <label className="text-[0.78rem] font-medium text-[var(--text-primary)]/70">Who can they pick up?</label>
@@ -764,6 +770,48 @@ export default function DelegatesPage() {
               </AnimatePresence>
             </div>
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Validation Error Modal */}
+      <AnimatePresence>
+        {showErrorModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-[var(--bg-surface)] rounded-2xl p-8 border border-[var(--border)] shadow-xl max-w-[400px] w-full text-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-coral/10 flex items-center justify-center mx-auto mb-6">
+                <AlertCircle className="w-8 h-8 text-coral" />
+              </div>
+              <h3 className="text-[1.25rem] font-semibold text-[var(--text-primary)] mb-2">Missing Information</h3>
+              <p className="text-[0.875rem] text-[var(--text-secondary)] mb-8 leading-relaxed">
+                Please ensure all required fields are filled correctly before generating the invite link.
+              </p>
+              
+              <div className="space-y-3">
+                {Object.keys(errors).length > 0 && (
+                  <div className="text-left bg-coral/5 rounded-xl p-4 mb-6 border border-coral/10">
+                    <p className="text-[0.75rem] font-bold text-coral uppercase tracking-wider mb-2">Errors found:</p>
+                    <ul className="space-y-1.5">
+                      {Object.entries(errors).map(([field, error]: [string, any]) => (
+                        <li key={field} className="text-[0.8rem] text-[var(--text-secondary)] flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-coral mt-1.5 shrink-0" />
+                          <span>{error.message}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                <Button variant="primary" fullWidth onClick={() => setShowErrorModal(false)}>
+                  Got it, I'll fix it
+                </Button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>

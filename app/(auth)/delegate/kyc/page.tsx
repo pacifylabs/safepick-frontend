@@ -9,6 +9,7 @@ import { AuthCard } from "@/components/ui/AuthCard";
 import { InputField } from "@/components/ui/InputField";
 import { OtpInput } from "@/components/ui/OtpInput";
 import { Button } from "@/components/ui/Button";
+import { AuthNavbar } from "@/components/layout/AuthNavbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { apiFetch } from "@/services/apiClient";
 
@@ -193,7 +194,7 @@ function DelegateKycContent() {
               Enter the 6-digit code sent to <span className="text-white font-medium">{phone}</span>
             </p>
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center w-full">
               <OtpInput length={6} onComplete={handlePhoneVerified} error={hasOtpError} disabled={isVerifying} />
               {hasOtpError && (
                 <p className="mt-2 sm:mt-3 text-[0.74rem] sm:text-[0.78rem] text-coral-light">Incorrect code. Please try again.</p>
@@ -345,17 +346,25 @@ function DelegateKycContent() {
 
 export default function DelegateKycPage() {
   return (
-    <AuthCard>
-      <Suspense
-        fallback={
-          <div className="py-12 text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
-            <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Loading...</p>
-          </div>
-        }
-      >
-        <DelegateKycContent />
-      </Suspense>
-    </AuthCard>
+    <main className="min-h-screen bg-[#0B1A2C] flex flex-col overflow-x-hidden relative">
+      <AuthNavbar />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-12">
+        <div className="w-full max-w-[480px] mx-auto">
+          <AuthCard className="w-full">
+            <Suspense
+              fallback={
+                <div className="py-12 text-center">
+                  <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
+                  <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Loading...</p>
+                </div>
+              }
+            >
+              <DelegateKycContent />
+            </Suspense>
+          </AuthCard>
+        </div>
+      </div>
+    </main>
   );
 }

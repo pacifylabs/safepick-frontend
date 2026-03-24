@@ -4,6 +4,7 @@ import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard } from "@/components/ui/AuthCard";
 import { Button } from "@/components/ui/Button";
+import { AuthNavbar } from "@/components/layout/AuthNavbar";
 import Link from "next/link";
 import { apiFetch } from "@/services/apiClient";
 
@@ -152,17 +153,25 @@ function DelegateJoinContent() {
 
 export default function DelegateJoinPage() {
   return (
-    <AuthCard>
-      <Suspense
-        fallback={
-          <div className="py-12 text-center">
-            <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
-            <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Loading invitation...</p>
-          </div>
-        }
-      >
-        <DelegateJoinContent />
-      </Suspense>
-    </AuthCard>
+    <main className="min-h-screen bg-[#0B1A2C] flex flex-col overflow-x-hidden relative">
+      <AuthNavbar />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-12">
+        <div className="w-full max-w-[480px] mx-auto">
+          <AuthCard className="w-full">
+            <Suspense
+              fallback={
+                <div className="py-12 text-center">
+                  <div className="mx-auto mb-4 h-10 w-10 animate-spin rounded-full border-2 border-[var(--auth-border)] border-t-teal" />
+                  <p className="font-body text-[0.9rem] text-[var(--auth-text-muted)]">Verifying your invite...</p>
+                </div>
+              }
+            >
+              <DelegateJoinContent />
+            </Suspense>
+          </AuthCard>
+        </div>
+      </div>
+    </main>
   );
 }

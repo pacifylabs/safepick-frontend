@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useDelegate";
 import { useDelegateAuthStore } from "@/stores/delegateAuth.store";
 import { SosButton } from "@/components/delegate/SosButton";
+import { SosNotificationBanner } from "@/components/delegate/SosNotificationBanner";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import {
   LayoutDashboard,
@@ -207,7 +208,10 @@ export default function DelegateLayout({
         </header>
 
         <div className="flex flex-1">
-          <main className="flex-1 pb-20 lg:pb-0">{children}</main>
+          <main className="flex-1 pb-20 lg:pb-0">
+            <SosNotificationBanner />
+            {children}
+          </main>
         </div>
       </div>
 

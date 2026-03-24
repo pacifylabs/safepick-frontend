@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useChild } from "@/hooks/useChildren";
 import { useSecondaryGuardians } from "@/hooks/useSecondaryGuardian";
 import { useDelegatesForChild } from "@/hooks/useDelegates";
@@ -21,9 +21,11 @@ import { AvatarStack } from "@/components/dashboard/AvatarStack";
 import { Button } from "@/components/ui/Button";
 import { format } from "date-fns";
 import { OverrideCodeCard } from "@/components/override/OverrideCodeCard";
+import { FileSearch } from "lucide-react";
 
 export default function ChildProfilePage() {
   const { childId } = useParams<{ childId: string }>();
+  const router = useRouter();
   const { data: child, isLoading: childLoading } = useChild(childId);
   const { data: guardians = [] } = useSecondaryGuardians();
   const { data: delegates = [], isLoading: delegatesLoading } = useDelegatesForChild(childId);
@@ -47,7 +49,7 @@ export default function ChildProfilePage() {
   if (!child) return null;
 
   return (
-    <div className="w-full px-6 py-8">
+    <div className="w-full px-6 py-4 min-h-[calc(100vh-56px)] overflow-y-scroll">
       {/* BREADCRUMB */}
       <div className="flex items-center gap-2 text-[var(--text-secondary)] text-[0.875rem] mb-6">
         <Link href="/dashboard" className="hover:text-[var(--text-primary)] transition-colors">Home</Link>
@@ -98,6 +100,15 @@ export default function ChildProfilePage() {
           <p className="font-body text-[0.68rem] text-white/25">
             Registered {format(new Date(child.createdAt), 'MMM d, yyyy')}
           </p>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-white/60 hover:text-white mt-2 h-9 px-4 rounded-xl bg-white/5 hover:bg-white/10"
+            onClick={() => router.push(`/dashboard/children/${childId}/audit`)}
+          >
+            <FileSearch className="w-4 h-4 mr-2" />
+            View audit log
+          </Button>
         </div>
       </div>
 

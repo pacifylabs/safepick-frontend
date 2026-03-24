@@ -3,10 +3,10 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useDelegatePickupRequests } from '@/hooks/useDelegate';
+import { useQueryClient } from '@tanstack/react-query';
 import { format, formatDistanceToNow } from 'date-fns';
 import { motion } from 'framer-motion';
 import DelegateRightPanel from '@/components/delegate/DelegateRightPanel';
-import { Toast } from '@/components/ui/Toast';
 import { getInitials } from '@/lib/utils';
 import { Bell, QrCode, LogOut, XCircle, Smartphone, Timer, CheckCircle } from 'lucide-react';
 import { usePickupStore } from '@/stores/pickup.store';
@@ -20,6 +20,7 @@ const PickupsPage = () => {
 
   const { qrOverlayAuthorizationId, setQrOverlayAuthorizationId } = usePickupStore();
   const { data: pickupRequests, isLoading } = useDelegatePickupRequests();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -35,11 +36,18 @@ const PickupsPage = () => {
           message: `Parent denied release of ${event.data.childName}.`,
           type: "error"
         });
+      } else if (event.data?.type === "PICKUP_COMPLETED") {
+        setActiveToast({
+          title: "Pickup Completed!",
+          message: `${event.data.childName} has been safely released.`,
+          type: "success"
+        });
+        queryClient.invalidateQueries({ queryKey: ["delegate", "pickup-requests"] });
       }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, []);
+  }, [queryClient]);
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -47,6 +55,8 @@ const PickupsPage = () => {
       case 'AWAITING_PARENT': return { label: 'Awaiting Parent', bg: 'bg-[#185FA5]/10', text: '#185FA5', icon: Smartphone };
       case 'APPROVED': return { label: 'Approved', bg: 'bg-[#0FA37F]/10', text: '#0FA37F', icon: CheckCircle };
       case 'DENIED': return { label: 'Denied', bg: 'bg-[#D85A30]/10', text: '#D85A30', icon: XCircle };
+      case 'RELEASED': return { label: 'Completed', bg: 'bg-[#0FA37F]/10', text: '#0FA37F', icon: CheckCircle };
+      case 'COMPLETED': return { label: 'Completed', bg: 'bg-[#0FA37F]/10', text: '#0FA37F', icon: CheckCircle };
       default: return { label: status, bg: 'bg-white/10', text: '#FFFFFF', icon: Bell };
     }
   };
@@ -59,21 +69,12 @@ const PickupsPage = () => {
   const historyRequests = useMemo(() => {
     const past = pickupRequests?.filter((req: any) => !['PENDING_GATE', 'AWAITING_PARENT', 'APPROVED'].includes(req.status)) || [];
     if (historyFilter === 'ALL') return past;
+    if (historyFilter === 'COMPLETED') return past.filter((req: any) => ['COMPLETED', 'RELEASED'].includes(req.status));
     return past.filter((req: any) => req.status === historyFilter);
   }, [pickupRequests, historyFilter]);
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      {activeToast && (
-        <div className="fixed top-6 right-6 z-[100] w-[340px]">
-          <Toast
-            title={activeToast.title}
-            message={activeToast.message}
-            type={activeToast.type}
-            onClose={() => setActiveToast(null)}
-          />
-        </div>
-      )}
       <main className="flex-1 bg-[var(--bg-page)] px-4 py-5 md:px-8 md:py-8 overflow-y-auto">
         <div>
           <p className="font-dm-sans text-[0.68rem] text-[var(--text-secondary)] mb-1">

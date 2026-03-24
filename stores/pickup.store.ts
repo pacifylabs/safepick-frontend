@@ -19,13 +19,13 @@ export interface PickupState {
   setTimeoutRemaining: (seconds: number) => void;
 }
 
-export const usePickupStore = create<PickupState>((set) => ({
+export const usePickupStore = create((set: any) => ({
   activePickupRequest: null,
   activePickupRequestId: null,
   qrOverlayAuthorizationId: null,
   timeoutRemaining: 0,
-  setActive: (req) => set({ activePickupRequest: req }),
-  setActivePickupRequestId: (id) => set({ activePickupRequestId: id }),
-  setQrOverlayAuthorizationId: (id) => set({ qrOverlayAuthorizationId: id }),
-  setTimeoutRemaining: (seconds) => set({ timeoutRemaining: seconds }),
+  setActive: (req: PickupRequestShort | null) => set({ activePickupRequest: req }),
+  setActivePickupRequestId: (id: string | null) => set({ activePickupRequestId: id }),
+  setQrOverlayAuthorizationId: (id: string | null) => set({ qrOverlayAuthorizationId: id }),
+  setTimeoutRemaining: (seconds: number) => set({ timeoutRemaining: seconds }),
 }));

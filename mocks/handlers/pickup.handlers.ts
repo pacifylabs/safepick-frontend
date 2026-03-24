@@ -254,6 +254,9 @@ export const mockPickupScenarios = {
     mockStatus = 'TIMED_OUT';
     mockSecondsRemaining = 0;
   },
+  setReleased: () => {
+    mockStatus = 'RELEASED';
+  },
   setNearExpiry: () => {
     mockStatus = 'AWAITING_PARENT';
     mockSecondsRemaining = 10;

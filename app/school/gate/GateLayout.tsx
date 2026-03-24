@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { Logo } from "@/components/ui/Logo";
+import Link from "next/link";
+import { History } from "lucide-react";
 
 export function GateLayout({ children }: { children: React.ReactNode }) {
   const [time, setTime] = useState(new Date());
@@ -28,6 +30,13 @@ export function GateLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-6">
+          <Link 
+            href="/school/audit" 
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/40 hover:text-white hover:bg-white/10 transition-all group"
+          >
+            <History className="w-4 h-4 group-hover:text-[#0FA37F] transition-colors" />
+            <span className="text-[0.75rem] font-bold uppercase tracking-widest">Audit Log</span>
+          </Link>
           <div className="text-right">
             <p className="text-white font-mono text-[1.1rem] font-bold leading-none">
               {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}

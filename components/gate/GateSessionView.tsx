@@ -11,7 +11,8 @@ import {
   Loader2,
   XCircle,
   Clock,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle
 } from "lucide-react";
 import { VerificationSession } from "@/types/verification.types";
 import { SessionStatusBanner } from "./SessionStatusBanner";
@@ -21,6 +22,7 @@ import { useSubmitOtp, useSubmitBiometric } from "@/hooks/useVerification";
 import { useVerificationStore } from "@/stores/verification.store";
 import { usePickupRequest } from "@/hooks/usePickupRequest";
 import { useSubmitOverrideCode, useHoldChild } from "@/hooks/useOverride";
+import { useClockOut } from "@/hooks/useAttendance";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { useRef } from "react";
@@ -44,9 +46,29 @@ export function GateSessionView({ session, onSessionEnd }: GateSessionViewProps)
 
   const [otpValue, setOtpValue] = useState("");
   const [biometricStatus, setBiometricStatus] = useState<"WAITING" | "SCANNING" | "SUCCESS" | "FAILED">("WAITING");
+  const [isLockedDown, setIsLockedDown] = useState(false);
   
   const submitOtp = useSubmitOtp();
   const submitBiometric = useSubmitBiometric();
+
+  // Listen for emergency panic
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "emergency.panic") {
+        const { panicActive, childId } = event.data.data;
+        if (panicActive) {
+          // If childId is specified, only lockdown if it matches our session child
+          if (!childId || childId === session.child.id) {
+            setIsLockedDown(true);
+          }
+        } else {
+          setIsLockedDown(false);
+        }
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [session.child.id]);
 
   const handleOtpSubmit = async () => {
     if (otpValue.length !== 6) return;
@@ -315,6 +337,34 @@ export function GateSessionView({ session, onSessionEnd }: GateSessionViewProps)
 
   return (
     <div className="h-full flex flex-col bg-[#0B1A2C]">
+      <AnimatePresence>
+        {isLockedDown && (
+          <motion.div
+            key="lockdown"
+            initial={{ opacity: 0, x: [0, -20, 20, -20, 20, 0] }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-[#1A0707] flex flex-col items-center justify-center p-20 text-center"
+          >
+            <motion.div
+              animate={{ opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1, repeat: Infinity }}
+              className="w-32 h-32 rounded-full bg-[#D85A30]/20 flex items-center justify-center mb-10"
+            >
+              <ShieldAlert className="w-16 h-16 text-[#D85A30]" />
+            </motion.div>
+            <h1 className="font-display text-7xl font-bold text-white mb-6 uppercase tracking-tighter">EMERGENCY LOCKDOWN</h1>
+            <p className="text-[#D85A30] text-2xl font-bold mb-10 uppercase tracking-[0.2em]">All release authorizations suspended</p>
+            <div className="bg-white/5 border border-white/10 rounded-[32px] p-10 max-w-[600px] w-full">
+              <p className="text-white/60 text-xl leading-relaxed">
+                A high-priority security alert has been triggered. Please keep the child in the school facility. 
+                All gate operations are halted until the alert is cleared by the parent or school administration.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <SessionStatusBanner session={session} />
       
       <AnimatePresence>
@@ -351,12 +401,30 @@ function GateAuthorizationView({
   const { data: request, isLoading, isError } = usePickupRequest(sessionId);
   const submitOverride = useSubmitOverrideCode();
   const holdChild = useHoldChild();
+  const clockOut = useClockOut();
 
   const [overrideCode, setOverrideCode] = useState("");
   const [holdProgress, setHoldProgress] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
+  const [resetCountdown, setResetCountdown] = useState(30);
 
   const holdInterval = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (request?.status === "RELEASED") {
+      const timer = setInterval(() => {
+        setResetCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            router.push("/school/gate");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [request?.status, router]);
 
   const handleStartHold = () => {
     setIsHolding(true);
@@ -399,6 +467,17 @@ function GateAuthorizationView({
           overrideCode,
           schoolAdminId: "staff_01", // In real app, get from auth
         },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleConfirmReleased = async () => {
+    try {
+      await clockOut.mutateAsync({
+        pickupRequestId: sessionId,
+        gateKeeperId: "staff_01", // In real app, get from auth
       });
     } catch (err) {
       console.error(err);
@@ -485,11 +564,79 @@ function GateAuthorizationView({
         <Button 
           variant="primary" 
           className="h-20 px-12 text-xl rounded-2xl flex items-center gap-4 mt-4"
-          onClick={onSessionEnd}
+          onClick={handleConfirmReleased}
+          loading={clockOut.isPending}
         >
           Confirm child released
           <ArrowRight className="w-6 h-6" />
         </Button>
+      </motion.div>
+    );
+  }
+
+  if (request.status === "RELEASED") {
+    return (
+      <motion.div 
+        initial={{ backgroundColor: "#0B1A2C" }}
+        animate={{ backgroundColor: "#071A0E" }}
+        transition={{ duration: 1.0 }}
+        className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-10"
+      >
+        <motion.div
+          initial={{ scale: 0, rotate: -10 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ duration: 0.5, type: "spring" }}
+          className="w-40 h-40 rounded-full bg-[#0FA37F]/10 flex items-center justify-center border-4 border-[#0FA37F]/30"
+        >
+          <CheckCircle className="w-20 h-20 text-[#0FA37F]" />
+        </motion.div>
+
+        <div className="text-center space-y-4">
+          <h2 className="font-display text-7xl font-bold text-white tracking-tight">Released</h2>
+          <p className="text-[#0FA37F] text-2xl font-medium">Attendance marked successfully</p>
+        </div>
+
+        <div className="bg-white/5 backdrop-blur-md rounded-[40px] p-10 mt-4 w-full max-w-[560px] border border-white/10 relative overflow-hidden">
+          <div className="flex items-center gap-8">
+            <div className="w-24 h-24 rounded-full border-4 border-[#0FA37F] p-1">
+              <div className="w-full h-full rounded-full overflow-hidden">
+                {child.photoUrl ? <img src={child.photoUrl} alt="" className="w-full h-full object-cover" /> : child.fullName[0]}
+              </div>
+            </div>
+            <div className="flex-1">
+              <p className="text-3xl text-white font-bold">{child.fullName}</p>
+              <p className="text-white/40 text-xl mt-1">Clocked out at {format(new Date(), "h:mm a")}</p>
+            </div>
+          </div>
+          
+          <div className="mt-10 flex justify-between items-center text-white/30 border-t border-white/10 pt-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                <Smartphone className="w-5 h-5" />
+              </div>
+              <p className="text-lg">Parent notified</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
+                <CheckCircle className="w-5 h-5 text-[#0FA37F]" />
+              </div>
+              <p className="text-lg">SafePick Confirmed</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="fixed bottom-0 left-0 right-0 h-3 bg-white/5">
+          <motion.div 
+            initial={{ width: "100%" }}
+            animate={{ width: "0%" }}
+            transition={{ duration: 30, ease: "linear" }}
+            className="h-full bg-[#0FA37F]"
+          />
+        </div>
+        
+        <p className="text-white/20 text-lg font-medium mt-4">
+          Resetting to home in {resetCountdown}s...
+        </p>
       </motion.div>
     );
   }
@@ -708,7 +855,7 @@ function GateAuthorizationView({
           </p>
           {request.incidentId && (
             <div className="bg-white/5 rounded-xl px-4 py-2 w-fit mx-auto mt-4">
-              <p className="font-body text-[0.875rem] text-white/40">Incident ref: {request.incidentId}</p>
+              <p className="font-body text-sm text-white/40">Incident ref: {request.incidentId}</p>
             </div>
           )}
         </div>

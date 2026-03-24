@@ -6,6 +6,7 @@ import { AuthCard } from "@/components/ui/AuthCard";
 import { OtpInput } from "@/components/ui/OtpInput";
 import { Button } from "@/components/ui/Button";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { AuthNavbar } from "@/components/layout/AuthNavbar";
 import { delegateService } from "@/services/delegate.service";
 import { useDelegateAuthStore } from "@/stores/delegateAuth.store";
 import { useToastStore } from "@/stores/toast.store";
@@ -101,82 +102,96 @@ export default function DelegateVerifyPage() {
 
   if (isNotVerified) {
     return (
-      <main className="min-h-screen bg-[var(--auth-bg)] flex flex-col items-center justify-center p-6">
-        <AuthCard>
-          <div className="flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-[#EF9F27]/10 rounded-full flex items-center justify-center mb-6">
-              <ShieldAlert className="text-[#EF9F27] w-10 h-10" />
-            </div>
-            
-            <h1 className="text-2xl font-semibold text-[var(--auth-text)] mb-4 font-display">
-              Verification pending
-            </h1>
-            
-            <p className="text-[var(--auth-text-muted)] mb-8 leading-relaxed max-w-[280px]">
-              Your identity is still being reviewed. You'll receive an SMS once approved.
-            </p>
+      <main className="min-h-screen bg-[#0B1A2C] flex flex-col overflow-x-hidden relative">
+        <AuthNavbar />
+        
+        <div className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-12">
+          <div className="w-full max-w-[480px] mx-auto">
+            <AuthCard className="w-full">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-[#EF9F27]/10 rounded-full flex items-center justify-center mb-6">
+                  <ShieldAlert className="text-[#EF9F27] w-10 h-10" />
+                </div>
+                
+                <h1 className="text-2xl font-semibold text-[var(--auth-text)] mb-4 font-display">
+                  Verification pending
+                </h1>
+                
+                <p className="text-[var(--auth-text-muted)] mb-8 leading-relaxed max-w-[280px]">
+                  Your identity is still being reviewed. You'll receive an SMS once approved.
+                </p>
 
-            <Button
-              variant="ghost"
-              className="text-[var(--auth-text-muted)] hover:text-white"
-              onClick={() => router.push("/delegate/login")}
-            >
-              Back to login
-            </Button>
+                <Link
+                  href="/delegate/login"
+                  className="inline-flex items-center gap-2 text-[var(--auth-text-muted)] hover:text-white transition-colors group"
+                >
+                  <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                  Back to login
+                </Link>
+              </div>
+            </AuthCard>
           </div>
-        </AuthCard>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[var(--auth-bg)] flex flex-col items-center justify-center p-6">
-      <AuthCard>
-        <button
-          onClick={() => router.back()}
-          className="text-[var(--auth-text-muted)] hover:text-white mb-6 flex items-center gap-2 text-sm transition-colors"
-        >
-          <ArrowLeft size={16} />
-          Back
-        </button>
+    <main className="min-h-screen bg-[#0B1A2C] flex flex-col overflow-x-hidden relative">
+      <AuthNavbar />
 
-        <SectionLabel className="text-[#0FA37F]">VERIFY YOUR PHONE</SectionLabel>
-        
-        <h1 className="text-3xl font-semibold text-[var(--auth-text)] mt-4 mb-2 font-display">
-          Check your <i className="text-[#0FA37F] not-italic">phone</i>
-        </h1>
-        
-        <p className="text-[var(--auth-text-muted)] mb-8 text-sm">
-          We sent a code to <span className="text-white font-medium">{phone}</span>
-        </p>
-
-        <div className="space-y-8">
-          <OtpInput
-            length={6}
-            onComplete={handleOtpComplete}
-            disabled={isVerifying || attempts === 0}
-            error={!!error}
-          />
-
-          {error && (
-            <p className="text-coral text-sm text-center animate-shake">
-              {error} {attempts > 0 && `(${attempts} attempts remaining)`}
-            </p>
-          )}
-
-          <div className="pt-4 flex flex-col items-center gap-4">
-            <button
-              onClick={handleResend}
-              disabled={isResending || resendTimer > 0}
-              className="text-[#0FA37F] text-sm font-medium hover:underline disabled:opacity-50 disabled:no-underline"
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-12">
+        <div className="w-full max-w-[480px] mx-auto">
+          <AuthCard className="w-full">
+            <Link
+              href="/delegate/login"
+              className="inline-flex items-center gap-2 text-[var(--auth-text-muted)] hover:text-white text-sm mb-6 transition-colors group"
             >
-              {resendTimer > 0
-                ? `Resend code in ${resendTimer}s`
-                : "Didn't receive a code? Resend"}
-            </button>
-          </div>
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              Back to login
+            </Link>
+
+            <SectionLabel className="text-[#0FA37F]">VERIFY YOUR PHONE</SectionLabel>
+            
+            <h1 className="text-3xl font-semibold text-[var(--auth-text)] mt-4 mb-2 font-display">
+              Check your <i className="text-[#0FA37F] not-italic">phone</i>
+            </h1>
+            
+            <p className="text-[var(--auth-text-muted)] mb-8 text-sm">
+              We sent a code to <span className="text-white font-medium">{phone}</span>
+            </p>
+
+            <div className="space-y-8">
+              <div className="w-full">
+                <OtpInput
+                  length={6}
+                  onComplete={handleOtpComplete}
+                  disabled={isVerifying || attempts === 0}
+                  error={!!error}
+                />
+              </div>
+
+              {error && (
+                <p className="text-coral text-sm text-center animate-shake">
+                  {error} {attempts > 0 && `(${attempts} attempts remaining)`}
+                </p>
+              )}
+
+              <div className="pt-4 flex flex-col items-center gap-4">
+                <button
+                  onClick={handleResend}
+                  disabled={isResending || resendTimer > 0}
+                  className="text-[#0FA37F] text-sm font-medium hover:underline disabled:opacity-50 disabled:no-underline"
+                >
+                  {resendTimer > 0
+                    ? `Resend code in ${resendTimer}s`
+                    : "Didn't receive a code? Resend"}
+                </button>
+              </div>
+            </div>
+          </AuthCard>
         </div>
-      </AuthCard>
+      </div>
     </main>
   );
 }

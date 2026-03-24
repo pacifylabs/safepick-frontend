@@ -4,12 +4,38 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PhoneCall, CheckCircle, X, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { useDelegateAuthorizations, useSendSos, useCancelSos } from "@/hooks/useDelegate";
+import { useDelegateAuthorizations } from "@/hooks/useDelegate";
+import { useSendSos, useCancelSos } from "@/hooks/useEmergency";
 import { SosReason } from "@/types/delegate.types";
 
 type Step = "IDLE" | "HOLDING" | "CONFIRMING" | "SENT" | "CANCELLED";
 
-export function SosButton() {
+interface SosButtonProps {
+  childId?: string; // Optional if we want to force a specific child
+}
+
+const getCurrentLocation = (): Promise<{ lat: number; lng: number; accuracy: number }> => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation is not supported by your browser"));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        });
+      },
+      (error) => reject(error),
+      { timeout: 5000, enableHighAccuracy: true }
+    );
+  });
+};
+
+export function SosButton({ childId }: SosButtonProps) {
   const [step, setStep] = useState<Step>("IDLE");
   const [holdProgress, setHoldingProgress] = useState(0);
   const [selectedAuthId, setSelectedAuthId] = useState<string>("");
@@ -25,10 +51,10 @@ export function SosButton() {
   const cancelSos = useCancelSos();
 
   useEffect(() => {
-    if (auths && auths.length === 1) {
+    if (auths && auths.length > 0 && !selectedAuthId) {
       setSelectedAuthId(auths[0].id);
     }
-  }, [auths]);
+  }, [auths, selectedAuthId]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -73,41 +99,37 @@ export function SosButton() {
   };
 
   const handleSendSos = async () => {
-    if (!selectedAuthId) return;
-    
-    let location = { latitude: 0, longitude: 0 };
-    if (shareLocation && navigator.geolocation) {
-      try {
-        const pos = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-        location = {
-          latitude: pos.coords.latitude,
-          longitude: pos.coords.longitude,
-        };
-      } catch (err) {
-        console.error("Location access denied");
-      }
+    const activeAuth = auths?.find(a => a.id === selectedAuthId);
+    const targetChildId = childId || activeAuth?.child?.id;
+
+    if (!targetChildId) {
+      console.error("No child selected for SOS");
+      return;
     }
 
     try {
+      const loc = await getCurrentLocation().catch(() => ({
+        lat: 0,
+        lng: 0,
+        accuracy: 0
+      }));
+      
       const res = await sendSos.mutateAsync({
-        authorizationId: selectedAuthId,
-        location,
-        reason: "SUSPECTED_THREAT" as SosReason,
+        childId: targetChildId,
+        location: loc
       });
       setSosId(res.sosId);
       setStep("SENT");
       setCancelCountdown(30);
     } catch (err) {
-      console.error("Failed to send SOS", err);
+      console.error("SOS failed:", err);
+      setStep("IDLE");
     }
   };
 
   const handleCancelSos = async () => {
-    if (!sosId) return;
     try {
-      await cancelSos.mutateAsync(sosId);
+      await cancelSos.mutateAsync();
       setStep("CANCELLED");
       setTimeout(() => setStep("IDLE"), 2000);
     } catch (err) {

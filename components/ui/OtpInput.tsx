@@ -83,37 +83,46 @@ export function OtpInput({
   };
 
   return (
-    <motion.div animate={controls} className="flex items-center gap-3">
+    <motion.div animate={controls} className="w-full flex justify-center gap-1.5 sm:gap-2 px-2">
       {values.map((value, index) => (
         <input
-          key={`${index}`}
+          key={index}
           ref={(el) => {
             refs.current[index] = el;
           }}
           type="text"
           inputMode="numeric"
+          autoComplete="one-time-code"
           maxLength={1}
           value={value}
           disabled={disabled}
-          onChange={(e) => handleChange(index, e.target.value)}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val.length > 1) {
+              handlePaste(val);
+            } else {
+              handleChange(index, val);
+            }
+          }}
           onKeyDown={(e) => handleKeyDown(index, e.key)}
           onPaste={(e) => {
             e.preventDefault();
             handlePaste(e.clipboardData.getData("text"));
           }}
           className={[
-            "w-[52px] h-[60px]",
+            "flex-1 max-w-[52px] min-w-0 aspect-square",
             "bg-white/[0.07]",
-            "border border-white/[0.15]",
-            "rounded-[14px]",
-            "text-white font-display text-[1.5rem] font-semibold text-center",
+            "border rounded-[14px]",
+            "text-white font-display text-[1.25rem] sm:text-[1.5rem] font-semibold text-center",
             "outline-none transition-all duration-200",
             "caret-transparent",
-            "focus:border-teal focus:ring-[3px] focus:ring-teal/30",
-            value ? "border-white/30" : "",
-            error ? "border-coral" : "",
+            "focus:ring-[3px]",
+            error
+              ? "border-coral focus:border-coral focus:ring-coral/30"
+              : "border-white/[0.15] focus:border-teal focus:ring-teal/30",
+            value && !error ? "border-white/30" : "",
             disabled ? "opacity-60" : ""
-          ].join(" ")}
+          ].filter(Boolean).join(" ")}
         />
       ))}
     </motion.div>

@@ -38,6 +38,9 @@ import { Child } from "@/types/children.types";
 import { usePickupStore } from "@/stores/pickup.store";
 import { PickupRequestModal } from "@/components/pickup/PickupRequestModal";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { useToastStore } from "@/stores/toast.store";
+import { useEmergencyStore } from "@/stores/emergency.store";
+import { SosAlertModal } from "@/components/emergency/SosAlertModal";
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -45,17 +48,30 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   const { user, clearSession } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const { activePickupRequestId, setActivePickupRequestId } = usePickupStore();
+  const { addToast } = useToastStore();
+  
+  const { activeSosAlert, setActiveSosAlert } = useEmergencyStore();
 
-  // FCM Foreground Listener Stub for Feature 09
+  // FCM Foreground Listener for Feature 09, 11, 13
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "PICKUP_REQUEST") {
         setActivePickupRequestId(event.data.pickupRequestId);
       }
+      if (event.data?.type === "CLOCK_OUT_CONFIRMATION") {
+        addToast({
+          message: `${event.data.childName} has been safely released to ${event.data.delegateName}.`,
+          variant: "success",
+          duration: 8000,
+        });
+      }
+      if (event.data?.type === "DELEGATE_SOS") {
+        setActiveSosAlert(event.data.alert);
+      }
     };
     window.addEventListener("message", handleMessage);
     return () => window.removeEventListener("message", handleMessage);
-  }, [setActivePickupRequestId]);
+  }, [setActivePickupRequestId, addToast, setActiveSosAlert]);
 
   const handleSignOut = () => {
     clearSession();
@@ -93,7 +109,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)] flex flex-col font-body">
+    <div className="h-screen overflow-hidden bg-[var(--bg-page)] flex flex-col font-body">
       {/* MOBILE MENU OVERLAY */}
       <AnimatePresence>
         {mobileMenuOpen && (
@@ -249,6 +265,15 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             onClose={() => setActivePickupRequestId(null)}
           />
         )}
+
+        <AnimatePresence>
+          {activeSosAlert && (
+            <SosAlertModal
+              alert={activeSosAlert}
+              onClose={() => setActiveSosAlert(null)}
+            />
+          )}
+        </AnimatePresence>
         <div className="flex items-center gap-3 md:gap-8">
           <button
             onClick={() => setMobileMenuOpen(true)}
@@ -433,12 +458,12 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         </aside>
 
         {/* MAIN CONTENT AREA */}
-        <main className="flex-1 overflow-y-auto relative bg-[var(--bg-surface-2)]">
+        <main className="flex-1 overflow-y-auto relative bg-[var(--bg-surface-2)] flex flex-col">
           {children}
         </main>
 
         {/* RIGHT DETAIL PANEL */}
-        <aside className="hidden lg:block">
+        <aside className={rightPanelOpen ? "hidden lg:block" : "hidden"}>
           <div
             className={`h-[calc(100vh-57px)] sticky top-[57px] bg-[var(--bg-surface)] border-l border-[var(--border)] transition-all duration-300 ease-in-out overflow-hidden ${
               rightPanelOpen ? "w-[300px]" : "w-0"

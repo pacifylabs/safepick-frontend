@@ -70,12 +70,13 @@ export const SchedulePickupSchema = z.object({
   pickupWindowEnd: z.string(),
   alarmSet: z.boolean(),
   alarmTime: z.string().nullable().optional(),
-  status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETE"]),
+  status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETE", "RELEASED"]),
+  completedAt: z.string().optional(),
 });
 
 export const PickupRequestSchema = z.object({
   id: z.string(),
-  status: z.enum(["PENDING_GATE", "APPROVED", "DENIED", "COMPLETED"]),
+  status: z.enum(["PENDING_GATE", "APPROVED", "DENIED", "COMPLETED", "RELEASED"]),
   child: z.object({
     fullName: z.string(),
     photoUrl: z.string().nullable().optional(),

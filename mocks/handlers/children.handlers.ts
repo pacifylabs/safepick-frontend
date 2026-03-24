@@ -42,6 +42,69 @@ const MOCK_CHILDREN = [
     enrollmentStatus: "VERIFIED",
     createdAt: new Date(Date.now() - 2592000000).toISOString(), // 30 days ago
   },
+  {
+    id: "child_3",
+    safepickId: "SP-2026-00003",
+    fullName: "Ama Osei",
+    dateOfBirth: "2019-11-05",
+    grade: "Primary 1",
+    photoUrl: null,
+    parentId: "user_parent_1",
+    secondaryGuardianId: "user_delegate_1",
+    secondaryGuardian: {
+      id: "user_delegate_1",
+      fullName: "David Mensah",
+      phone: "+233240000001",
+    },
+    school: {
+      id: "school_1",
+      name: "Greenfield Academy",
+    },
+    enrollmentStatus: "VERIFIED",
+    createdAt: new Date(Date.now() - 5184000000).toISOString(),
+  },
+  {
+    id: "child_4",
+    safepickId: "SP-2026-00004",
+    fullName: "Kwame Osei",
+    dateOfBirth: "2023-02-14",
+    grade: "Toddler",
+    photoUrl: null,
+    parentId: "user_parent_1",
+    secondaryGuardianId: "user_delegate_2",
+    secondaryGuardian: {
+      id: "user_delegate_2",
+      fullName: "Sarah Antwi",
+      phone: "+233240000002",
+    },
+    school: {
+      id: "school_1",
+      name: "Greenfield Academy",
+    },
+    enrollmentStatus: "VERIFIED",
+    createdAt: new Date(Date.now() - 7776000000).toISOString(),
+  },
+  {
+    id: "child_5",
+    safepickId: "SP-2026-00005",
+    fullName: "Esi Osei",
+    dateOfBirth: "2017-08-30",
+    grade: "Primary 4",
+    photoUrl: null,
+    parentId: "user_parent_1",
+    secondaryGuardianId: "user_delegate_1",
+    secondaryGuardian: {
+      id: "user_delegate_1",
+      fullName: "David Mensah",
+      phone: "+233240000001",
+    },
+    school: {
+      id: "school_1",
+      name: "Greenfield Academy",
+    },
+    enrollmentStatus: "VERIFIED",
+    createdAt: new Date(Date.now() - 10368000000).toISOString(),
+  },
 ];
 
 export const childrenHandlers = [

@@ -8,6 +8,8 @@ import { delegateAuthHandlers } from "./delegate-auth.handlers";
 import { auditHandlers } from "./audit.handlers";
 import { pickupHandlers } from "./pickup.handlers";
 import { secondaryGuardianHandlers } from "./secondary-guardian.handlers";
+import { attendanceHandlers } from "./attendance.handlers";
+import { emergencyHandlers } from "./emergency.handlers";
 
 export const handlers = [
   ...authHandlers,
@@ -20,4 +22,6 @@ export const handlers = [
   ...secondaryGuardianHandlers,
   ...delegateAuthHandlers,
   ...auditHandlers,
+  ...attendanceHandlers,
+  ...emergencyHandlers,
 ];

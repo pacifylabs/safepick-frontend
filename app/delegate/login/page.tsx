@@ -8,8 +8,8 @@ import { z } from "zod";
 import { AuthCard } from "@/components/ui/AuthCard";
 import { InputField } from "@/components/ui/InputField";
 import { Button } from "@/components/ui/Button";
-import { Logo } from "@/components/ui/Logo";
 import { SectionLabel } from "@/components/ui/SectionLabel";
+import { AuthNavbar } from "@/components/layout/AuthNavbar";
 import { delegateService } from "@/services/delegate.service";
 import { useToastStore } from "@/stores/toast.store";
 import Link from "next/link";
@@ -61,50 +61,52 @@ export default function DelegateLoginPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--auth-bg)] flex flex-col items-center justify-center p-6">
-      <div className="mb-12">
-        <Logo variant="light" size="lg" />
-      </div>
+    <main className="min-h-screen bg-[#0B1A2C] flex flex-col overflow-x-hidden relative">
+      <AuthNavbar />
 
-      <AuthCard>
-        <SectionLabel className="text-[#0FA37F]">DELEGATE LOGIN</SectionLabel>
-        
-        <h1 className="text-3xl font-semibold text-[var(--auth-text)] mt-4 mb-2 font-display">
-          Welcome back, <i className="text-[#0FA37F] not-italic">delegate</i>
-        </h1>
-        
-        <p className="text-[var(--auth-text-muted)] mb-8 text-sm leading-relaxed">
-          Sign in to view your pickup schedule and QR codes.
-        </p>
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pt-20 pb-12">
+        <div className="w-full max-w-[480px] mx-auto">
+          <AuthCard className="w-full">
+            <SectionLabel className="text-[#0FA37F]">DELEGATE LOGIN</SectionLabel>
+            
+            <h1 className="text-3xl font-semibold text-[var(--auth-text)] mt-4 mb-2 font-display">
+              Welcome back, <span className="text-[#0FA37F]">delegate</span>
+            </h1>
+            
+            <p className="text-[var(--auth-text-muted)] mb-8 text-sm leading-relaxed">
+              Sign in to view your pickup schedule and QR codes.
+            </p>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <InputField
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            placeholder="+234 801 234 5678"
-            register={register}
-            error={errors.phone?.message}
-          />
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <InputField
+                label="Phone Number"
+                name="phone"
+                type="tel"
+                placeholder="+234 801 234 5678"
+                register={register}
+                error={errors.phone?.message}
+              />
 
-          <Button
-            type="submit"
-            fullWidth
-            loading={isLoading}
-          >
-            Send login code
-          </Button>
-        </form>
+              <Button
+                type="submit"
+                fullWidth
+                loading={isLoading}
+              >
+                Send login code
+              </Button>
+            </form>
 
-        <div className="mt-8 pt-8 border-t border-[var(--auth-border)] flex flex-col items-center gap-4">
-          <p className="text-[var(--auth-text-muted)] text-sm">
-            Not a delegate?{" "}
-            <Link href="/login" className="text-[#0FA37F] font-medium hover:underline">
-              Parent sign in
-            </Link>
-          </p>
+            <div className="mt-8 pt-8 border-t border-[var(--auth-border)] flex flex-col items-center gap-4">
+              <p className="text-[var(--auth-text-muted)] text-sm">
+                Not a delegate?{" "}
+                <Link href="/login" className="text-[#0FA37F] font-medium hover:underline">
+                  Parent sign in
+                </Link>
+              </p>
+            </div>
+          </AuthCard>
         </div>
-      </AuthCard>
+      </div>
     </main>
   );
 }

@@ -8,6 +8,7 @@ export const PickupStatusEnum = z.enum([
   "DENIED",
   "TIMED_OUT",
   "CHILD_HELD",
+  "RELEASED",
 ]);
 
 export type PickupStatus = z.infer<typeof PickupStatusEnum>;
@@ -18,6 +19,7 @@ export const TERMINAL_PICKUP_STATUSES = [
   "DENIED",
   "TIMED_OUT",
   "CHILD_HELD",
+  "RELEASED",
 ] as const;
 
 export const VerificationMethodEnum = z.enum(["QR", "OTP", "BIOMETRIC"]);
@@ -47,6 +49,7 @@ export const PickupRequestSchema = z.object({
   timeoutAt: z.string(),
   secondsRemaining: z.number(),
   createdAt: z.string(),
+  incidentId: z.string().optional(),
 });
 
 export const PickupRespondPayloadSchema = z.object({
