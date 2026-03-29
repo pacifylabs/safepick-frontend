@@ -9,12 +9,13 @@ export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 0. Public Paths (No Auth Needed)
+  if (pathname === "/") return NextResponse.next(); 
   if (pathname === "/respond" || pathname.startsWith("/respond/")) return NextResponse.next();
   if (pathname.startsWith("/secondary/join/")) return NextResponse.next();
 
   // 1. Parent Auth
   const parentToken = req.cookies.get("accessToken")?.value;
-  const isParentPath = pathname.startsWith("/dashboard") || pathname === "/";
+  const isParentPath = pathname.startsWith("/dashboard");
   const isParentPublic = PARENT_PUBLIC_PATHS.includes(pathname);
 
   if (isParentPath && !parentToken) {
