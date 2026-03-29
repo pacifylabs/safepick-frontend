@@ -17,7 +17,9 @@ export function AppProviders(props: { children: React.ReactNode }) {
   const user = useAuthStore((state: any) => state.user);
 
   useEffect(() => {
-    if (process.env.NODE_ENV !== "production") {
+    const enableMsw = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_MSW === "true";
+    
+    if (enableMsw) {
       import("@/mocks/browser")
         .then(({ worker }) => {
           if (!(globalThis as any).__mswStarted) {
@@ -70,7 +72,7 @@ export function AppProviders(props: { children: React.ReactNode }) {
       <ThemeProvider>
         <ToastContainer />
         {props.children}
-        {process.env.NODE_ENV !== "production" ? (
+        {process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_MSW === "true" ? (
           <ReactQueryDevtools initialIsOpen={false} />
         ) : null}
       </ThemeProvider>

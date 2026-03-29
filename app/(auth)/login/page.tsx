@@ -36,6 +36,24 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
     setError(null);
+    
+    // Demo mode fallback for production without backend
+    if (process.env.NEXT_PUBLIC_DEMO_MODE === "true" && !process.env.NEXT_PUBLIC_API_BASE_URL) {
+      // Mock successful login
+      const mockUser = {
+        id: "usr_01H8M3Q9V",
+        fullName: "Amara Osei",
+        phone: data.phone,
+        email: "amara@example.com",
+        role: "PARENT",
+        createdAt: "2025-01-01T00:00:00Z"
+      };
+      setSession(mockUser as any, "demo-mock-token");
+      router.push("/dashboard");
+      setIsSubmitting(false);
+      return;
+    }
+    
     try {
       const response = await loginUser(data);
       setSession(response.user as any, response.accessToken);
@@ -50,7 +68,7 @@ export default function LoginPage() {
   return (
     <AuthCard>
       <div className="mb-6 sm:mb-8">
-        <span className="font-body text-[0.75rem] font-medium uppercase tracking-widest text-teal-mid">
+        <span className="font-body text-[0.75rem] font-medium uppercase tracking-widest text-gray-400">
           WELCOME BACK
         </span>
         <h1 className="mt-2 font-display text-2xl sm:text-3xl font-semibold text-white">
@@ -62,7 +80,7 @@ export default function LoginPage() {
       </div>
 
       {error && (
-        <div className="mb-4 sm:mb-6 rounded-[14px] bg-coral/10 border border-coral/20 p-3 sm:p-4 text-sm text-coral-light">
+        <div className="mb-4 sm:mb-6 rounded-[14px] bg-red-50 border border-red-200 p-3 sm:p-4 text-sm text-red-600">
           {error}
         </div>
       )}
