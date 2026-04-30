@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -10,12 +10,15 @@ import {
   Pencil,
   AlertCircle,
   ShieldCheck,
+  X,
+  Loader2,
 } from "lucide-react";
 import {
   RegisterChildPayload,
   RegisterChildPayloadSchema,
 } from "@/types/children.types";
 import { useRegisterChild } from "@/hooks/useChildren";
+import { useFileUpload, useFileDelete } from "@/hooks/useFileUpload";
 import { useChildrenStore } from "@/stores/children.store";
 import { Button } from "@/components/ui/Button";
 
@@ -23,6 +26,39 @@ import { Button } from "@/components/ui/Button";
 export default function NewChildPage() {
   const router = useRouter();
   const { registrationStep, setRegistrationStep, registrationDraft, updateDraft, clearDraft } = useChildrenStore();
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [uploadedPhotoUrl, setUploadedPhotoUrl] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const { mutate: uploadFile, isPending: isUploading } = useFileUpload();
+  const { mutate: deleteFile } = useFileDelete();
+
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+
+  const handleRemovePhoto = () => {
+    if (uploadedPhotoUrl) {
+      deleteFile(uploadedPhotoUrl);
+    }
+    setPhotoPreview(null);
+    setUploadedPhotoUrl(null);
+    setUploadError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  const handleGoBack = () => {
+    if (uploadedPhotoUrl) {
+      deleteFile(uploadedPhotoUrl);
+    }
+    setPhotoPreview(null);
+    setUploadedPhotoUrl(null);
+    setUploadError(null);
+    prevStep();
+  };
 
   const {
     register,
@@ -42,9 +78,15 @@ export default function NewChildPage() {
   const { mutate: registerChild, isPending } = useRegisterChild();
 
   const onSubmit = (data: RegisterChildPayload) => {
-    registerChild(data, {
+    const payload: RegisterChildPayload = {
+      ...data,
+      ...(uploadedPhotoUrl ? { photoUrl: uploadedPhotoUrl } : {}),
+    };
+    registerChild(payload, {
       onSuccess: (newChild) => {
         clearDraft();
+        setPhotoPreview(null);
+        setUploadedPhotoUrl(null);
         router.push(`/dashboard/children/${newChild.id}/school`);
       },
     });
@@ -54,7 +96,7 @@ export default function NewChildPage() {
     const formData = watch();
     if (registrationStep === "DETAILS") {
       const isValid = await trigger(["fullName", "dateOfBirth", "grade"]);
-      if (isValid) {
+      if (isValid && !isUploading) {
         updateDraft({
           fullName: formData.fullName,
           dateOfBirth: formData.dateOfBirth,
@@ -141,17 +183,94 @@ export default function NewChildPage() {
                 </div>
 
                 <div className="flex flex-col items-center">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      // Validation
+                      if (!ALLOWED_TYPES.includes(file.type)) {
+                        setUploadError("Please upload a JPEG, PNG, or WebP image");
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                        return;
+                      }
+                      if (file.size > MAX_FILE_SIZE) {
+                        setUploadError("File size must be less than 5MB");
+                        if (fileInputRef.current) fileInputRef.current.value = "";
+                        return;
+                      }
+
+                      setUploadError(null);
+                      setPhotoPreview(URL.createObjectURL(file));
+                      const entityId = formData.fullName || "temp-child";
+                      uploadFile(
+                        { file, uploadType: "child_photos", entityId },
+                        {
+                          onSuccess: (data) => {
+                            setUploadedPhotoUrl(data.url);
+                            setUploadError(null);
+                          },
+                          onError: (error) => {
+                            setUploadError(error.message || "Failed to upload photo");
+                            setPhotoPreview(null);
+                          },
+                        }
+                      );
+                    }}
+                  />
                   <div className="relative group">
-                    <div className="w-20 h-20 rounded-full bg-[var(--bg-page)] border-2 border-dashed border-[var(--text-primary)]/15 flex items-center justify-center group-hover:border-[#0FA37F] group-hover:bg-[#E1F5EE] transition-all cursor-pointer">
-                      <Camera className="w-7 h-7 text-[var(--text-secondary)]" />
-                    </div>
-                    <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-[#0FA37F] flex items-center justify-center border-2 border-[var(--bg-surface)]">
-                      <Pencil className="w-3 h-3 text-white" />
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className={`w-20 h-20 rounded-full bg-[var(--bg-page)] border-2 border-dashed flex items-center justify-center transition-all cursor-pointer relative overflow-hidden disabled:opacity-50 ${uploadError ? 'border-red-400 bg-red-50' : 'border-[var(--text-primary)]/15 group-hover:border-[#0FA37F] group-hover:bg-[#E1F5EE]'}`}
+                    >
+                      {photoPreview ? (
+                        <img
+                          src={photoPreview}
+                          alt="Preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Camera className="w-7 h-7 text-[var(--text-secondary)]" />
+                      )}
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                          <Loader2 className="w-6 h-6 text-white animate-spin" />
+                        </div>
+                      )}
+                    </button>
+                    {photoPreview && !isUploading && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemovePhoto();
+                        }}
+                        className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-red-500 flex items-center justify-center border-2 border-[var(--bg-surface)] hover:bg-red-600 transition-colors"
+                      >
+                        <X className="w-3 h-3 text-white" />
+                      </button>
+                    )}
+                    {!photoPreview && (
+                      <div className="absolute bottom-0 right-0 w-6 h-6 rounded-full bg-[#0FA37F] flex items-center justify-center border-2 border-[var(--bg-surface)]">
+                        <Pencil className="w-3 h-3 text-white" />
+                      </div>
+                    )}
                   </div>
                   <p className="text-[0.72rem] text-[var(--text-secondary)] mt-2">
-                    Tap to add photo (optional)
+                    {isUploading ? "Uploading..." : photoPreview ? "Photo selected" : "Tap to add photo (optional)"}
                   </p>
+                  {uploadError && (
+                    <p className="text-[0.72rem] text-red-500 mt-1 flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {uploadError}
+                    </p>
+                  )}
                 </div>
 
                 <div className="space-y-4">
@@ -231,8 +350,20 @@ export default function NewChildPage() {
                   </div>
                 </div>
 
-                <Button type="submit" variant="primary" className="w-full h-12 rounded-xl mt-4">
-                  Continue
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="w-full h-12 rounded-xl mt-4"
+                  disabled={isUploading}
+                >
+                  {isUploading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading photo...
+                    </span>
+                  ) : (
+                    "Continue"
+                  )}
                 </Button>
               </form>
             </motion.div>
@@ -259,6 +390,31 @@ export default function NewChildPage() {
               </div>
 
               <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl overflow-hidden mb-4">
+                {photoPreview && (
+                  <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={photoPreview}
+                        alt="Child"
+                        className="w-12 h-12 rounded-full object-cover"
+                      />
+                      <div>
+                        <p className="font-sans text-[0.72rem] text-[var(--text-muted)] uppercase tracking-wide mb-0.5">
+                          PHOTO
+                        </p>
+                        <p className="font-sans text-[0.9375rem] font-medium text-[var(--text-primary)]">
+                          Uploaded
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => setRegistrationStep("DETAILS")}
+                      className="font-sans text-[0.78rem] font-medium text-[#0FA37F] hover:text-[#1D9E75] transition-all duration-200"
+                    >
+                      Edit
+                    </button>
+                  </div>
+                )}
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
                   <div>
                     <p className="font-sans text-[0.72rem] text-[var(--text-muted)] uppercase tracking-wide mb-0.5">
@@ -327,7 +483,7 @@ export default function NewChildPage() {
 
               <div className="flex gap-3 mt-6">
                 <button
-                  onClick={prevStep}
+                  onClick={handleGoBack}
                   className="flex-1 bg-[var(--bg-muted)] text-[var(--text-secondary)] rounded-full py-3.5 text-center font-sans text-[0.9375rem] font-medium hover:bg-[var(--border)] transition-all duration-200"
                 >
                   Back

@@ -167,6 +167,27 @@ export const childrenHandlers = [
     return HttpResponse.json({ child: newChild }, { status: 201 });
   }),
 
+  // PUT /children/:childId
+  http.put('/children/:childId', async ({ request, params }: any) => {
+    const body = await request.json() as any;
+    await delay(400);
+    return HttpResponse.json({
+      id: params.childId,
+      safepickId: 'SP-2026-00001',
+      fullName: body.fullName,
+      grade: body.grade,
+      dateOfBirth: body.dateOfBirth ?? '2017-03-15',
+      photoUrl: body.photoUrl ?? null,
+      parentId: 'usr_01',
+      secondaryGuardianId: null,
+      secondaryGuardianStatus: 'NONE',
+      mode: 'LIMITED',
+      enrollmentStatus: 'VERIFIED',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+  }),
+
   // PATCH /children/:id
   http.patch("/children/:id", async ({ params, request }: any) => {
     await delay(800);

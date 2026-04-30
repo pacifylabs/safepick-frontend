@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FolderOpen,
@@ -27,6 +27,7 @@ import { AvatarStack } from "@/components/dashboard/AvatarStack";
 import { InviteStatusBanner } from "@/components/delegates/InviteStatusBanner";
 import { Button } from "@/components/ui/Button";
 import { format } from "date-fns";
+import { MobileChildSheet } from "@/components/dashboard/MobileChildSheet";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -43,6 +44,32 @@ export default function DashboardPage() {
 
   const { dismissedBanners, dismissBanner } = useDelegatesStore();
   const { activePickupRequestId } = usePickupStore();
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  const [mobileSheetChildId, setMobileSheetChildId] = useState<string | null>(null);
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const urlChildId = searchParams.get('childId');
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    if (urlChildId) {
+      if (isMobile) {
+        setMobileSheetChildId(urlChildId);
+        setMobileSheetOpen(true);
+      } else {
+        openRightPanel(urlChildId);
+      }
+    }
+  }, [urlChildId, isMobile, openRightPanel]);
 
   useEffect(() => {
     setPageTitle("Files");
@@ -263,7 +290,18 @@ export default function DashboardPage() {
             {children.map((child) => (
               <div
                 key={child.id}
-                onClick={() => openRightPanel(child.id)}
+                onClick={() => {
+                  const params = new URLSearchParams(searchParams.toString());
+                  params.set('childId', child.id);
+                  router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+                  if (isMobile) {
+                    setMobileSheetOpen(true);
+                    setMobileSheetChildId(child.id);
+                  } else {
+                    openRightPanel(child.id);
+                  }
+                }}
                 className={`px-6 py-3.5 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center cursor-pointer transition-colors duration-100 ${
                   selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[var(--bg-surface-2)]"
                 }`}
@@ -295,14 +333,20 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <AvatarStack
-                    users={[
-                      ...(child.secondaryGuardian ? [{ id: child.secondaryGuardianId || child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),
-                      ...delegates
-                        .filter(d => d.authorizations.some(a => a.childId === child.id))
-                        .map(d => ({ id: d.id, fullName: d.fullName, photoUrl: d.photoUrl || undefined }))
-                    ]}
-                  />
+                  {(child.secondaryGuardian || delegates.some(d => d.authorizations.some(a => a.childId === child.id))) ? (
+                    <AvatarStack
+                      users={[
+                        ...(child.secondaryGuardian ? [{ id: child.secondaryGuardianId || child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),
+                        ...delegates
+                          .filter(d => d.authorizations.some(a => a.childId === child.id))
+                          .map(d => ({ id: d.id, fullName: d.fullName, photoUrl: d.photoUrl || undefined }))
+                      ]}
+                    />
+                  ) : (
+                    <span className="font-body text-[0.72rem] text-[var(--text-secondary)] italic">
+                      No delegate
+                    </span>
+                  )}
                 </div>
 
                 <div className="min-w-0 flex items-center overflow-hidden">
@@ -334,7 +378,18 @@ export default function DashboardPage() {
             <motion.div
               key={child.id}
               whileHover={{ y: -2 }}
-              onClick={() => openRightPanel(child.id)}
+              onClick={() => {
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('childId', child.id);
+                router.push(`${pathname}?${params.toString()}`, { scroll: false });
+
+                if (isMobile) {
+                  setMobileSheetOpen(true);
+                  setMobileSheetChildId(child.id);
+                } else {
+                  openRightPanel(child.id);
+                }
+              }}
               className="bg-[var(--bg-surface)] rounded-2xl p-4 border border-[var(--border)] cursor-pointer hover:shadow-md transition-all"
             >
               <div className="w-12 h-12 rounded-xl bg-[#EEF2FF] flex items-center justify-center mb-3">
@@ -359,6 +414,18 @@ export default function DashboardPage() {
           ))}
         </div>
       )}
+
+      <MobileChildSheet
+        childId={mobileSheetChildId}
+        isOpen={mobileSheetOpen}
+        onClose={() => {
+          const params = new URLSearchParams(searchParams.toString());
+          params.delete('childId');
+          router.push(`${pathname}?${params.toString()}`, { scroll: false });
+          setMobileSheetOpen(false);
+          setMobileSheetChildId(null);
+        }}
+      />
     </div>
   );
 }

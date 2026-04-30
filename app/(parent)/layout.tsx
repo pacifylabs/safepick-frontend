@@ -378,8 +378,16 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                   onClick={() => router.push(`/dashboard/children/${child.id}`)}
                   className="flex items-center gap-2.5 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--bg-muted)] transition-colors group"
                 >
-                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-medium text-white ${getChildColor(child.id)}`}>
-                    {child.fullName[0]}
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-medium text-white overflow-hidden ${getChildColor(child.id)}`}>
+                    {child.photoUrl ? (
+                      <img
+                        src={child.photoUrl}
+                        alt={child.fullName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      child.fullName[0]
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[0.82rem] font-medium text-[var(--text-primary)] truncate">

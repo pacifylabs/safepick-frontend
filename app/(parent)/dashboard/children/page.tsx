@@ -200,11 +200,15 @@ export default function ChildrenPage() {
                 </div>
 
                 <div>
-                  <AvatarStack
-                    users={[
-                      ...(child.secondaryGuardian ? [{ id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),
-                    ]}
-                  />
+                  {child.secondaryGuardian ? (
+                    <AvatarStack
+                      users={[{ id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }]}
+                    />
+                  ) : (
+                    <span className="font-body text-[0.72rem] text-[var(--text-secondary)] italic">
+                      No guardian
+                    </span>
+                  )}
                 </div>
 
                 <div className="min-w-0">

@@ -8,6 +8,7 @@ import {
   GuardianLookupResponseSchema,
   RegisterChildPayload,
   RegisterChildResponseSchema,
+  UpdateChildPayload,
 } from "../types/children.types";
 
 export const childrenService = {
@@ -34,12 +35,15 @@ export const childrenService = {
     return parsed.child;
   },
 
-  async updateChild(childId: string, data: Partial<RegisterChildPayload>): Promise<Child> {
-    const response = await apiFetch<any>(`/children/${childId}`, {
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-    return ChildSchema.parse(response);
+  async updateChild(childId: string, payload: UpdateChildPayload): Promise<Child> {
+    const data = await apiFetch<any>(
+      `/children/${childId}`,
+      {
+        method: 'PUT',
+        body: JSON.stringify(payload),
+      },
+    );
+    return ChildSchema.parse(data);
   },
 
   async deleteChild(childId: string): Promise<void> {

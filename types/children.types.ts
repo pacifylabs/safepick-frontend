@@ -53,6 +53,15 @@ export const RegisterChildPayloadSchema = z.object({
   }).optional(),
 });
 
+export const UpdateChildPayloadSchema = z.object({
+  fullName: z.string().min(1, 'Full name is required'),
+  grade: z.string().min(1, 'Grade is required'),
+  dateOfBirth: z.string().optional(),
+  photoUrl: z.string().url().nullable().optional(),
+});
+
+export type UpdateChildPayload = z.infer<typeof UpdateChildPayloadSchema>;
+
 export const ChildListResponseSchema = z.object({
   children: z.array(ChildSchema),
 });

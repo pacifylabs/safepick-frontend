@@ -14,6 +14,7 @@ import {
   FileText,
   History,
   StickyNote,
+  Pencil,
 } from "lucide-react";
 import { useChild } from "@/hooks/useChildren";
 import { useDelegatesForChild } from "@/hooks/useDelegates";
@@ -21,6 +22,7 @@ import { useAuditLog } from "@/hooks/useAudit";
 import { AvatarStack } from "./AvatarStack";
 import { useRouter } from "next/navigation";
 import { AuditEntry, AUDIT_EVENT_LABELS } from "@/types/audit.types";
+import { ChildEditForm } from "./ChildEditForm";
 
 interface ChildDetailPanelProps {
   childId: string | null;
@@ -38,6 +40,7 @@ export const ChildDetailPanel: React.FC<ChildDetailPanelProps> = ({
 }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabType>("activity");
+  const [mode, setMode] = useState<'view' | 'edit'>('view');
   const { data: child, isLoading: loadingChild, error } = useChild(childId || "");
   const { data: delegates = [], isLoading: loadingDelegates } = useDelegatesForChild(childId || "");
 
@@ -85,8 +88,18 @@ export const ChildDetailPanel: React.FC<ChildDetailPanelProps> = ({
   if (!child) return null;
 
   return (
-    <div className="p-5 flex flex-col gap-5">
-      {/* PANEL HEADER */}
+    <>
+      {mode === 'edit' && child ? (
+        <ChildEditForm
+          child={child}
+          onCancel={() => setMode('view')}
+          onSuccess={(updated) => {
+            setMode('view');
+          }}
+        />
+      ) : (
+        <div className="p-5 flex flex-col gap-5">
+          {/* PANEL HEADER */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-[#EEF2FF] flex items-center justify-center cursor-pointer" onClick={() => router.push(`/dashboard/children/${child.id}`)}>
@@ -101,12 +114,14 @@ export const ChildDetailPanel: React.FC<ChildDetailPanelProps> = ({
             )}
           </div>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 hover:bg-[#F2F0EB] rounded-lg transition-colors"
-        >
-          <X className="w-4 h-4 text-[#6B7280] hover:text-[#0B1A2C]" />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onClose}
+            className="p-1 hover:bg-[#F2F0EB] rounded-lg transition-colors"
+          >
+            <X className="w-4 h-4 text-[#6B7280] hover:text-[#0B1A2C]" />
+          </button>
+        </div>
       </div>
 
       {/* CHILD NAME + META */}
@@ -126,8 +141,14 @@ export const ChildDetailPanel: React.FC<ChildDetailPanelProps> = ({
           <p className="font-body text-[0.72rem] font-medium text-[#6B7280]">
             Tags
           </p>
-          <button className="font-body text-[0.72rem] text-[#4F46E5] hover:underline">
-            Edit
+          <button
+            onClick={() => setMode('edit')}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#F2F0EB] hover:bg-[#E8E6E1] rounded-[8px] transition-colors"
+          >
+            <Pencil className="w-3.5 h-3.5 stroke-[#6B7280]" />
+            <span className="font-body text-[0.75rem] text-[#6B7280] font-medium">
+              Edit
+            </span>
           </button>
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -159,19 +180,25 @@ export const ChildDetailPanel: React.FC<ChildDetailPanelProps> = ({
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <AvatarStack
-            users={[
-              ...(child.secondaryGuardian ? [{
-                id: child.secondaryGuardian.id,
-                fullName: child.secondaryGuardian.fullName,
-              }] : []),
-              ...delegates.map(d => ({
-                id: d.id,
-                fullName: d.fullName,
-                photoUrl: d.photoUrl || undefined
-              }))
-            ]}
-          />
+          {(child.secondaryGuardian || delegates.length > 0) ? (
+            <AvatarStack
+              users={[
+                ...(child.secondaryGuardian ? [{
+                  id: child.secondaryGuardian.id,
+                  fullName: child.secondaryGuardian.fullName,
+                }] : []),
+                ...delegates.map(d => ({
+                  id: d.id,
+                  fullName: d.fullName,
+                  photoUrl: d.photoUrl || undefined
+                }))
+              ]}
+            />
+          ) : (
+            <span className="font-body text-[0.72rem] text-[var(--text-secondary)] italic">
+              No delegate
+            </span>
+          )}
         </div>
       </div>
 
@@ -227,6 +254,8 @@ export const ChildDetailPanel: React.FC<ChildDetailPanelProps> = ({
         </div>
       </div>
     </div>
+      )}
+    </>
   );
 };
 

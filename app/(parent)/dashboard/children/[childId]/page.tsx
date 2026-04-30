@@ -50,6 +50,7 @@ export default function ChildProfilePage() {
     );
   }
 
+  console.log("child", child);
   if (!child) return null;
 
   return (
