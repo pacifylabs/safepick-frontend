@@ -64,142 +64,147 @@ export default function ChildProfilePage() {
       </div>
 
       {/* HEADER CARD */}
-      <div className="bg-[#0B1A2C] rounded-2xl p-6 mb-6 flex items-center gap-4 shadow-sm">
-        <div className="w-16 h-16 rounded-full bg-[#1D9E75] flex items-center justify-center text-white overflow-hidden flex-shrink-0">
+      <div className="bg-[#0B1A2C] rounded-2xl p-4 sm:p-6 mb-6 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#1D9E75] flex items-center justify-center text-white overflow-hidden flex-shrink-0">
           {child.photoUrl ? (
             <img src={child.photoUrl} alt={child.fullName} className="w-full h-full object-cover" />
           ) : (
-            <p className="font-display text-[1.5rem] font-semibold">
+            <p className="font-display text-[1.25rem] sm:text-[1.5rem] font-semibold">
               {(child.fullName || '').split(' ').map(n => n[0]).join('')}
             </p>
           )}
         </div>
-        
+
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-1 flex-wrap">
-            <p className="font-display text-[1.5rem] font-semibold text-white truncate">
+          <div className="flex items-center gap-2 sm:gap-3 mb-1 flex-wrap">
+            <p className="font-display text-[1.25rem] sm:text-[1.5rem] font-semibold text-white truncate">
               {child.fullName}
             </p>
-            <Badge variant={child.school ? "teal" : "cream"} className="bg-[#0FA37F]/20 text-[#E1F5EE] border-none">
-              {child.school ? "Enrolled" : "Pending Enrollment"}
+            <Badge variant={child.school ? "teal" : "cream"} className="bg-[#0FA37F]/20 text-[#E1F5EE] border-none text-[0.65rem] sm:text-xs">
+              {child.school ? "Enrolled" : "Pending"}
             </Badge>
           </div>
-          <p className="font-body text-[0.875rem] text-white/50">
+          <p className="font-body text-[0.8rem] sm:text-[0.875rem] text-white/50">
             {child.grade} &middot; {child.school?.name || "No school yet"}
           </p>
-          <p className="font-body text-[0.72rem] text-white/30 mt-1">
+          <p className="font-body text-[0.65rem] sm:text-[0.72rem] text-white/30 mt-1">
             ID: {child.safepickId}
           </p>
         </div>
 
-        <div className="flex flex-col items-end gap-2 flex-shrink-0">
+        <div className="flex flex-col items-start sm:items-end gap-2 flex-shrink-0 pt-2 sm:pt-0 border-t border-white/10 sm:border-t-0 mt-2 sm:mt-0">
           {secondaryGuardian && (
             <div className="bg-white/10 rounded-full px-3 py-1.5 flex items-center gap-1.5">
               <Shield className="w-3.5 h-3.5 text-white/50" />
-              <p className="font-body text-[0.72rem] text-white/60">
+              <p className="font-body text-[0.7rem] sm:text-[0.72rem] text-white/60 truncate max-w-[150px] sm:max-w-none">
                 Backup: {secondaryGuardian.fullName}
               </p>
             </div>
           )}
-          <p className="font-body text-[0.68rem] text-white/25">
+          <p className="font-body text-[0.65rem] sm:text-[0.68rem] text-white/25">
             Registered {child.createdAt ? format(new Date(child.createdAt), 'MMM d, yyyy') : 'Unknown date'}
           </p>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-white/60 hover:text-white mt-2 h-9 px-4 rounded-xl bg-white/5 hover:bg-white/10"
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white/60 hover:text-white mt-1 sm:mt-2 h-8 sm:h-9 px-3 sm:px-4 rounded-xl bg-white/5 hover:bg-white/10 text-[0.75rem] sm:text-sm"
             onClick={() => router.push(`/dashboard/children/${childId}/audit`)}
           >
-            <FileSearch className="w-4 h-4 mr-2" />
+            <FileSearch className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
             View audit log
           </Button>
         </div>
       </div>
 
       {/* CONTENT GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+
         {/* SCHOOL SECTION */}
-        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 col-span-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 min-w-0">
           <p className="font-body text-[0.72rem] uppercase tracking-widest text-[var(--text-secondary)] mb-4">
             SCHOOL
           </p>
           {child.school ? (
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-primary)]">
-                  <School className="w-5 h-5" />
+                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[var(--bg-muted)] flex items-center justify-center text-[var(--text-primary)] flex-shrink-0">
+                  <School className="w-4 h-4 sm:w-5 sm:h-5" />
                 </div>
-                <div>
-                  <p className="font-body font-bold text-[var(--text-primary)]">{child.school.name}</p>
-                  <p className="font-body text-[0.82rem] text-[var(--text-secondary)]">School active on SafePick</p>
+                <div className="min-w-0">
+                  <p className="font-body font-bold text-[var(--text-primary)] text-sm sm:text-base truncate">{child.school.name}</p>
+                  <p className="font-body text-[0.75rem] sm:text-[0.82rem] text-[var(--text-secondary)]">School active on SafePick</p>
                 </div>
               </div>
-              <div className="bg-[var(--bg-muted)] rounded-xl p-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[var(--bg-surface-2)] flex items-center justify-center text-[#0FA37F]">
-                  <CheckCircle2 className="w-4 h-4" />
+              <div className="bg-[var(--bg-muted)] rounded-xl p-2.5 sm:p-3 flex items-center gap-2.5 sm:gap-3">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[var(--bg-surface-2)] flex items-center justify-center text-[#0FA37F] flex-shrink-0">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 </div>
-                <p className="font-body text-[0.78rem] text-[var(--text-primary)]">
+                <p className="font-body text-[0.75rem] sm:text-[0.78rem] text-[var(--text-primary)]">
                   School gate active for pickup authorizations.
                 </p>
               </div>
             </div>
           ) : (
-            <div className="py-4 text-center">
+            <div className="py-4 px-2">
               <p className="font-body text-sm text-[var(--text-secondary)]">Not currently enrolled in a school.</p>
-              <Button variant="ghost" size="sm" className="mt-2 text-[#0FA37F]">Connect to school</Button>
+              <button
+                className="mt-3 h-10 px-5 rounded-xl bg-[#0FA37F] text-white font-medium text-xs sm:text-sm shadow-sm shadow-[#0FA37F]/25 hover:bg-[#0F6E56] hover:shadow-md hover:shadow-[#0FA37F]/30 active:scale-[0.98] transition-all duration-200 flex items-center justify-center"
+              >
+                <School className="w-4 h-4 mr-2" />
+                Connect to school
+              </button>
             </div>
           )}
         </div>
 
         {/* AUTHORIZED DELEGATES */}
-        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 col-span-1">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 min-w-0">
           <div className="flex justify-between items-center mb-4">
-            <p className="font-body text-[0.72rem] uppercase tracking-widest text-[var(--text-secondary)]">
+            <p className="font-body text-[0.7rem] sm:text-[0.72rem] uppercase tracking-widest text-[var(--text-secondary)]">
               AUTHORIZED DELEGATES
             </p>
-            <Link href="/dashboard/delegates" className="text-[0.72rem] font-bold text-[#0FA37F] hover:underline">
+            <Link href="/dashboard/delegates" className="text-[0.7rem] sm:text-[0.72rem] font-bold text-[#0FA37F] hover:underline flex-shrink-0 ml-2">
               Manage
             </Link>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <AvatarStack users={delegates.map(d => ({ id: d.id, fullName: d.fullName, photoUrl: d.photoUrl || undefined }))} />
-            <p className="font-body text-[0.82rem] text-[var(--text-secondary)]">
+            <p className="font-body text-[0.75rem] sm:text-[0.82rem] text-[var(--text-secondary)] break-words">
               {delegates.length} {delegates.length === 1 ? 'delegate' : 'delegates'} authorized to collect {(child.fullName || '').split(' ')[0]}.
             </p>
           </div>
         </div>
 
         {/* ATTENDANCE */}
-        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 col-span-2">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 lg:col-span-2">
           <p className="font-body text-[0.72rem] uppercase tracking-widest text-[var(--text-secondary)] mb-4">
             ATTENDANCE
           </p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
-              <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Current Status</p>
-              <div className="flex items-center justify-center gap-2">
-                <div className={`w-2 h-2 rounded-full text-center ${isMswEnabled ? 'bg-[#0FA37F]' : 'bg-[#6B7280]'}`} />
-                <p className="font-body font-bold text-xs text-[var(--text-primary)] text-center">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-[var(--bg-muted)] rounded-2xl p-3 sm:p-4">
+              <p className="text-[0.65rem] sm:text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Current Status</p>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isMswEnabled ? 'bg-[#0FA37F]' : 'bg-[#6B7280]'}`} />
+                <p className="font-body font-bold text-[0.7rem] sm:text-xs text-[var(--text-primary)] truncate">
                   {isMswEnabled ? 'In School' : (child.enrollmentStatus || 'Pending')}
                 </p>
               </div>
             </div>
-            <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
-              <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Check-in</p>
-              <p className="font-body font-bold text-xs text-[var(--text-primary)]">
+            <div className="bg-[var(--bg-muted)] rounded-2xl p-3 sm:p-4">
+              <p className="text-[0.65rem] sm:text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Check-in</p>
+              <p className="font-body font-bold text-[0.7rem] sm:text-xs text-[var(--text-primary)]">
                 {isMswEnabled ? '7:42 AM' : 'N/A'}
               </p>
             </div>
-            <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
-              <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Weekly Avg</p>
-              <p className="font-body font-bold text-xs text-[var(--text-primary)]">
+            <div className="bg-[var(--bg-muted)] rounded-2xl p-3 sm:p-4">
+              <p className="text-[0.65rem] sm:text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Weekly Avg</p>
+              <p className="font-body font-bold text-[0.7rem] sm:text-xs text-[var(--text-primary)]">
                 {isMswEnabled ? '98%' : 'N/A'}
               </p>
             </div>
-            <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
-              <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Late days</p>
-              <p className="font-body font-bold text-xs text-[var(--text-primary)]">
+            <div className="bg-[var(--bg-muted)] rounded-2xl p-3 sm:p-4">
+              <p className="text-[0.65rem] sm:text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Late days</p>
+              <p className="font-body font-bold text-[0.7rem] sm:text-xs text-[var(--text-primary)]">
                 {isMswEnabled ? '0 this term' : 'N/A'}
               </p>
             </div>
@@ -207,40 +212,40 @@ export default function ChildProfilePage() {
         </div>
 
         {/* RECENT PICKUPS */}
-        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5 col-span-2">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5 lg:col-span-2">
           <div className="flex justify-between items-center mb-4">
             <p className="font-body text-[0.72rem] uppercase tracking-widest text-[var(--text-secondary)]">
               RECENT PICKUPS
             </p>
-            <Link href="/dashboard/pickups" className="text-[0.72rem] font-bold text-[#0FA37F] hover:underline">
+            <Link href="/dashboard/pickups" className="text-[0.7rem] sm:text-[0.72rem] font-bold text-[#0FA37F] hover:underline flex-shrink-0 ml-2">
               View All
             </Link>
           </div>
           {isMswEnabled ? (
             <div className="space-y-3">
-              <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F]">
-                    <Clock className="w-4 h-4" />
+              <div className="flex items-center justify-between py-3 border-b border-[var(--border)] gap-2">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F] flex-shrink-0">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
-                  <div>
-                    <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)]">Collected by David Mensah</p>
-                    <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">Yesterday &middot; 3:15 PM</p>
+                  <div className="min-w-0">
+                    <p className="font-body text-[0.8rem] sm:text-[0.875rem] font-medium text-[var(--text-primary)] truncate">Collected by David Mensah</p>
+                    <p className="font-body text-[0.7rem] sm:text-[0.75rem] text-[var(--text-secondary)]">Yesterday &middot; 3:15 PM</p>
                   </div>
                 </div>
-                <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none">Approved</Badge>
+                <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none text-[0.65rem] sm:text-xs flex-shrink-0">Approved</Badge>
               </div>
-              <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F]">
-                    <Clock className="w-4 h-4" />
+              <div className="flex items-center justify-between py-3 border-b border-[var(--border)] gap-2">
+                <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F] flex-shrink-0">
+                    <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
-                  <div>
-                    <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)]">Collected by Efua Mensah</p>
-                    <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">Oct 12 &middot; 3:20 PM</p>
+                  <div className="min-w-0">
+                    <p className="font-body text-[0.8rem] sm:text-[0.875rem] font-medium text-[var(--text-primary)] truncate">Collected by Efua Mensah</p>
+                    <p className="font-body text-[0.7rem] sm:text-[0.75rem] text-[var(--text-secondary)]">Oct 12 &middot; 3:20 PM</p>
                   </div>
                 </div>
-                <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none">Approved</Badge>
+                <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none text-[0.65rem] sm:text-xs flex-shrink-0">Approved</Badge>
               </div>
             </div>
           ) : (
@@ -255,11 +260,11 @@ export default function ChildProfilePage() {
 
         {/* EMERGENCY OVERRIDE CODES */}
         {child.school && (
-          <div className="col-span-2 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-5">
+          <div className="lg:col-span-2 bg-[var(--bg-surface)] border border-[var(--border)] rounded-2xl p-4 sm:p-5">
             <p className="font-body text-[0.72rem] uppercase tracking-widest text-[var(--text-secondary)] mb-4">
               EMERGENCY OVERRIDE CODES
             </p>
-            <OverrideCodeCard 
+            <OverrideCodeCard
               childId={child.id}
               schoolId={child.school.id}
               schoolName={child.school.name}
@@ -270,16 +275,16 @@ export default function ChildProfilePage() {
       </div>
 
       {/* DANGER ZONE */}
-      <div className="bg-[#FAECE7] rounded-2xl p-5 border border-[#D85A30]/20 mt-8">
-        <div className="flex items-center gap-3 mb-4">
-          <AlertTriangle className="w-5 h-5 text-[#D85A30]" />
+      <div className="bg-[#FAECE7] rounded-2xl p-4 sm:p-5 border border-[#D85A30]/20 mt-6 sm:mt-8">
+        <div className="flex items-center gap-3 mb-3 sm:mb-4">
+          <AlertTriangle className="w-5 h-5 text-[#D85A30] flex-shrink-0" />
           <p className="font-body font-bold text-[#D85A30]">Danger Zone</p>
         </div>
-        <p className="font-body text-sm text-[#D85A30]/70 mb-4 leading-relaxed">
-          Once you delete a child profile, all history and school enrollment data will be permanently removed. 
+        <p className="font-body text-xs sm:text-sm text-[#D85A30]/70 mb-4 leading-relaxed">
+          Once you delete a child profile, all history and school enrollment data will be permanently removed.
           This action cannot be undone.
         </p>
-        <Button variant="danger" className="bg-[#D85A30] text-white border-none h-12 px-6 rounded-xl font-bold">
+        <Button variant="danger" className="bg-[#D85A30] text-white border-none h-10 sm:h-12 px-4 sm:px-6 rounded-xl font-bold text-xs sm:text-sm w-full sm:w-auto">
           Remove {(child.fullName || '').split(' ')[0]}
         </Button>
       </div>

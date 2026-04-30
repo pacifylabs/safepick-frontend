@@ -33,8 +33,8 @@ export function AppProviders(props: { children: React.ReactNode }) {
   const user = useAuthStore((state: any) => state.user);
 
   useEffect(() => {
-    const enableMsw = process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_MSW === "true";
-    
+    const enableMsw = process.env.NEXT_PUBLIC_ENABLE_MSW === "true";
+
     if (enableMsw) {
       import("@/mocks/browser")
         .then(({ worker }) => {
@@ -90,7 +90,7 @@ export function AppProviders(props: { children: React.ReactNode }) {
       <ThemeProvider>
         <ToastContainer />
         {props.children}
-        {process.env.NODE_ENV !== "production" || process.env.NEXT_PUBLIC_ENABLE_MSW === "true" ? (
+        {process.env.NODE_ENV !== "production" ? (
           <ReactQueryDevtools initialIsOpen={false} />
         ) : null}
       </ThemeProvider>
