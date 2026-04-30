@@ -1,18 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { overrideService } from "@/services/override.service";
-import { 
-  GenerateOverridePayload, 
-  OverrideSubmitPayload 
+import {
+  GenerateOverridePayload,
+  OverrideSubmitPayload
 } from "@/types/override.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 /**
  * Hook to fetch all active override codes for a specific child.
  */
 export const useOverrideCodes = (childId: string) => {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["override-codes", childId],
     queryFn: () => overrideService.getOverrideCodes(childId),
-    enabled: !!childId,
+    enabled: !!childId && !!accessToken,
+    staleTime: 1000 * 60 * 30, // 30 minutes - rarely changes (near-static)
   });
 };
 
@@ -90,6 +93,7 @@ export const useValidateSecondaryToken = (token: string | null) => {
     queryFn: () => overrideService.validateSecondaryToken(token!),
     enabled: !!token,
     retry: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 

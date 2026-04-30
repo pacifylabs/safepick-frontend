@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { schoolsService } from "../services/schools.service";
 import { useDebouncedValue } from "./useDebouncedValue";
 import { RequestSchoolPayload } from "../types/schools.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function useSchoolSearch(query: string) {
   const debouncedQuery = useDebouncedValue(query, 400);
@@ -34,10 +35,12 @@ export function useRequestSchool() {
 }
 
 export function useEnrollmentStatus(childId: string) {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["enrollment", childId],
     queryFn: () => schoolsService.getEnrollmentStatus(childId),
-    enabled: !!childId,
+    enabled: !!childId && !!accessToken,
     refetchInterval: 30000,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }

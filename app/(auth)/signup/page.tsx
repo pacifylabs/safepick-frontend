@@ -34,17 +34,31 @@ export default function SignupPage() {
     resolver: zodResolver(signupSchema),
   });
 
+  const normalizePhone = (phone: string): string => {
+    const cleaned = phone.trim().replace(/\s+/g, "");
+    if (cleaned.startsWith("+")) {
+      return cleaned;
+    }
+    if (cleaned.startsWith("0")) {
+      return "+234" + cleaned.slice(1);
+    }
+    return "+234" + cleaned;
+  };
+
   const onSubmit = async (data: SignupFormValues) => {
     setIsSubmitting(true);
     setError(null);
+
+    const normalizedPhone = normalizePhone(data.phone);
+
     try {
       const response = await registerUser({
         fullName: data.fullName,
-        phone: data.phone,
+        phone: normalizedPhone,
         email: data.email || "",
         password: data.password,
       });
-      router.push(`/verify?phone=${encodeURIComponent(data.phone)}&otpToken=${response.otpToken}`);
+      router.push(`/verify?phone=${encodeURIComponent(normalizedPhone)}&otpToken=${response.otpToken}`);
     } catch (err: any) {
       if (err.data?.error === "PHONE_ALREADY_REGISTERED") {
         setFormFieldError("phone", { message: "Phone number already registered" });

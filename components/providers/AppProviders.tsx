@@ -7,7 +7,23 @@ import { getCurrentUser } from "@/services/auth.service";
 import { ToastContainer } from "@/components/ui/Toast";
 import { ThemeProvider } from "./ThemeProvider";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({ 
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 3,
+      gcTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      retry: 1,
+      retryDelay: 2000,
+      refetchOnReconnect: false,
+    },
+    mutations: {
+      retry: 1,
+      retryDelay: 1000,
+    },
+  },
+});
 
 export function AppProviders(props: { children: React.ReactNode }) {
   const [mswReady, setMswReady] = useState(false);
@@ -52,9 +68,11 @@ export function AppProviders(props: { children: React.ReactNode }) {
         .then((response) => {
           setSession(response.user, accessToken);
         })
-        .catch(() => {
-          // Token might be invalid
-          useAuthStore.getState().clearSession();
+        .catch((err) => {
+          // Token might be invalid or /auth/me endpoint doesn't exist
+          console.warn("[AppProviders] Failed to fetch current user:", err);
+          // Don't clear session - let the app work with just the token
+          // The user can be populated from other data sources (e.g., children response)
         });
     }
   }, [mswReady, accessToken, user, setSession]);

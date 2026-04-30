@@ -1,14 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { secondaryGuardianService } from "@/services/secondaryGuardian.service";
 import { InvitePayload } from "@/types/secondaryGuardian.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 /**
  * Parent scoped hooks (useSecondaryGuardian implementation)
  */
 export function useSecondaryGuardians() {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["secondary-guardians"],
     queryFn: () => secondaryGuardianService.getSecondaryGuardians(),
+    enabled: !!accessToken,
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 }
 
@@ -77,6 +81,7 @@ export function useSecondaryPickupRequest(id: string | null) {
       }
       return false;
     },
+    staleTime: 1000 * 30, // 30 seconds - high frequency changes
   });
 }
 
@@ -96,5 +101,6 @@ export function useSecondaryHistory() {
   return useQuery({
     queryKey: ["secondary-history"],
     queryFn: () => secondaryGuardianService.getSecondaryHistory(),
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 }

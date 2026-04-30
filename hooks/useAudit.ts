@@ -1,27 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { auditService } from "@/services/audit.service";
 import { AuditLogFilters, ResolveIncidentPayload } from "@/types/audit.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 export const useAuditLog = (filters: AuditLogFilters) => {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["audit-log", filters],
     queryFn: () => auditService.getAuditLog(filters),
-    enabled: !!filters.childId || !!filters.schoolId,
+    enabled: (!!filters.childId || !!filters.schoolId) && !!accessToken,
     staleTime: 30000,
   });
 };
 
-export const useIncidents = (filters: { 
-  childId?: string; 
-  schoolId?: string; 
+export const useIncidents = (filters: {
+  childId?: string;
+  schoolId?: string;
   resolved?: boolean;
   page?: number;
   limit?: number;
 }) => {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["incidents", filters],
     queryFn: () => auditService.getIncidents(filters),
-    enabled: !!filters.childId || !!filters.schoolId,
+    enabled: (!!filters.childId || !!filters.schoolId) && !!accessToken,
     staleTime: 60000,
   });
 };

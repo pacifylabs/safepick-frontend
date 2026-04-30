@@ -7,6 +7,7 @@ const userSchema = z.object({
   phone: z.string(),
   email: z.string(),
   role: z.string(),
+  phoneVerified: z.boolean(),
   createdAt: z.string()
 });
 

@@ -2,6 +2,12 @@ import { http, HttpResponse } from "msw";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const MOCK_PARENT = {
+  id: "user_parent_1",
+  fullName: "Amara Osei",
+  phone: "+2348012345678",
+};
+
 const MOCK_CHILDREN = [
   {
     id: "child_1",
@@ -11,12 +17,13 @@ const MOCK_CHILDREN = [
     grade: "Primary 3",
     photoUrl: null,
     parentId: "user_parent_1",
-    secondaryGuardianId: "user_delegate_1",
-    secondaryGuardian: {
-      id: "user_delegate_1",
-      fullName: "David Mensah",
-      phone: "+233240000001",
-    },
+    parent: MOCK_PARENT,
+    // secondaryGuardianId: "user_delegate_1",
+    // secondaryGuardian: {
+    //   id: "user_delegate_1",
+    //   fullName: "David Mensah",
+    //   phone: "+233240000001",
+    // },
     school: null,
     enrollmentStatus: "PENDING_SCHOOL",
     createdAt: new Date(Date.now() - 86400000).toISOString(), // Yesterday
@@ -29,12 +36,13 @@ const MOCK_CHILDREN = [
     grade: "Nursery 2",
     photoUrl: null,
     parentId: "user_parent_1",
-    secondaryGuardianId: "user_delegate_2",
-    secondaryGuardian: {
-      id: "user_delegate_2",
-      fullName: "Sarah Antwi",
-      phone: "+233240000002",
-    },
+    parent: MOCK_PARENT,
+    // secondaryGuardianId: "user_delegate_2",
+    // secondaryGuardian: {
+    //   id: "user_delegate_2",
+    //   fullName: "Sarah Antwi",
+    //   phone: "+233240000002",
+    // },
     school: {
       id: "school_1",
       name: "Greenfield Academy",
@@ -50,12 +58,13 @@ const MOCK_CHILDREN = [
     grade: "Primary 1",
     photoUrl: null,
     parentId: "user_parent_1",
-    secondaryGuardianId: "user_delegate_1",
-    secondaryGuardian: {
-      id: "user_delegate_1",
-      fullName: "David Mensah",
-      phone: "+233240000001",
-    },
+    parent: MOCK_PARENT,
+    // secondaryGuardianId: "user_delegate_1",
+    // secondaryGuardian: {
+    //   id: "user_delegate_1",
+    //   fullName: "David Mensah",
+    //   phone: "+233240000001",
+    // },
     school: {
       id: "school_1",
       name: "Greenfield Academy",
@@ -71,12 +80,13 @@ const MOCK_CHILDREN = [
     grade: "Toddler",
     photoUrl: null,
     parentId: "user_parent_1",
-    secondaryGuardianId: "user_delegate_2",
-    secondaryGuardian: {
-      id: "user_delegate_2",
-      fullName: "Sarah Antwi",
-      phone: "+233240000002",
-    },
+    parent: MOCK_PARENT,
+    // secondaryGuardianId: "user_delegate_2",
+    // secondaryGuardian: {
+    //   id: "user_delegate_2",
+    //   fullName: "Sarah Antwi",
+    //   phone: "+233240000002",
+    // },
     school: {
       id: "school_1",
       name: "Greenfield Academy",
@@ -92,12 +102,13 @@ const MOCK_CHILDREN = [
     grade: "Primary 4",
     photoUrl: null,
     parentId: "user_parent_1",
-    secondaryGuardianId: "user_delegate_1",
-    secondaryGuardian: {
-      id: "user_delegate_1",
-      fullName: "David Mensah",
-      phone: "+233240000001",
-    },
+    parent: MOCK_PARENT,
+    // secondaryGuardianId: "user_delegate_1",
+    // secondaryGuardian: {
+    //   id: "user_delegate_1",
+    //   fullName: "David Mensah",
+    //   phone: "+233240000001",
+    // },
     school: {
       id: "school_1",
       name: "Greenfield Academy",
@@ -128,7 +139,9 @@ export const childrenHandlers = [
   http.post("/children", async ({ request }: any) => {
     await delay(1000);
     const body = (await request.json()) as any;
-    
+
+    const hasSecondaryGuardian = body.secondaryGuardian?.phone;
+
     const newChild = {
       id: `child_${Math.random().toString(36).substr(2, 9)}`,
       safepickId: `SP-2026-${Math.floor(Math.random() * 90000) + 10000}`,
@@ -137,12 +150,15 @@ export const childrenHandlers = [
       grade: body.grade,
       photoUrl: body.photo || null,
       parentId: "user_parent_1",
-      secondaryGuardianId: "user_delegate_1", // Mocking found guardian
-      secondaryGuardian: {
+      parent: MOCK_PARENT,
+      secondaryGuardianId: hasSecondaryGuardian ? "user_delegate_1" : undefined,
+      secondaryGuardian: hasSecondaryGuardian ? {
         id: "user_delegate_1",
         fullName: "David Mensah",
         phone: body.secondaryGuardian.phone,
-      },
+      } : null,
+      secondaryGuardianStatus: hasSecondaryGuardian ? "PENDING_INVITE" : "NONE",
+      mode: hasSecondaryGuardian ? "FULL" : "LIMITED",
       school: null,
       enrollmentStatus: "PENDING_SCHOOL",
       createdAt: new Date().toISOString(),

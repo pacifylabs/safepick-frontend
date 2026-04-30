@@ -6,6 +6,7 @@ export const useDelegateProfile = () => {
   return useQuery({
     queryKey: ["delegate", "profile"],
     queryFn: () => delegateService.getProfile(),
+    staleTime: 1000 * 60 * 30, // 30 minutes - rarely changes
   });
 };
 
@@ -13,6 +14,7 @@ export const useDelegateAuthorizations = () => {
   return useQuery({
     queryKey: ["delegate", "authorizations"],
     queryFn: () => delegateService.getAuthorizations(),
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 };
 
@@ -28,6 +30,7 @@ export const useDelegateSchedule = (date: string) => {
         throw error;
       }
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 };
 
@@ -36,6 +39,7 @@ export const useDelegatePickupRequests = () => {
     queryKey: ["delegate", "pickup-requests"],
     queryFn: () => delegateService.getPickupRequests(),
     refetchInterval: 5000,
+    staleTime: 1000 * 30, // 30 seconds - high frequency changes (DO NOT CHANGE)
   });
 };
 
@@ -44,7 +48,8 @@ export const useDelegateQrToken = (authorizationId: string | null) => {
     queryKey: ["delegate", "qr-token", authorizationId],
     queryFn: () => delegateService.getQrToken(authorizationId!),
     enabled: !!authorizationId,
-    refetchInterval: 30000, // Token likely expires, refresh every 30s
+    refetchInterval: 30000,
+    staleTime: 1000 * 30, // 30 seconds - token may refresh frequently
   });
 };
 

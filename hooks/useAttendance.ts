@@ -7,6 +7,7 @@ export const useAttendanceByChild = (childId: string, month: string) => {
     queryKey: ["attendance", childId, month],
     queryFn: () => attendanceService.getAttendanceByChild(childId, month),
     enabled: !!childId && !!month,
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 };
 

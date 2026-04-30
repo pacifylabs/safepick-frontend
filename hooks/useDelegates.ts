@@ -1,27 +1,38 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { delegatesService } from "../services/delegates.service";
 import { CreateInvitePayload } from "../types/delegates.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function useDelegates(childId?: string) {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: childId ? ["delegates", "child", childId] : ["delegates"],
     queryFn: () => delegatesService.getDelegates(childId),
+    enabled: !!accessToken,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   });
 }
 
 export function useDelegate(delegateId: string) {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["delegates", delegateId],
     queryFn: () => delegatesService.getDelegate(delegateId),
-    enabled: !!delegateId,
+    enabled: !!delegateId && !!accessToken,
+    staleTime: 1000 * 60 * 30, // 30 minutes - delegate profiles rarely change
   });
 }
 
 export function useDelegatesForChild(childId: string) {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["delegates", "child", childId],
     queryFn: () => delegatesService.getDelegatesForChild(childId),
-    enabled: !!childId,
+    enabled: !!childId && !!accessToken,
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 }
 
@@ -47,10 +58,13 @@ export function useRevokeInvite() {
 }
 
 export function usePendingInvites() {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["invites", "pending"],
     queryFn: () => delegatesService.getPendingInvites(),
+    enabled: !!accessToken,
     refetchInterval: 30000,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
 

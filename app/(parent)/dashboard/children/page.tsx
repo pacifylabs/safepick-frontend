@@ -202,7 +202,7 @@ export default function ChildrenPage() {
                 <div>
                   <AvatarStack
                     users={[
-                      { id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName },
+                      ...(child.secondaryGuardian ? [{ id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),
                     ]}
                   />
                 </div>
@@ -220,7 +220,7 @@ export default function ChildrenPage() {
                 </div>
 
                 <p className="font-body text-[0.82rem] text-[var(--text-secondary)] text-right">
-                  {format(new Date(child.createdAt), "MMM d, yyyy")}
+                  {child.createdAt ? format(new Date(child.createdAt), "MMM d, yyyy") : "N/A"}
                 </p>
 
                 <button className="p-1 hover:bg-[var(--bg-muted)] rounded-lg transition-colors text-[var(--text-muted)] hover:text-[var(--text-primary)]">
@@ -279,7 +279,7 @@ export default function ChildrenPage() {
                 </div>
                 <AvatarStack
                   users={[
-                    { id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName },
+                    ...(child.secondaryGuardian ? [{ id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),
                   ]}
                 />
               </div>

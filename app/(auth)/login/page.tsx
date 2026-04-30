@@ -22,6 +22,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
   const setSession = useAuthStore((state: any) => state.setSession);
+  const clearMswSession = useAuthStore((state: any) => state.clearMswSession);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -33,33 +34,101 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = async (data: LoginFormValues) => {
+  const normalizePhone = (phone: string): string => {
+    const cleaned = phone.trim().replace(/\s+/g, "");
+    if (cleaned.startsWith("+")) {
+      return cleaned;
+    }
+    if (cleaned.startsWith("0")) {
+      return "+234" + cleaned.slice(1);
+    }
+    return "+234" + cleaned;
+  };
+
+   const onSubmit = async (data: LoginFormValues) => {
     setIsSubmitting(true);
     setError(null);
-    
-    // Demo mode fallback for production without backend
-    if (process.env.NEXT_PUBLIC_DEMO_MODE === "true" && !process.env.NEXT_PUBLIC_API_BASE_URL) {
-      // Mock successful login
-      const mockUser = {
-        id: "usr_01H8M3Q9V",
-        fullName: "Amara Osei",
-        phone: data.phone,
-        email: "amara@example.com",
-        role: "PARENT",
-        createdAt: "2025-01-01T00:00:00Z"
-      };
-      setSession(mockUser as any, "demo-mock-token");
-      router.push("/dashboard");
-      setIsSubmitting(false);
-      return;
-    }
-    
+
+    const normalizedData = {
+      ...data,
+      phone: normalizePhone(data.phone),
+    };
+
     try {
-      const response = await loginUser(data);
+      const response = await loginUser(normalizedData);
+      console.log("[Login] API Response:", response);
       setSession(response.user as any, response.accessToken);
       router.push("/dashboard");
     } catch (err: any) {
-      setError("Invalid phone number or password. Please try again.");
+      console.error("[Login] Error:", err);
+      setError(err?.data?.message || err?.message || "Invalid phone number or password. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDemoAccess = async (userType: "parent" | "delegate" | "school") => {
+    setIsSubmitting(true);
+    setError(null);
+    
+    try {
+      // Check if MSW is available by making a test call
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || ""}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: "+2348012345678", password: "demo" })
+      });
+      
+      if (!response.ok) {
+        throw new Error("MSW not available");
+      }
+      
+      // Mock successful login based on user type
+      let mockUser, redirectPath;
+      
+      switch (userType) {
+        case "parent":
+          mockUser = {
+            id: "usr_01H8M3Q9V",
+            fullName: "Amara Osei",
+            phone: "+2348012345678",
+            email: "amara@example.com",
+            role: "PARENT",
+            createdAt: "2025-01-01T00:00:00Z"
+          };
+          redirectPath = "/dashboard";
+          break;
+        case "delegate":
+          mockUser = {
+            id: "del_123",
+            fullName: "John Driver",
+            phone: "+2348012345678",
+            photoUrl: null,
+            kycStatus: "APPROVED",
+            role: "DELEGATE",
+            createdAt: "2024-03-15T10:00:00Z"
+          };
+          redirectPath = "/delegate/dashboard";
+          break;
+        case "school":
+          mockUser = {
+            id: "sch_001",
+            fullName: "Grange School Admin",
+            phone: "+2348012345678",
+            email: "admin@grange.edu",
+            role: "SCHOOL_ADMIN",
+            createdAt: "2024-01-01T00:00:00Z"
+          };
+          redirectPath = "/school/gate";
+          break;
+      }
+      
+      clearMswSession();
+      setSession(mockUser as any, "demo-mock-token");
+      router.push(redirectPath);
+      
+    } catch (err) {
+      setError("Demo mode is not available. MSW is not running.");
     } finally {
       setIsSubmitting(false);
     }
@@ -141,6 +210,36 @@ export default function LoginPage() {
             Delegate sign in
           </Link>
         </p>
+      </div>
+
+      {/* Quick Demo Access */}
+      <div className="mt-6 pt-6 border-t border-[var(--auth-border)]">
+        <p className="text-center font-body text-xs sm:text-sm text-[var(--auth-text-muted)] mb-4">
+          Quick demo access (MSW required)
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            onClick={() => handleDemoAccess("parent")}
+            disabled={isSubmitting}
+            className="px-3 py-2 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 hover:text-gray-700 hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            Demo as Parent
+          </button>
+          <button
+            onClick={() => handleDemoAccess("delegate")}
+            disabled={isSubmitting}
+            className="px-3 py-2 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 hover:text-gray-700 hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            Demo as Delegate
+          </button>
+          <button
+            onClick={() => handleDemoAccess("school")}
+            disabled={isSubmitting}
+            className="px-3 py-2 text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 hover:text-gray-700 hover:scale-105 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+          >
+            Demo as School
+          </button>
+        </div>
       </div>
     </AuthCard>
   );

@@ -3,6 +3,7 @@ import {
   Child,
   ChildListResponseSchema,
   ChildSchema,
+  GetChildResponseSchema,
   GuardianLookupResponse,
   GuardianLookupResponseSchema,
   RegisterChildPayload,
@@ -17,8 +18,11 @@ export const childrenService = {
   },
 
   async getChild(childId: string): Promise<Child> {
-    const response = await apiFetch<any>(`/children/${childId}`);
-    return ChildSchema.parse(response);
+    const response = await apiFetch<unknown>(`/children/${childId}`);
+
+    // API returns { child: {...} } nested structure
+    const parsed = GetChildResponseSchema.parse(response);
+    return parsed.child;
   },
 
   async registerChild(data: RegisterChildPayload): Promise<Child> {

@@ -1,20 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { authorizationsService } from "../services/authorizations.service";
 import { CreateAuthorizationPayload, UpdateAuthorizationPayload, RejectDelegatePayload } from "../types/authorizations.types";
+import { useAuthStore } from "@/stores/auth.store";
 
 export function usePendingDelegates() {
+  const { accessToken } = useAuthStore();
   return useQuery({
     queryKey: ["pending-delegates"],
     queryFn: () => authorizationsService.getPendingDelegates(),
+    enabled: !!accessToken,
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 }
 
 export function useAuthorizations(childId?: string) {
   const queryClient = useQueryClient();
+  const { accessToken } = useAuthStore();
 
   const query = useQuery({
     queryKey: ["authorizations", childId],
     queryFn: () => authorizationsService.getAuthorizations(childId),
+    enabled: !!accessToken,
+    staleTime: 1000 * 60 * 5, // 5 minutes - occasionally changes
   });
 
   const createAuthorization = useMutation({

@@ -17,6 +17,7 @@ export const usePickupRequest = (id: string) => {
       return false;
     },
     enabled: !!id,
+    staleTime: 1000 * 30, // 30 seconds - high frequency changes
   });
 };
 
@@ -43,6 +44,7 @@ export const useRecentPickupRequests = () => {
     queryKey: ["pickup", "recent"],
     queryFn: () => pickupService.getRecentPickupRequests(),
     refetchInterval: 10000,
+    staleTime: 1000 * 30, // 30 seconds - high frequency changes
   });
 };
 
@@ -55,5 +57,6 @@ export const useQrToken = (authorizationId: string | null) => {
     queryFn: () => pickupService.getQrToken(authorizationId!),
     refetchInterval: 60000,
     enabled: !!authorizationId,
+    staleTime: 1000 * 30, // 30 seconds - token may refresh frequently
   });
 };

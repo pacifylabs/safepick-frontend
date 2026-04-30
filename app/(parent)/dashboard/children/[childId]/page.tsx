@@ -13,7 +13,8 @@ import {
   Clock, 
   AlertTriangle,
   MapPin,
-  CheckCircle2
+  CheckCircle2,
+  History
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
@@ -22,6 +23,9 @@ import { Button } from "@/components/ui/Button";
 import { format } from "date-fns";
 import { OverrideCodeCard } from "@/components/override/OverrideCodeCard";
 import { FileSearch } from "lucide-react";
+
+// Check if MSW is enabled
+const isMswEnabled = process.env.NEXT_PUBLIC_ENABLE_MSW === "true";
 
 export default function ChildProfilePage() {
   const { childId } = useParams<{ childId: string }>();
@@ -66,7 +70,7 @@ export default function ChildProfilePage() {
             <img src={child.photoUrl} alt={child.fullName} className="w-full h-full object-cover" />
           ) : (
             <p className="font-display text-[1.5rem] font-semibold">
-              {child.fullName.split(' ').map(n => n[0]).join('')}
+              {(child.fullName || '').split(' ').map(n => n[0]).join('')}
             </p>
           )}
         </div>
@@ -98,7 +102,7 @@ export default function ChildProfilePage() {
             </div>
           )}
           <p className="font-body text-[0.68rem] text-white/25">
-            Registered {format(new Date(child.createdAt), 'MMM d, yyyy')}
+            Registered {child.createdAt ? format(new Date(child.createdAt), 'MMM d, yyyy') : 'Unknown date'}
           </p>
           <Button 
             variant="ghost" 
@@ -161,7 +165,7 @@ export default function ChildProfilePage() {
           <div className="flex items-center gap-4">
             <AvatarStack users={delegates.map(d => ({ id: d.id, fullName: d.fullName, photoUrl: d.photoUrl || undefined }))} />
             <p className="font-body text-[0.82rem] text-[var(--text-secondary)]">
-              {delegates.length} {delegates.length === 1 ? 'delegate' : 'delegates'} authorized to collect {child.fullName.split(' ')[0]}.
+              {delegates.length} {delegates.length === 1 ? 'delegate' : 'delegates'} authorized to collect {(child.fullName || '').split(' ')[0]}.
             </p>
           </div>
         </div>
@@ -174,22 +178,30 @@ export default function ChildProfilePage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
               <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Current Status</p>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#0FA37F]" />
-                <p className="font-body font-bold text-[var(--text-primary)]">In School</p>
+              <div className="flex items-center justify-center gap-2">
+                <div className={`w-2 h-2 rounded-full text-center ${isMswEnabled ? 'bg-[#0FA37F]' : 'bg-[#6B7280]'}`} />
+                <p className="font-body font-bold text-xs text-[var(--text-primary)] text-center">
+                  {isMswEnabled ? 'In School' : (child.enrollmentStatus || 'Pending')}
+                </p>
               </div>
             </div>
             <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
               <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Check-in</p>
-              <p className="font-body font-bold text-[var(--text-primary)]">7:42 AM</p>
+              <p className="font-body font-bold text-xs text-[var(--text-primary)]">
+                {isMswEnabled ? '7:42 AM' : 'N/A'}
+              </p>
             </div>
             <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
               <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Weekly Avg</p>
-              <p className="font-body font-bold text-[var(--text-primary)]">98%</p>
+              <p className="font-body font-bold text-xs text-[var(--text-primary)]">
+                {isMswEnabled ? '98%' : 'N/A'}
+              </p>
             </div>
             <div className="bg-[var(--bg-muted)] rounded-2xl p-4">
               <p className="text-[0.68rem] font-bold text-[var(--text-secondary)] uppercase tracking-wider mb-1">Late days</p>
-              <p className="font-body font-bold text-[var(--text-primary)]">0 this term</p>
+              <p className="font-body font-bold text-xs text-[var(--text-primary)]">
+                {isMswEnabled ? '0 this term' : 'N/A'}
+              </p>
             </div>
           </div>
         </div>
@@ -204,32 +216,41 @@ export default function ChildProfilePage() {
               View All
             </Link>
           </div>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F]">
-                  <Clock className="w-4 h-4" />
+          {isMswEnabled ? (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F]">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)]">Collected by David Mensah</p>
+                    <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">Yesterday &middot; 3:15 PM</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)]">Collected by David Mensah</p>
-                  <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">Yesterday &middot; 3:15 PM</p>
-                </div>
+                <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none">Approved</Badge>
               </div>
-              <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none">Approved</Badge>
-            </div>
-            <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F]">
-                  <Clock className="w-4 h-4" />
+              <div className="flex items-center justify-between py-3 border-b border-[var(--border)]">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#E1F5EE] flex items-center justify-center text-[#0FA37F]">
+                    <Clock className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)]">Collected by Efua Mensah</p>
+                    <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">Oct 12 &middot; 3:20 PM</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-body text-[0.875rem] font-medium text-[var(--text-primary)]">Collected by Efua Mensah</p>
-                  <p className="font-body text-[0.75rem] text-[var(--text-secondary)]">Oct 12 &middot; 3:20 PM</p>
-                </div>
+                <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none">Approved</Badge>
               </div>
-              <Badge variant="teal" className="bg-[#E1F5EE] text-[#0F6E56] border-none">Approved</Badge>
             </div>
-          </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-center">
+              <History className="w-8 h-8 text-[#6B7280]/30 mb-2" />
+              <p className="font-body text-[0.78rem] text-[#6B7280]/60">
+                No recent pickups recorded
+              </p>
+            </div>
+          )}
         </div>
 
         {/* EMERGENCY OVERRIDE CODES */}
@@ -259,7 +280,7 @@ export default function ChildProfilePage() {
           This action cannot be undone.
         </p>
         <Button variant="danger" className="bg-[#D85A30] text-white border-none h-12 px-6 rounded-xl font-bold">
-          Remove {child.fullName.split(' ')[0]}
+          Remove {(child.fullName || '').split(' ')[0]}
         </Button>
       </div>
     </div>

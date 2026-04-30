@@ -297,7 +297,7 @@ export default function DashboardPage() {
                 <div>
                   <AvatarStack
                     users={[
-                      { id: child.secondaryGuardianId, fullName: child.secondaryGuardian.fullName },
+                      ...(child.secondaryGuardian ? [{ id: child.secondaryGuardianId || child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),
                       ...delegates
                         .filter(d => d.authorizations.some(a => a.childId === child.id))
                         .map(d => ({ id: d.id, fullName: d.fullName, photoUrl: d.photoUrl || undefined }))
@@ -310,13 +310,13 @@ export default function DashboardPage() {
                     <p className="font-body text-[0.82rem] text-[var(--text-primary)] truncate">{child.school?.name}</p>
                   ) : (
                     <span className="bg-[#FAEEDA] text-[#BA7517] text-[0.72rem] px-2 py-0.5 rounded-full whitespace-nowrap inline-block max-w-full overflow-hidden text-ellipsis">
-                      {child.enrollmentStatus === "PENDING_SCHOOL" ? "Setup needed" : "Verifying"}
+                      {(child.enrollmentStatus || "") === "PENDING_SCHOOL" ? "Setup needed" : "Verifying"}
                     </span>
                   )}
                 </div>
 
                 <p className="font-body text-[0.82rem] text-[var(--text-secondary)] truncate text-right">
-                  {format(new Date(child.createdAt), "MMM d, yyyy")}
+                  {child.createdAt ? format(new Date(child.createdAt), "MMM d, yyyy") : "N/A"}
                 </p>
 
                 <div className="relative">
@@ -350,7 +350,7 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-1.5">
                   <div className={`w-1.5 h-1.5 rounded-full ${child.enrollmentStatus === "VERIFIED" ? "bg-[#0FA37F]" : "bg-[#EF9F27]"}`} />
                   <span className="text-[0.65rem] text-[var(--text-secondary)] font-medium capitalize">
-                    {child.enrollmentStatus.toLowerCase().replace(/_/g, " ")}
+                    {(child.enrollmentStatus || "PENDING").toLowerCase().replace(/_/g, " ")}
                   </span>
                 </div>
                 <MoreHorizontal className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
