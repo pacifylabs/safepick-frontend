@@ -34,13 +34,14 @@ export const ChildSchema = z.object({
   photoUrl: z.string().nullable(),
   parentId: z.string().optional(),
   parent: ParentSchema.optional(),
-  secondaryGuardianId: z.string().optional(),
+  secondaryGuardianId: z.string().nullable().optional(),
   secondaryGuardian: SecondaryGuardianSchema.nullable().optional(),
   secondaryGuardianStatus: z.enum(["NONE", "PENDING_INVITE", "ACTIVE"]).optional(),
   mode: z.enum(["LIMITED", "FULL"]).optional(),
   school: SchoolSummarySchema.nullable().optional(),
   enrollmentStatus: EnrollmentStatusSchema.optional().default("PENDING_VERIFICATION"),
   createdAt: z.string(),
+  updatedAt: z.string().optional(),
 });
 
 export const RegisterChildPayloadSchema = z.object({

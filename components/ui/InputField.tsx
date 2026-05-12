@@ -72,7 +72,7 @@ export function InputField<T extends FieldValues>({
           </button>
         ) : null}
       </div>
-      <p className="min-h-[1.25rem] text-[0.75rem] text-coral font-body">
+      <p className="min-h-[1.25rem] text-[0.75rem] text-red-500 font-body">
         {error ?? ""}
       </p>
     </div>

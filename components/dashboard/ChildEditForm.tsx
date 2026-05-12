@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { X, Loader2, AlertCircle } from 'lucide-react';
+import { X, Loader2, AlertCircle, Upload } from 'lucide-react';
 import {
   UpdateChildPayload,
   UpdateChildPayloadSchema,
   Child,
 } from '@/types/children.types';
 import { useUpdateChild } from '@/hooks/useUpdateChild';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 interface ChildEditFormProps {
   child: Child;
@@ -28,6 +29,9 @@ const GRADES = [
 
 export function ChildEditForm({ child, onCancel, onSuccess }: ChildEditFormProps) {
   const { mutate, isPending, isError } = useUpdateChild(child.id);
+  const { mutate: uploadPhoto, isPending: isUploading } = useFileUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState<string | null>(child.photoUrl);
 
   const form = useForm<UpdateChildPayload>({
     resolver: zodResolver(UpdateChildPayloadSchema),
@@ -41,6 +45,26 @@ export function ChildEditForm({ child, onCancel, onSuccess }: ChildEditFormProps
     },
   });
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    uploadPhoto(
+      { file, uploadType: 'child_photos', entityId: child.id },
+      {
+        onSuccess: (response) => {
+          setPreviewPhotoUrl(response.url);
+          form.setValue('photoUrl', response.url);
+        },
+      }
+    );
+  };
+
+  const handleRemovePhoto = () => {
+    setPreviewPhotoUrl(null);
+    form.setValue('photoUrl', null);
+  };
+
   const handleCancel = () => {
     if (form.formState.isDirty) {
       const confirmed = window.confirm(
@@ -52,6 +76,7 @@ export function ChildEditForm({ child, onCancel, onSuccess }: ChildEditFormProps
   };
 
   const handleSubmit = form.handleSubmit((data) => {
+    if (isPending) return;
     mutate(data, {
       onSuccess: (updated) => {
         onSuccess(updated);
@@ -80,24 +105,50 @@ export function ChildEditForm({ child, onCancel, onSuccess }: ChildEditFormProps
       <div className="flex-1 overflow-y-auto p-5 space-y-5">
         {/* PHOTO FIELD */}
         <div className="flex flex-col items-center">
-          <div className="w-[72px] h-[72px] rounded-full mx-auto mb-3 bg-[#1D9E75] flex items-center justify-center text-white overflow-hidden">
-            {child.photoUrl ? (
-              <img
-                src={child.photoUrl}
-                alt={child.fullName}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <span className="font-display text-[1.5rem] font-semibold">
-                {child.fullName.split(' ').map(n => n[0]).join('')}
-              </span>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="hidden"
+          />
+          <div className="relative">
+            <div
+              className="w-[72px] h-[72px] rounded-full mx-auto mb-3 bg-[#1D9E75] flex items-center justify-center text-white overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {isUploading ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : previewPhotoUrl ? (
+                <img
+                  src={previewPhotoUrl}
+                  alt={child.fullName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="font-display text-[1.5rem] font-semibold">
+                  {child.fullName.split(' ').map(n => n[0]).join('')}
+                </span>
+              )}
+            </div>
+            {previewPhotoUrl && !isUploading && (
+              <button
+                type="button"
+                onClick={handleRemovePhoto}
+                className="absolute -top-1 -right-1 w-6 h-6 bg-[#D85A30] text-white rounded-full flex items-center justify-center text-xs hover:bg-[#c44d27] transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
             )}
           </div>
           <button
             type="button"
-            className="text-[0.72rem] text-[#0FA37F] hover:underline"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="text-[0.72rem] text-[#0FA37F] hover:underline disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
           >
-            Change photo
+            <Upload className="w-3 h-3" />
+            {previewPhotoUrl ? 'Change photo' : 'Add photo'}
           </button>
         </div>
 

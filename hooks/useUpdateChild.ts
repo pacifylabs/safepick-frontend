@@ -12,6 +12,19 @@ export function useUpdateChild(childId: string) {
     mutationFn: (payload: UpdateChildPayload) =>
       childrenService.updateChild(childId, payload),
 
+    onSuccess: (data) => {
+      console.log('Update child API response:', data);
+      // Update cache with server response on success
+      queryClient.setQueryData(queryKeys.child(childId), data);
+      queryClient.setQueryData(
+        queryKeys.children,
+        (old: any[]) =>
+          Array.isArray(old)
+            ? old.map((c) => (c.id === childId ? data : c))
+            : old,
+      );
+    },
+
     onMutate: async (payload) => {
       // Cancel outgoing refetches for this child
       await queryClient.cancelQueries({
@@ -49,7 +62,8 @@ export function useUpdateChild(childId: string) {
       return { previousChild, previousChildren };
     },
 
-    onError: (_err, _payload, context) => {
+    onError: (err, _payload, context) => {
+      console.error('Update child error:', err);
       // Roll back on error
       if (context?.previousChild) {
         queryClient.setQueryData(

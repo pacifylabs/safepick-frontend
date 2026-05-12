@@ -33,7 +33,9 @@ export function AppProviders(props: { children: React.ReactNode }) {
   const user = useAuthStore((state: any) => state.user);
 
   useEffect(() => {
-    const enableMsw = process.env.NEXT_PUBLIC_ENABLE_MSW === "true";
+    const enableMsw =
+      process.env.NODE_ENV !== "production" &&
+      process.env.NEXT_PUBLIC_ENABLE_MSW === "true";
 
     if (enableMsw) {
       import("@/mocks/browser")
@@ -58,6 +60,26 @@ export function AppProviders(props: { children: React.ReactNode }) {
           setMswReady(true);
         });
     } else {
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .getRegistrations()
+          .then((registrations) => {
+            registrations.forEach((registration) => {
+              const workerUrl =
+                registration.active?.scriptURL ??
+                registration.installing?.scriptURL ??
+                registration.waiting?.scriptURL;
+
+              if (workerUrl?.endsWith("/mockServiceWorker.js")) {
+                registration.unregister();
+              }
+            });
+          })
+          .catch((err: unknown) => {
+            console.warn("[MSW] Failed to unregister service worker:", err);
+          });
+      }
+
       setMswReady(true);
     }
   }, []);
