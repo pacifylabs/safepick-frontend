@@ -26,6 +26,7 @@ import {
   LogOut,
   MapPin,
   Menu,
+  UserRound,
   X,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
@@ -142,7 +143,13 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
               <div className="flex-1 overflow-y-auto p-4 space-y-6">
                 {/* Profile Section */}
-                <div className="flex items-center gap-3 p-3 bg-[var(--bg-surface-2)] rounded-2xl border border-[var(--border)]">
+                <button
+                  onClick={() => {
+                    router.push("/dashboard/profile");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex w-full items-center gap-3 rounded-2xl border border-[var(--border)] bg-[var(--bg-surface-2)] p-3 text-left transition-colors hover:bg-[var(--bg-muted)]"
+                >
                   <div className="w-10 h-10 rounded-full bg-[#1D9E75] flex items-center justify-center text-white font-medium">
                     {user?.fullName?.[0]}
                   </div>
@@ -150,7 +157,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                     <p className="text-[0.9rem] font-semibold text-[var(--text-primary)] truncate">{user?.fullName}</p>
                     <p className="text-[0.75rem] text-[var(--text-secondary)] truncate">{user?.phone}</p>
                   </div>
-                </div>
+                </button>
 
                 {/* Main Links */}
                 <div className="space-y-1">
@@ -304,7 +311,11 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             )}
           </div>
 
-          <div className="w-9 h-9 rounded-full overflow-hidden cursor-pointer bg-[#1D9E75] flex items-center justify-center border border-black/5">
+          <button
+            onClick={() => router.push("/dashboard/profile")}
+            className="w-9 h-9 rounded-full overflow-hidden cursor-pointer bg-[#1D9E75] flex items-center justify-center border border-black/5"
+            aria-label="Open profile"
+          >
             {user?.fullName ? (
               <span className="text-[0.75rem] font-medium text-white">
                 {user.fullName.split(" ").map((n: string) => n[0]).join("")}
@@ -312,7 +323,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             ) : (
               <Users className="w-4 h-4 text-white" />
             )}
-          </div>
+          </button>
         </div>
       </header>
 
@@ -422,7 +433,22 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
           </div>
 
           <div className="mt-auto p-4 border-t border-[var(--border)]">
-            <div className="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--bg-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+            <div
+              onClick={() => router.push("/dashboard/profile")}
+              className={`flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer ${
+                pathname === "/dashboard/profile"
+                  ? "bg-[#EEF2FF] text-[#3730A3]"
+                  : "text-[var(--text-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              <UserRound className="w-4 h-4" />
+              <span className="text-[0.875rem]">Profile</span>
+            </div>
+
+            <div
+              onClick={() => router.push("/dashboard/profile")}
+              className="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer hover:bg-[var(--bg-muted)] text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+            >
               <Settings className="w-4 h-4" />
               <span className="text-[0.875rem]">Settings</span>
             </div>

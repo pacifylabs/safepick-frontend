@@ -28,7 +28,7 @@ export function InputField<T extends FieldValues>({
 
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
-      <label htmlFor={name} className="font-body text-[0.875rem] font-medium text-navy">
+      <label htmlFor={name} className="font-body text-[0.875rem] font-medium text-white/85">
         {label}
       </label>
       <div className="relative">

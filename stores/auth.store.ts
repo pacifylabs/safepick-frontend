@@ -5,7 +5,7 @@ export interface AuthUser {
   id: string;
   fullName: string;
   phone: string;
-  email?: string;
+  email?: string | null;
   role: "PARENT" | "DELEGATE" | "SCHOOL_ADMIN";
   phoneVerified?: boolean;
   createdAt: string;

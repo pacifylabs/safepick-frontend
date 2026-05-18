@@ -9,6 +9,7 @@ import { AuthCard } from "@/components/ui/AuthCard";
 import { InputField } from "@/components/ui/InputField";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { getApiErrorMessage } from "@/services/apiError";
 import { loginUser } from "@/services/auth.service";
 import { useAuthStore } from "@/stores/auth.store";
 
@@ -61,7 +62,7 @@ export default function LoginPage() {
       router.push("/dashboard");
     } catch (err: any) {
       console.error("[Login] Error:", err);
-      setError(err?.data?.message || err?.message || "Invalid phone number or password. Please try again.");
+      setError(getApiErrorMessage(err, "Invalid phone number or password. Please try again."));
     } finally {
       setIsSubmitting(false);
     }
@@ -70,25 +71,19 @@ export default function LoginPage() {
   const handleDemoAccess = async (userType: "parent" | "delegate" | "school") => {
     setIsSubmitting(true);
     setError(null);
-    
-    try {
-      // Check if MSW is available by making a test call
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || ""}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: "+2348012345678", password: "demo" })
-      });
-      
-      if (!response.ok) {
-        throw new Error("MSW not available");
-      }
-      
-      // Mock successful login based on user type
-      let mockUser, redirectPath;
-      
+
+    const mswStarted = (globalThis as any).__mswStarted;
+
+    if (!mswStarted) {
+      setError("Demo mode is not available. MSW is not running.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const mockUser = (() => {
       switch (userType) {
         case "parent":
-          mockUser = {
+          return {
             id: "usr_01H8M3Q9V",
             fullName: "Amara Osei",
             phone: "+2348012345678",
@@ -96,10 +91,8 @@ export default function LoginPage() {
             role: "PARENT",
             createdAt: "2025-01-01T00:00:00Z"
           };
-          redirectPath = "/dashboard";
-          break;
         case "delegate":
-          mockUser = {
+          return {
             id: "del_123",
             fullName: "John Driver",
             phone: "+2348012345678",
@@ -108,10 +101,8 @@ export default function LoginPage() {
             role: "DELEGATE",
             createdAt: "2024-03-15T10:00:00Z"
           };
-          redirectPath = "/delegate/dashboard";
-          break;
         case "school":
-          mockUser = {
+          return {
             id: "sch_001",
             fullName: "Grange School Admin",
             phone: "+2348012345678",
@@ -119,19 +110,20 @@ export default function LoginPage() {
             role: "SCHOOL_ADMIN",
             createdAt: "2024-01-01T00:00:00Z"
           };
-          redirectPath = "/school/gate";
-          break;
       }
-      
-      clearMswSession();
-      setSession(mockUser as any, "demo-mock-token");
-      router.push(redirectPath);
-      
-    } catch (err) {
-      setError("Demo mode is not available. MSW is not running.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    })();
+
+    const redirectPath =
+      userType === "parent"
+        ? "/dashboard"
+        : userType === "delegate"
+          ? "/delegate/dashboard"
+          : "/school/gate";
+
+    clearMswSession();
+    setSession(mockUser as any, "demo-mock-token");
+    router.push(redirectPath);
+    setIsSubmitting(false);
   };
 
   return (

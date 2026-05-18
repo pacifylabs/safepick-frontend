@@ -154,7 +154,7 @@ function DelegateKycContent() {
 
             <div className="space-y-4 sm:space-y-6">
               <div className="flex flex-col gap-1.5">
-                <label className="font-body text-[0.75rem] sm:text-[0.78rem] font-medium text-white/70">Your phone number</label>
+                <label className="font-body text-[0.75rem] sm:text-[0.78rem] font-medium text-white/85">Your phone number</label>
                 <input
                   type="tel"
                   placeholder="+234 801 234 5678"
@@ -228,7 +228,7 @@ function DelegateKycContent() {
               <InputField label="Full name" name="fullName" placeholder="David Mensah" register={register} error={errors.fullName?.message} />
               
               <div className="flex flex-col gap-1.5">
-                <label className="font-body text-[0.75rem] sm:text-[0.78rem] font-medium text-white/70">ID Type</label>
+                <label className="font-body text-[0.75rem] sm:text-[0.78rem] font-medium text-white/85">ID Type</label>
                 <select
                   {...register("idType")}
                   className="w-full px-4 py-3 sm:py-3.5 bg-[var(--auth-surface)] border border-[var(--auth-border)] rounded-[14px] text-white text-[0.9rem] outline-none focus:border-teal focus:ring-3 focus:ring-teal/25 transition-all appearance-none"

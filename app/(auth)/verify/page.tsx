@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AuthCard } from "@/components/ui/AuthCard";
 import { OtpInput } from "@/components/ui/OtpInput";
 import { Button } from "@/components/ui/Button";
+import { getApiErrorMessage } from "@/services/apiError";
 import { verifyOtp, resendOtp as resendOtpService } from "@/services/auth.service";
 import { useAuthStore } from "@/stores/auth.store";
 
@@ -18,6 +19,7 @@ export default function VerifyPage() {
   const [otpToken, setOtpToken] = useState(initialOtpToken);
   const [isVerifying, setIsVerifying] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("Incorrect code.");
   const [attemptsRemaining, setAttemptsRemaining] = useState(3);
   const [cooldown, setCooldown] = useState(60);
 
@@ -33,13 +35,18 @@ export default function VerifyPage() {
     
     setIsVerifying(true);
     setHasError(false);
+    setErrorMessage("Incorrect code.");
     try {
       const response = await verifyOtp({ otpToken, otp });
       setSession(response.user as any, response.accessToken);
       router.push("/signup/success");
-    } catch (err) {
+    } catch (err: any) {
+      const status = typeof err?.status === "number" ? err.status : null;
       setHasError(true);
-      setAttemptsRemaining((prev) => Math.max(0, prev - 1));
+      setErrorMessage(getApiErrorMessage(err, "Verification failed. Please try again."));
+      if (status === 400 || status === 401 || status === 422) {
+        setAttemptsRemaining((prev) => Math.max(0, prev - 1));
+      }
     } finally {
       setIsVerifying(false);
     }
@@ -104,7 +111,7 @@ export default function VerifyPage() {
 
         {hasError && attemptsRemaining > 0 && (
           <p className="mt-2 sm:mt-3 text-center text-[0.74rem] sm:text-[0.78rem] text-coral-light">
-            Incorrect code. {attemptsRemaining} attempts remaining.
+            {errorMessage} {attemptsRemaining} attempts remaining.
           </p>
         )}
 

@@ -1,4 +1,5 @@
 import { useAuthStore } from "@/stores/auth.store";
+import { getApiErrorMessage } from "@/services/apiError";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -39,18 +40,14 @@ export async function apiFetch<T>(
 
   if (res.status === 401) {
     useAuthStore.getState().clearSession();
-    if (typeof window !== "undefined") {
+    if (path !== "/auth/login" && typeof window !== "undefined") {
       window.location.href = "/login";
     }
-    throw new ApiError("Unauthorized", 401, data);
+    throw new ApiError(getApiErrorMessage(data, "Unauthorized"), 401, data);
   }
 
   if (!res.ok) {
-    const msg =
-      typeof data === "object" && data && "message" in (data as any)
-        ? (data as any).message
-        : "Request failed";
-    throw new ApiError(String(msg), res.status, data);
+    throw new ApiError(getApiErrorMessage(data), res.status, data);
   }
 
   return data as T;
