@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { apiFetch } from "./apiClient";
 import {
   SchoolSchema,
@@ -11,6 +12,14 @@ import {
   RequestSchoolResponse,
   EnrollmentStatus,
   SchoolOnboardPayload,
+  SchoolResponseSchema,
+  CreateSchoolRequestSchema,
+  UpdateSchoolRequestSchema,
+  LinkChildResponseSchema,
+  SchoolResponse,
+  CreateSchoolRequest,
+  UpdateSchoolRequest,
+  LinkChildResponse,
 } from "../types/schools.types";
 
 export const schoolsService = {
@@ -28,7 +37,14 @@ export const schoolsService = {
       method: "POST",
       body: JSON.stringify({ schoolId }),
     });
-    return LinkChildToSchoolResponseSchema.parse(data);
+    const enrollmentStatus = data.child?.enrollmentStatus || data.enrollmentStatus;
+    return LinkChildToSchoolResponseSchema.parse({
+      enrollmentStatus,
+      message: data.message,
+      adoptionRequestId: data.adoptionRequestId,
+      requestCount: data.requestCount,
+      threshold: data.threshold,
+    });
   },
 
   async requestSchool(
@@ -79,5 +95,51 @@ export const schoolsService = {
       method: "POST",
       body: JSON.stringify(data),
     });
+  },
+
+  async createSchool(data: CreateSchoolRequest): Promise<SchoolResponse> {
+    const res = await apiFetch<any>("/schools", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return SchoolResponseSchema.parse(res);
+  },
+
+  async listSchools(): Promise<SchoolResponse[]> {
+    const res = await apiFetch<any>("/schools");
+    return z.array(SchoolResponseSchema).parse(res);
+  },
+
+  async searchSchoolsV2(query: string): Promise<SchoolResponse[]> {
+    const res = await apiFetch<any>(`/schools/search?q=${encodeURIComponent(query)}`);
+    const data = Array.isArray(res) ? res : (res?.schools ?? []);
+    return z.array(SchoolResponseSchema).parse(data);
+  },
+
+  async getSchool(id: string): Promise<SchoolResponse & { children: any[] }> {
+    return apiFetch<any>(`/schools/${id}`);
+  },
+
+  async updateSchool(id: string, data: UpdateSchoolRequest): Promise<SchoolResponse> {
+    const res = await apiFetch<any>(`/schools/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+    return SchoolResponseSchema.parse(res);
+  },
+
+  async deleteSchool(id: string): Promise<void> {
+    await apiFetch(`/schools/${id}`, { method: "DELETE" });
+  },
+
+  async linkChild(schoolId: string, childId: string): Promise<LinkChildResponse> {
+    const res = await apiFetch<any>(`/schools/${schoolId}/children/${childId}`, {
+      method: "POST",
+    });
+    return LinkChildResponseSchema.parse(res);
+  },
+
+  async unlinkChild(childId: string): Promise<void> {
+    await apiFetch(`/schools/${childId}/unlink`, { method: "DELETE" });
   },
 };

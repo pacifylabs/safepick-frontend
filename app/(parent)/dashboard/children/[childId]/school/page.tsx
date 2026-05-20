@@ -18,15 +18,13 @@ import {
   Share2,
 } from "lucide-react";
 import { useChild } from "@/hooks/useChildren";
-import {
-  useSchoolSearch,
-  useLinkChildToSchool,
-  useRequestSchool,
-} from "@/hooks/useSchools";
+import { useSchoolSearch, useLinkChildToSchool, useRequestSchool } from "@/hooks/useSchools";
+import { useSchoolSearch as useSchoolSearchV2 } from "@/hooks/useSchoolsManagement";
 import { SchoolSearchResult } from "@/components/schools/SchoolSearchResult";
 import { AdoptionProgress } from "@/components/schools/AdoptionProgress";
 import { Button } from "@/components/ui/Button";
-import { School, RequestSchoolPayload } from "@/types/schools.types";
+import { useToastStore } from "@/stores/toast.store";
+import { SchoolResponse, RequestSchoolPayload } from "@/types/schools.types";
 
 type PageState = "SEARCH" | "REQUEST_FORM" | "CONFIRMED";
 
@@ -44,7 +42,7 @@ export default function SchoolLinkingPage() {
   const router = useRouter();
   const [pageState, setPageState] = useState<PageState>("SEARCH");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSchool, setSelectedSchool] = useState<School | null>(null);
+  const [selectedSchool, setSelectedSchool] = useState<SchoolResponse | null>(null);
   const [confirmationData, setConfirmationData] = useState<{
     type: "LINKED" | "REQUESTED";
     schoolName: string;
@@ -53,9 +51,10 @@ export default function SchoolLinkingPage() {
   } | null>(null);
 
   const { data: child } = useChild(childId as string);
-  const { data: searchResults, isLoading: isSearching } = useSchoolSearch(searchQuery);
+  const { data: searchResults = [], isLoading: isSearching } = useSchoolSearchV2(searchQuery);
   const { mutate: linkSchool, isPending: isLinking } = useLinkChildToSchool();
   const { mutate: requestSchool, isPending: isRequesting } = useRequestSchool();
+  const { addToast } = useToastStore();
 
   const {
     register,
@@ -65,7 +64,7 @@ export default function SchoolLinkingPage() {
     resolver: zodResolver(RequestFormSchema),
   });
 
-  const handleSchoolSelect = (school: School) => {
+  const handleSchoolSelect = (school: SchoolResponse) => {
     setSelectedSchool(school);
   };
 
@@ -77,12 +76,14 @@ export default function SchoolLinkingPage() {
       {
         onSuccess: (data) => {
           if (data.enrollmentStatus === "PENDING_VERIFICATION") {
+            addToast({ message: `${child?.fullName?.split(" ")[0] || "Child"} linked to ${selectedSchool.name} — pending verification`, variant: "success" });
             setConfirmationData({
               type: "LINKED",
               schoolName: selectedSchool.name,
             });
             setPageState("CONFIRMED");
           } else if (data.enrollmentStatus === "SCHOOL_NOT_ON_SAFEPICK") {
+            addToast({ message: `Request sent for ${selectedSchool.name}`, variant: "success" });
             setConfirmationData({
               type: "REQUESTED",
               schoolName: selectedSchool.name,
@@ -160,7 +161,7 @@ export default function SchoolLinkingPage() {
   };
 
   return (
-    <div className="max-w-[600px] mx-auto px-6 py-6 font-body">
+    <div className="w-full mx-auto px-6 py-6 font-body">
       {/* BREADCRUMB */}
       <div className="flex items-center gap-2 mb-6 text-[0.875rem]">
         <span
@@ -228,10 +229,10 @@ export default function SchoolLinkingPage() {
                       {selectedSchool.name}
                     </p>
                     <p className="text-[0.78rem] text-[var(--text-secondary)] truncate">
-                      {selectedSchool.address}, {selectedSchool.city}
+                      {selectedSchool.address}
                     </p>
                     <div className="mt-2 flex items-center gap-2">
-                      {selectedSchool.status === "ACTIVE" ? (
+                      {selectedSchool.verified ? (
                         <span className="bg-[#E1F5EE] text-[#0F6E56] rounded-full px-2.5 py-1 text-[0.7rem] font-medium">
                           On SafePick
                         </span>
@@ -250,7 +251,7 @@ export default function SchoolLinkingPage() {
                   </button>
                 </div>
 
-                {selectedSchool.status === "ACTIVE" ? (
+                {selectedSchool.verified ? (
                   <Button
                     variant="primary"
                     className="w-full h-12 rounded-xl mt-4"
@@ -268,7 +269,7 @@ export default function SchoolLinkingPage() {
                           {selectedSchool.name} hasn't joined SafePick yet.
                         </p>
                         <p className="text-[0.78rem] text-[var(--text-secondary)] leading-relaxed">
-                          {selectedSchool.pendingRequests || 0} parents have already
+                          Parents have already
                           requested this school. Request it and we'll notify you
                           when they join.
                         </p>

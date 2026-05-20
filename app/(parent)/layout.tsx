@@ -28,6 +28,7 @@ import {
   Menu,
   UserRound,
   X,
+  Building,
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { ToastContainer } from "@/components/ui/Toast";
@@ -92,6 +93,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
   const sidebarItems = [
     { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
     { href: "/dashboard/delegates", icon: Users, label: "Delegates" },
+    { href: "/dashboard/schools", icon: Building, label: "Schools" },
     { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
     { href: "/dashboard/attendance", icon: CalendarDays, label: "Attendance" },
     { href: "/dashboard/emergency", icon: ShieldAlert, label: "Emergency" },
@@ -131,7 +133,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             >
               <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
                 <Link href="/dashboard" className="hover:opacity-80 transition-opacity" onClick={() => setMobileMenuOpen(false)}>
-                  <Logo variant="dark" size="sm" />
+                  <Logo size="sm" />
                 </Link>
                 <button
                   onClick={() => setMobileMenuOpen(false)}
@@ -221,7 +223,20 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[0.65rem] font-medium text-white ${getChildColor(child.id)}`}>
                           {child.fullName[0]}
                         </div>
-                        <span className="text-[0.875rem] text-[var(--text-primary)]">{child.fullName.split(" ")[0]}</span>
+                        <span className="text-[0.875rem] text-[var(--text-primary)] flex-1 text-left">{child.fullName.split(" ")[0]}</span>
+                        <div
+                          className={`w-2 h-2 rounded-full relative ${
+                            child.enrollmentStatus === "VERIFIED"
+                              ? "bg-[#0FA37F]"
+                              : child.enrollmentStatus === "REJECTED"
+                              ? "bg-[#D85A30]"
+                              : "bg-[#EF9F27]"
+                          }`}
+                        >
+                          {child.enrollmentStatus === "PENDING_VERIFICATION" && (
+                            <div className="absolute inset-0 rounded-full animate-ping bg-[#EF9F27]/40" />
+                          )}
+                        </div>
                       </button>
                     ))}
                     <button
@@ -290,7 +305,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
           </button>
 
           <Link href="/dashboard" className="hover:opacity-80 transition-opacity">
-            <Logo variant="dark" size="md" />
+            <Logo size="md" />
           </Link>
         </div>
 

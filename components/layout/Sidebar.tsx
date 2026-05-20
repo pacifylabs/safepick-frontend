@@ -43,6 +43,7 @@ const defaultParentItems: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/dashboard/children", icon: FolderOpen, label: "Children" },
   { href: "/dashboard/delegates", icon: ShieldCheck, label: "Delegates" },
+  { href: "/dashboard/schools", icon: Building, label: "Schools" },
   { href: "/dashboard/secondary-guardians", icon: Users2, label: "Guardians" },
   { href: "/dashboard/pickups", icon: Bell, label: "Pickups" },
   { href: "/dashboard/attendance", icon: CalendarCheck, label: "Attendance" },

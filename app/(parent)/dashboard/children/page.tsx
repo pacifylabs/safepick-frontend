@@ -151,8 +151,8 @@ export default function ChildrenPage() {
 
       {/* CONTENT */}
       {viewMode === "list" ? (
-        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm">
-          <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-x-auto shadow-sm">
+          <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-4 sm:px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-2 sm:gap-4 items-center min-w-[640px]">
             {["Name", "Sharing", "School", "Modified"].map((h, idx) => (
               <span
                 key={h}
@@ -171,7 +171,7 @@ export default function ChildrenPage() {
               <div
                 key={child.id}
                 onClick={() => router.push(`/dashboard/children/${child.id}`)}
-                className={`px-6 py-4 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center cursor-pointer transition-colors ${
+                className={`px-4 sm:px-6 py-4 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-2 sm:gap-4 items-center cursor-pointer transition-colors min-w-[640px] ${
                   selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[var(--bg-surface-2)]"
                 }`}
               >
@@ -217,8 +217,17 @@ export default function ChildrenPage() {
                       {child.school.name}
                     </p>
                   ) : (
-                    <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#FAEEDA] text-[#BA7517] text-[0.7rem] font-bold uppercase tracking-wider">
-                      Setup needed
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[0.7rem] font-bold uppercase tracking-wider ${
+                      child.enrollmentStatus === "REJECTED"
+                        ? "bg-coral/10 text-coral"
+                        : "bg-[#FAEEDA] text-[#BA7517]"
+                    }`}>
+                      {child.enrollmentStatus === "PENDING_SCHOOL" ? "Setup needed" :
+                       child.enrollmentStatus === "PENDING_VERIFICATION" ? "Verifying" :
+                       child.enrollmentStatus === "VERIFIED" ? "Verified" :
+                       child.enrollmentStatus === "REJECTED" ? "Rejected" :
+                       child.enrollmentStatus === "SCHOOL_NOT_ON_SAFEPICK" ? "School not on SafePick" : "Setup needed"
+                       }
                     </span>
                   )}
                 </div>
@@ -271,16 +280,24 @@ export default function ChildrenPage() {
               </div>
 
               <div className="flex items-center justify-between pt-4 border-t border-[var(--border)]">
-                <div className="flex items-center gap-1.5">
-                  <div
-                    className={`w-1.5 h-1.5 rounded-full ${
-                      child.enrollmentStatus === "VERIFIED" ? "bg-[#0FA37F]" : "bg-[#EF9F27]"
-                    }`}
-                  />
-                  <span className="text-[0.65rem] text-[var(--text-secondary)] font-bold uppercase tracking-widest">
-                    {child.enrollmentStatus === "VERIFIED" ? "Verified" : "Pending"}
+                {child.enrollmentStatus === "VERIFIED" && child.school ? (
+                  <p className="font-body text-[0.82rem] text-[var(--text-primary)] truncate">
+                    {child.school.name}
+                  </p>
+                ) : (
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[0.7rem] font-bold uppercase tracking-wider ${
+                    child.enrollmentStatus === "REJECTED"
+                      ? "bg-coral/10 text-coral"
+                      : "bg-[#FAEEDA] text-[#BA7517]"
+                  }`}>
+                    {child.enrollmentStatus === "PENDING_SCHOOL" ? "Setup needed" :
+                     child.enrollmentStatus === "PENDING_VERIFICATION" ? "Verifying" :
+                     child.enrollmentStatus === "VERIFIED" ? "Verified" :
+                     child.enrollmentStatus === "REJECTED" ? "Rejected" :
+                     child.enrollmentStatus === "SCHOOL_NOT_ON_SAFEPICK" ? "School not on SafePick" : "Setup needed"
+                     }
                   </span>
-                </div>
+                )}
                 <AvatarStack
                   users={[
                     ...(child.secondaryGuardian ? [{ id: child.secondaryGuardian.id, fullName: child.secondaryGuardian.fullName }] : []),

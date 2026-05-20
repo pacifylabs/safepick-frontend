@@ -149,6 +149,7 @@ export default function ChildProfilePage() {
             <div className="py-4 px-2">
               <p className="font-body text-sm text-[var(--text-secondary)]">Not currently enrolled in a school.</p>
               <button
+                onClick={() => router.push("/dashboard/schools")}
                 className="mt-3 h-10 px-5 rounded-xl bg-[#0FA37F] text-white font-medium text-xs sm:text-sm shadow-sm shadow-[#0FA37F]/25 hover:bg-[#0F6E56] hover:shadow-md hover:shadow-[#0FA37F]/30 active:scale-[0.98] transition-all duration-200 flex items-center justify-center"
               >
                 <School className="w-4 h-4 mr-2" />

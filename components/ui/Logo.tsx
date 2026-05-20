@@ -13,9 +13,9 @@ const sizeMap = {
   lg: { text: "text-[1.8rem]", icon: "w-10 h-10", svg: "22" }
 };
 
-export function Logo({ variant = "light", size = "md", className = "", onClick }: LogoProps) {
+export function Logo({ variant, size = "md", className = "", onClick }: LogoProps) {
   const t = sizeMap[size];
-  const colorClass = variant === "light" ? "text-white" : "text-navy";
+  const colorClass = variant === "light" ? "text-white" : variant === "dark" ? "text-black" : "text-[var(--text-primary)]";
 
   return (
     <div 

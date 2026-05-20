@@ -78,6 +78,48 @@ export const VerifyOnboardOTPSchema = z.object({
   otp: z.string().length(6, "OTP must be 6 digits"),
 });
 
+export const SchoolResponseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  address: z.string(),
+  phone: z.string(),
+  email: z.string(),
+  verified: z.boolean(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+});
+
+export const CreateSchoolRequestSchema = z.object({
+  name: z.string().min(1, "School name is required"),
+  address: z.string().min(1, "Address is required"),
+  phone: z.string().min(7, "Enter a valid phone number"),
+  email: z.string().email("Enter a valid email"),
+  verified: z.boolean().optional(),
+});
+
+export const UpdateSchoolRequestSchema = z.object({
+  name: z.string().optional(),
+  address: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email("Enter a valid email").optional(),
+  verified: z.boolean().optional(),
+});
+
+export const LinkChildResponseSchema = z.object({
+  message: z.string(),
+  child: z.object({
+    id: z.string(),
+    fullName: z.string(),
+    enrollmentStatus: z.literal("PENDING_VERIFICATION"),
+    schoolId: z.string(),
+  }),
+});
+
+export type SchoolResponse = z.infer<typeof SchoolResponseSchema>;
+export type CreateSchoolRequest = z.infer<typeof CreateSchoolRequestSchema>;
+export type UpdateSchoolRequest = z.infer<typeof UpdateSchoolRequestSchema>;
+export type LinkChildResponse = z.infer<typeof LinkChildResponseSchema>;
+
 export type SchoolStatus = z.infer<typeof SchoolStatusSchema>;
 export type School = z.infer<typeof SchoolSchema>;
 export type SchoolSearchResponse = z.infer<typeof SchoolSearchResponseSchema>;

@@ -273,8 +273,8 @@ export default function DashboardPage() {
           </Button>
         </div>
       ) : viewMode === "list" ? (
-        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-hidden">
-          <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center">
+        <div className="bg-[var(--bg-surface)] rounded-2xl border border-[var(--border)] overflow-x-auto">
+          <div className="bg-[var(--bg-surface-2)] border-b border-[var(--border)] px-4 sm:px-6 py-3 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-2 sm:gap-4 items-center min-w-[640px]">
             {["Name", "Sharing", "School", "Modified"].map((h, idx) => (
               <span 
                 key={h} 
@@ -302,7 +302,7 @@ export default function DashboardPage() {
                     openRightPanel(child.id);
                   }
                 }}
-                className={`px-6 py-3.5 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-4 items-center cursor-pointer transition-colors duration-100 ${
+                className={`px-4 sm:px-6 py-3.5 grid grid-cols-[2.5fr_1.2fr_2.5fr_1fr_auto] gap-2 sm:gap-4 items-center cursor-pointer transition-colors duration-100 min-w-[640px] ${
                   selectedChildId === child.id ? "bg-[#EEF2FF]/50" : "hover:bg-[var(--bg-surface-2)]"
                 }`}
               >
@@ -353,8 +353,16 @@ export default function DashboardPage() {
                   {child.enrollmentStatus === "VERIFIED" ? (
                     <p className="font-body text-[0.82rem] text-[var(--text-primary)] truncate">{child.school?.name}</p>
                   ) : (
-                    <span className="bg-[#FAEEDA] text-[#BA7517] text-[0.72rem] px-2 py-0.5 rounded-full whitespace-nowrap inline-block max-w-full overflow-hidden text-ellipsis">
-                      {(child.enrollmentStatus || "") === "PENDING_SCHOOL" ? "Setup needed" : "Verifying"}
+                    <span className={`text-[0.72rem] px-2 py-0.5 rounded-full whitespace-nowrap inline-block max-w-full overflow-hidden text-ellipsis ${
+                      child.enrollmentStatus === "REJECTED"
+                        ? "bg-coral/10 text-coral"
+                        : "bg-[#FAEEDA] text-[#BA7517]"
+                    }`}>
+                      {child.enrollmentStatus === "PENDING_SCHOOL" ? "Setup needed" :
+                       child.enrollmentStatus === "PENDING_VERIFICATION" ? "Verifying" :
+                       child.enrollmentStatus === "REJECTED" ? "Rejected" :
+                       child.enrollmentStatus === "SCHOOL_NOT_ON_SAFEPICK" ? "School not on SafePick" :
+                       "Setup needed"}
                     </span>
                   )}
                 </div>

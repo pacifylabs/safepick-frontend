@@ -27,7 +27,7 @@ export function LandingNav() {
       <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         {/* Left: Logo */}
         <Link href="/">
-          <Logo variant="dark" className="dark:!text-[var(--text-primary)]" />
+          <Logo />
         </Link>
 
         {/* Center: Nav Links (Desktop) */}

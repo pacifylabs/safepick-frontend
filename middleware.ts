@@ -30,18 +30,18 @@ export function middleware(req: NextRequest) {
   }
 
   // 2. Delegate Auth
+  const isDelegatePublicPath = DELEGATE_PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/delegate/kyc") || pathname === "/delegate/join" || pathname.startsWith("/delegate/join/");
   const delegateToken = req.cookies.get("delegate-access-token")?.value;
-  const isDelegatePath = pathname.startsWith("/delegate") && !DELEGATE_PUBLIC_PATHS.includes(pathname);
-  const isDelegatePublic = DELEGATE_PUBLIC_PATHS.includes(pathname);
+  const isDelegatePath = pathname.startsWith("/delegate") && !isDelegatePublicPath;
 
   if (isDelegatePath && !delegateToken) {
     const url = req.nextUrl.clone();
     url.pathname = "/delegate/login";
     return NextResponse.redirect(url);
   }
-  if (isDelegatePublic && delegateToken) {
+  if (isDelegatePublicPath && delegateToken) {
     const url = req.nextUrl.clone();
-    url.pathname = "/delegate/dashboard"; // Assuming this is the delegate home
+    url.pathname = "/delegate/dashboard";
     return NextResponse.redirect(url);
   }
 

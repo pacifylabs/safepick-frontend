@@ -33,6 +33,9 @@ export const queryKeys = {
   schoolSearch: (query: string) => ['schools', 'search', query] as const,
   school: (id: string) => ['schools', id] as const,
   enrollment: (childId: string) => ['enrollment', childId] as const,
+  schoolRequests: ['school-requests'] as const,
+  schoolRequestsList: (query: string) => ['school-requests', 'list', query] as const,
+  schoolRequest: (id: string) => ['school-requests', id] as const,
 
   // Secondary guardians
   secondaryGuardians: ['secondary-guardians'] as const,
