@@ -12,7 +12,7 @@ export default function SchoolsPage() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s: any) => s.user);
   const isAdmin = user?.role === "SCHOOL_ADMIN";
 
   const { data: schools = [], isLoading } = useSchoolsList();

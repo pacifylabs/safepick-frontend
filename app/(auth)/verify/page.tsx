@@ -38,7 +38,7 @@ export default function VerifyPage() {
     setErrorMessage("Incorrect code.");
     try {
       const response = await verifyOtp({ otpToken, otp });
-      setSession(response.user as any, response.accessToken);
+      setSession(response.user as any, response.accessToken, response.refreshToken);
       router.push("/signup/success");
     } catch (err: any) {
       const status = typeof err?.status === "number" ? err.status : null;

@@ -14,8 +14,10 @@ export interface AuthUser {
 export interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
+  refreshToken: string | null;
   isAuthenticated: boolean;
-  setSession: (user: AuthUser, token: string) => void;
+  setSession: (user: AuthUser, token: string, refreshToken?: string) => void;
+  setTokens: (accessToken: string, refreshToken: string) => void;
   clearSession: () => void;
   clearMswSession: () => void;
 }
@@ -23,20 +25,36 @@ export interface AuthState {
 export const useAuthStore = create((set: any) => ({
   user: null,
   accessToken: Cookies.get("accessToken") || null,
+  refreshToken: Cookies.get("refreshToken") || null,
   isAuthenticated: !!Cookies.get("accessToken"),
-  setSession: (user: AuthUser, token: string) => {
-    Cookies.set("accessToken", token, { expires: 7 });
-    set({ user, accessToken: token, isAuthenticated: true });
+  setSession: (user: AuthUser, token: string, refreshToken?: string) => {
+    Cookies.set("accessToken", token, { expires: 7, sameSite: "strict" });
+    if (refreshToken) {
+      Cookies.set("refreshToken", refreshToken, { expires: 7, sameSite: "strict" });
+    }
+    set({
+      user,
+      accessToken: token,
+      ...(refreshToken ? { refreshToken } : {}),
+      isAuthenticated: true
+    });
+  },
+  setTokens: (accessToken: string, refreshToken: string) => {
+    Cookies.set("accessToken", accessToken, { expires: 7, sameSite: "strict" });
+    Cookies.set("refreshToken", refreshToken, { expires: 7, sameSite: "strict" });
+    set({ accessToken, refreshToken, isAuthenticated: true });
   },
   clearSession: () => {
     Cookies.remove("accessToken");
-    set({ user: null, accessToken: null, isAuthenticated: false });
+    Cookies.remove("refreshToken");
+    set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
   },
   clearMswSession: () => {
     // Clear both real and demo sessions
     Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     Cookies.remove("delegate-access-token");
     Cookies.remove("safepick_secondary_token");
-    set({ user: null, accessToken: null, isAuthenticated: false });
+    set({ user: null, accessToken: null, refreshToken: null, isAuthenticated: false });
   }
 })) as any;

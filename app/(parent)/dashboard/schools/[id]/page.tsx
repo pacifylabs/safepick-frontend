@@ -30,7 +30,7 @@ import { Badge } from "@/components/ui/Badge";
 export default function SchoolDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s: any) => s.user);
   const isAdmin = user?.role === "SCHOOL_ADMIN";
   const { data: school, isLoading } = useSchool(id);
   const { data: children = [] } = useChildren();

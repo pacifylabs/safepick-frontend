@@ -34,7 +34,7 @@ const statusConfig: Record<SchoolRequestStatus, { variant: "sand" | "teal" | "da
 export default function RequestDetailPage({ params }: { params: { id: string } }) {
   const { id } = params;
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s: any) => s.user);
   const isAdmin = user?.role === "SCHOOL_ADMIN";
   const { addToast } = useToastStore();
   const { data: request, isLoading } = useSchoolRequest(id);

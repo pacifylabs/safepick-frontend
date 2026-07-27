@@ -57,8 +57,7 @@ export default function LoginPage() {
 
     try {
       const response = await loginUser(normalizedData);
-      console.log("[Login] API Response:", response);
-      setSession(response.user as any, response.accessToken);
+      setSession(response.user as any, response.accessToken, response.refreshToken);
       router.push("/dashboard");
     } catch (err: any) {
       console.error("[Login] Error:", err);

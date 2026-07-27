@@ -1,20 +1,24 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { isValidToken } from "@/lib/authToken";
 
 const PARENT_PUBLIC_PATHS = ["/login", "/signup", "/verify"];
 const DELEGATE_PUBLIC_PATHS = ["/delegate/login", "/delegate/verify"];
 const SECONDARY_PUBLIC_PATHS = ["/secondary/login", "/secondary/verify", "/secondary/join"];
 
-export function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // 0. Public Paths (No Auth Needed)
-  if (pathname === "/") return NextResponse.next(); 
+  if (pathname === "/") return NextResponse.next();
   if (pathname === "/respond" || pathname.startsWith("/respond/")) return NextResponse.next();
   if (pathname.startsWith("/secondary/join/")) return NextResponse.next();
 
   // 1. Parent Auth
-  const parentToken = req.cookies.get("accessToken")?.value;
+  const parentToken = await isValidToken(
+    req.cookies.get("accessToken")?.value,
+    "parent",
+  );
   const isParentPath = pathname.startsWith("/dashboard");
   const isParentPublic = PARENT_PUBLIC_PATHS.includes(pathname);
 
@@ -31,7 +35,10 @@ export function middleware(req: NextRequest) {
 
   // 2. Delegate Auth
   const isDelegatePublicPath = DELEGATE_PUBLIC_PATHS.includes(pathname) || pathname.startsWith("/delegate/kyc") || pathname === "/delegate/join" || pathname.startsWith("/delegate/join/");
-  const delegateToken = req.cookies.get("delegate-access-token")?.value;
+  const delegateToken = await isValidToken(
+    req.cookies.get("delegate-access-token")?.value,
+    "delegate",
+  );
   const isDelegatePath = pathname.startsWith("/delegate") && !isDelegatePublicPath;
 
   if (isDelegatePath && !delegateToken) {
@@ -46,7 +53,10 @@ export function middleware(req: NextRequest) {
   }
 
   // 3. Secondary Guardian Auth (Role: SECONDARY_GUARDIAN)
-  const secondaryToken = req.cookies.get("safepick_secondary_token")?.value;
+  const secondaryToken = await isValidToken(
+    req.cookies.get("safepick_secondary_token")?.value,
+    "secondary",
+  );
   const isSecondaryPath = pathname.startsWith("/secondary") && !SECONDARY_PUBLIC_PATHS.some(p => pathname.startsWith(p));
   const isSecondaryPublic = SECONDARY_PUBLIC_PATHS.some(p => pathname.startsWith(p));
 
