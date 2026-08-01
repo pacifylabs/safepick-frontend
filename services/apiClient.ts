@@ -1,5 +1,6 @@
 import { useAuthStore } from "@/stores/auth.store";
 import { getApiErrorMessage } from "@/services/apiError";
+import { csrfHeaders } from "@/lib/session";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -20,21 +21,18 @@ export class ApiError extends Error {
 let refreshInFlight: Promise<boolean> | null = null;
 
 async function doRefresh(): Promise<boolean> {
-  const { refreshToken } = useAuthStore.getState();
-  if (!refreshToken) return false;
-
   try {
+    // The refresh token travels in an httpOnly cookie, so there is nothing to
+    // put in the body and nothing for a script to steal.
     const res = await fetch(`${BASE_URL}/auth/refresh`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken })
+      credentials: "include",
+      headers: { "Content-Type": "application/json", ...csrfHeaders("POST") },
+      body: "{}"
     });
     if (!res.ok) return false;
 
-    const data = await res.json();
-    if (!data?.accessToken || !data?.refreshToken) return false;
-
-    useAuthStore.getState().setTokens(data.accessToken, data.refreshToken);
+    useAuthStore.getState().markAuthenticated();
     return true;
   } catch {
     return false;
@@ -54,17 +52,21 @@ function tryRefreshSession(): Promise<boolean> {
 }
 
 async function rawFetch(path: string, options: RequestInit): Promise<Response> {
-  const token = useAuthStore.getState().accessToken;
+  const method = options.method ?? "GET";
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    ...csrfHeaders(method),
     ...(options.headers || {})
   };
-  if (token) {
-    (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
-  }
 
   try {
-    return await fetch(`${BASE_URL}${path}`, { ...options, headers });
+    // credentials: "include" is what actually sends the session; there is no
+    // Authorization header any more.
+    return await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      credentials: "include",
+      headers
+    });
   } catch (e) {
     throw new ApiError("Network error", 0, null);
   }

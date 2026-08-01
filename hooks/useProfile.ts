@@ -17,12 +17,12 @@ export const profileKeys = {
 };
 
 export function useProfile() {
-  const accessToken = useAuthStore((state: any) => state.accessToken);
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   return useQuery({
     queryKey: profileKeys.profile,
     queryFn: () => profileService.getProfile(),
-    enabled: !!accessToken,
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 3,
   });
 }
@@ -39,12 +39,12 @@ export function useUpdateProfile() {
 }
 
 export function useProfileSecuritySettings() {
-  const accessToken = useAuthStore((state: any) => state.accessToken);
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   return useQuery({
     queryKey: profileKeys.security,
     queryFn: () => profileService.getSecuritySettings(),
-    enabled: !!accessToken,
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 3,
   });
 }
@@ -69,12 +69,12 @@ export function useChangeProfilePassword() {
 }
 
 export function useProfileSecondaryGuardians() {
-  const accessToken = useAuthStore((state: any) => state.accessToken);
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   return useQuery({
     queryKey: profileKeys.guardians,
     queryFn: () => profileService.getSecondaryGuardians(),
-    enabled: !!accessToken,
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 3,
   });
 }
@@ -105,12 +105,12 @@ export function useRevokeProfileSecondaryGuardian() {
 }
 
 export function useProfileIncidentReports() {
-  const accessToken = useAuthStore((state: any) => state.accessToken);
+  const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
 
   return useQuery({
     queryKey: profileKeys.incidents,
     queryFn: () => profileService.getIncidentReports(),
-    enabled: !!accessToken,
+    enabled: isAuthenticated,
     staleTime: 1000 * 60 * 3,
   });
 }

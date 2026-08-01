@@ -253,7 +253,6 @@ export default function GuardianProfilePage() {
   const { addToast } = useToastStore();
   const clearSession = useAuthStore((state: any) => state.clearSession);
   const setSession = useAuthStore((state: any) => state.setSession);
-  const accessToken = useAuthStore((state: any) => state.accessToken);
   const [activeSection, setActiveSection] = useState<SectionId>("profile");
   const [guardianFormOpen, setGuardianFormOpen] = useState(false);
   const [revokeTarget, setRevokeTarget] = useState<ProfileSecondaryGuardian | null>(null);
@@ -312,9 +311,7 @@ export default function GuardianProfilePage() {
         fullName: values.fullName.trim(),
         email: emptyToUndefined(values.email),
       });
-      if (accessToken) {
-        setSession(updated as any, accessToken);
-      }
+      setSession(updated as any);
       addToast({ message: "Profile updated successfully", variant: "success" });
     } catch (err) {
       addToast({ message: getApiErrorMessage(err, "Could not update profile"), variant: "danger" });

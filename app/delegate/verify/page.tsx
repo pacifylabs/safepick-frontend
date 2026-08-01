@@ -28,7 +28,7 @@ export default function DelegateVerifyPage() {
   const [isVerifying, setIsVerifying] = useState(false);
   const [isNotVerified, setIsNotVerified] = useState(false);
 
-  const { setDelegate, setTokens } = useDelegateAuthStore();
+  const { setDelegate } = useDelegateAuthStore();
   const addToast = useToastStore((state: any) => state.addToast);
 
   useEffect(() => {
@@ -47,13 +47,10 @@ export default function DelegateVerifyPage() {
     try {
       const response = await delegateService.verifyOtp(otpToken, otp);
       
-      // Set session in store
-      setTokens(response.accessToken, response.refreshToken);
+      // The session cookies are set by the API on this response; the store
+      // holds the profile only.
       setDelegate(response.delegate);
-      
-      // Set cookie for middleware and layout
-      Cookies.set("delegate-access-token", response.accessToken, { expires: 7 });
-      
+
       addToast({
         message: "Signed in successfully",
         variant: "success",

@@ -1,5 +1,6 @@
 import { apiFetch, ApiError } from "@/services/apiClient";
 import { useAuthStore } from "@/stores/auth.store";
+import { CSRF_COOKIE, CSRF_HEADER } from "@/lib/session";
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -8,11 +9,17 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+const CSRF_VALUE = "csrf-token-value";
+
 describe("apiFetch", () => {
   let fetchMock: jest.SpyInstance;
   let consoleErrorMock: jest.SpyInstance;
 
   beforeEach(() => {
+    // The session itself is httpOnly and invisible here; only the CSRF cookie
+    // is readable, which is exactly what the client relies on.
+    document.cookie = `${CSRF_COOKIE}=${CSRF_VALUE}`;
+
     // The 401 path assigns window.location.href; jsdom cannot navigate and
     // logs a "not implemented" error. Silence it so real failures stand out.
     consoleErrorMock = jest.spyOn(console, "error").mockImplementation(() => {});
@@ -23,29 +30,42 @@ describe("apiFetch", () => {
       .mockImplementation(async (url) => {
         throw new Error(`Unexpected unmocked fetch call: ${String(url)}`);
       });
-    useAuthStore.setState({
-      user: null,
-      accessToken: "access-1",
-      refreshToken: "refresh-1",
-      isAuthenticated: true
-    });
+    useAuthStore.setState({ user: null, isAuthenticated: true });
   });
 
   afterEach(() => {
     fetchMock.mockRestore();
     consoleErrorMock.mockRestore();
+    document.cookie = `${CSRF_COOKIE}=; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   });
 
-  it("attaches the bearer token and returns parsed JSON", async () => {
+  it("sends the session cookie rather than an Authorization header", async () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({ ok: true }));
 
     const result = await apiFetch<{ ok: boolean }>("/children");
 
     expect(result).toEqual({ ok: true });
     const [, init] = fetchMock.mock.calls[0];
-    expect((init.headers as Record<string, string>)["Authorization"]).toBe(
-      "Bearer access-1"
-    );
+    expect(init.credentials).toBe("include");
+    expect((init.headers as Record<string, string>)["Authorization"]).toBeUndefined();
+  });
+
+  it("echoes the CSRF token on mutating requests", async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+    await apiFetch("/children", { method: "POST", body: "{}" });
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init.headers as Record<string, string>)[CSRF_HEADER]).toBe(CSRF_VALUE);
+  });
+
+  it("omits the CSRF header on safe requests", async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+    await apiFetch("/children");
+
+    const [, init] = fetchMock.mock.calls[0];
+    expect((init.headers as Record<string, string>)[CSRF_HEADER]).toBeUndefined();
   });
 
   it("throws ApiError with status for non-401 failures", async () => {
@@ -60,13 +80,8 @@ describe("apiFetch", () => {
 
   it("silently refreshes on 401 and retries the original request", async () => {
     fetchMock
-      // original request -> 401
       .mockResolvedValueOnce(jsonResponse({ message: "expired" }, 401))
-      // refresh -> new tokens
-      .mockResolvedValueOnce(
-        jsonResponse({ accessToken: "access-2", refreshToken: "refresh-2" })
-      )
-      // retried request -> success
+      .mockResolvedValueOnce(jsonResponse({ message: "rotated" }))
       .mockResolvedValueOnce(jsonResponse({ ok: true }));
 
     const result = await apiFetch<{ ok: boolean }>("/children");
@@ -76,18 +91,10 @@ describe("apiFetch", () => {
 
     const refreshCall = fetchMock.mock.calls[1];
     expect(refreshCall[0]).toContain("/auth/refresh");
-    expect(JSON.parse(refreshCall[1].body)).toEqual({
-      refreshToken: "refresh-1"
-    });
-
-    // retried with the rotated access token
-    const retryCall = fetchMock.mock.calls[2];
-    expect(
-      (retryCall[1].headers as Record<string, string>)["Authorization"]
-    ).toBe("Bearer access-2");
-
-    expect(useAuthStore.getState().accessToken).toBe("access-2");
-    expect(useAuthStore.getState().refreshToken).toBe("refresh-2");
+    // No token in the body: the refresh token rides in an httpOnly cookie.
+    expect(refreshCall[1].credentials).toBe("include");
+    expect(JSON.parse(refreshCall[1].body)).toEqual({});
+    expect(refreshCall[1].headers[CSRF_HEADER]).toBe(CSRF_VALUE);
   });
 
   it("clears the session when refresh fails", async () => {
@@ -96,17 +103,8 @@ describe("apiFetch", () => {
       .mockResolvedValueOnce(jsonResponse({ message: "revoked" }, 401));
 
     await expect(apiFetch("/children")).rejects.toBeInstanceOf(ApiError);
-    expect(useAuthStore.getState().accessToken).toBeNull();
     expect(useAuthStore.getState().isAuthenticated).toBe(false);
-  });
-
-  it("does not attempt refresh when there is no refresh token", async () => {
-    useAuthStore.setState({ refreshToken: null });
-    fetchMock.mockResolvedValueOnce(jsonResponse({ message: "expired" }, 401));
-
-    await expect(apiFetch("/children")).rejects.toMatchObject({ status: 401 });
-    // only the original request - no refresh call
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(useAuthStore.getState().user).toBeNull();
   });
 
   it("does not try to refresh a failed login (401 from /auth/login)", async () => {
@@ -122,14 +120,17 @@ describe("apiFetch", () => {
 
   it("shares one refresh across concurrent 401s (single-flight)", async () => {
     let refreshCalls = 0;
-    fetchMock.mockImplementation(async (url: string, init?: RequestInit) => {
+    let refreshed = false;
+
+    fetchMock.mockImplementation(async (url: string) => {
       if (String(url).includes("/auth/refresh")) {
         refreshCalls += 1;
-        return jsonResponse({ accessToken: "access-2", refreshToken: "refresh-2" });
+        refreshed = true;
+        return jsonResponse({ message: "rotated" });
       }
-      const auth = (init?.headers as Record<string, string>)?.["Authorization"];
-      if (auth === "Bearer access-2") return jsonResponse({ ok: true });
-      return jsonResponse({ message: "expired" }, 401);
+      return refreshed
+        ? jsonResponse({ ok: true })
+        : jsonResponse({ message: "expired" }, 401);
     });
 
     const [a, b, c] = await Promise.all([

@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/auth.store";
+import { csrfHeaders } from "@/lib/session";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -20,21 +20,16 @@ export const fileService = {
     uploadType: UploadType,
     entityId: string
   ): Promise<UploadFileResponse> {
-    const token = useAuthStore.getState().accessToken;
-
     const formData = new FormData();
     formData.append("file", file);
     formData.append("uploadType", uploadType);
     formData.append("entityId", entityId);
 
-    const headers: HeadersInit = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
+    // No Content-Type header: the browser must set the multipart boundary.
     const res = await fetch(`${BASE_URL}/files/upload`, {
       method: "POST",
-      headers,
+      credentials: "include",
+      headers: csrfHeaders("POST"),
       body: formData,
     });
 
@@ -48,17 +43,14 @@ export const fileService = {
   },
 
   async deleteFile(publicId: string): Promise<void> {
-    const token = useAuthStore.getState().accessToken;
-
-    const headers: HeadersInit = {};
-    if (token) {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
-
-    const res = await fetch(`${BASE_URL}/files/${encodeURIComponent(publicId)}`, {
-      method: "DELETE",
-      headers,
-    });
+    const res = await fetch(
+      `${BASE_URL}/files/${encodeURIComponent(publicId)}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+        headers: csrfHeaders("DELETE"),
+      }
+    );
 
     if (!res.ok) {
       const data = await res.json().catch(() => null);

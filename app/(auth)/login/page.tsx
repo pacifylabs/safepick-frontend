@@ -57,7 +57,7 @@ export default function LoginPage() {
 
     try {
       const response = await loginUser(normalizedData);
-      setSession(response.user as any, response.accessToken, response.refreshToken);
+      setSession(response.user as any);
       router.push("/dashboard");
     } catch (err: any) {
       console.error("[Login] Error:", err);
@@ -120,7 +120,7 @@ export default function LoginPage() {
           : "/school/gate";
 
     clearMswSession();
-    setSession(mockUser as any, "demo-mock-token");
+    setSession(mockUser as any);
     router.push(redirectPath);
     setIsSubmitting(false);
   };
