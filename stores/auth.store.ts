@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import Cookies from "js-cookie";
+import { hasSessionCookie } from "@/lib/session";
 
 export interface AuthUser {
   id: string;
@@ -13,30 +14,33 @@ export interface AuthUser {
 
 export interface AuthState {
   user: AuthUser | null;
-  accessToken: string | null;
   isAuthenticated: boolean;
-  setSession: (user: AuthUser, token: string) => void;
+  setSession: (user: AuthUser) => void;
+  markAuthenticated: () => void;
   clearSession: () => void;
   clearMswSession: () => void;
 }
 
+/**
+ * Holds identity, never credentials.
+ *
+ * Access and refresh tokens now live in httpOnly cookies the browser attaches
+ * on its own, so nothing here is readable by injected script. isAuthenticated
+ * is seeded from the readable CSRF cookie purely so the first render does not
+ * flash a signed-out state; the server remains the authority.
+ */
 export const useAuthStore = create((set: any) => ({
   user: null,
-  accessToken: Cookies.get("accessToken") || null,
-  isAuthenticated: !!Cookies.get("accessToken"),
-  setSession: (user: AuthUser, token: string) => {
-    Cookies.set("accessToken", token, { expires: 7 });
-    set({ user, accessToken: token, isAuthenticated: true });
-  },
-  clearSession: () => {
-    Cookies.remove("accessToken");
-    set({ user: null, accessToken: null, isAuthenticated: false });
-  },
+  isAuthenticated: hasSessionCookie(),
+  setSession: (user: AuthUser) => set({ user, isAuthenticated: true }),
+  markAuthenticated: () => set({ isAuthenticated: true }),
+  clearSession: () => set({ user: null, isAuthenticated: false }),
   clearMswSession: () => {
-    // Clear both real and demo sessions
+    // Legacy demo cookies from before the httpOnly migration.
     Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     Cookies.remove("delegate-access-token");
     Cookies.remove("safepick_secondary_token");
-    set({ user: null, accessToken: null, isAuthenticated: false });
+    set({ user: null, isAuthenticated: false });
   }
 })) as any;

@@ -17,7 +17,7 @@ export const SubmitKycRequestSchema = z.object({
   selfieUrl: z.string().url("Enter a valid selfie URL"),
   address: z.string().min(5, "Address must be at least 5 characters"),
   consentAccepted: z.literal(true, {
-    errorMap: () => ({ message: "You must accept the privacy policy" }),
+    message: "You must accept the privacy policy",
   }),
 });
 

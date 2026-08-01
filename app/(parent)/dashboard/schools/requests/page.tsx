@@ -34,7 +34,7 @@ const statusBadge: Record<SchoolRequestStatus, { variant: "sand" | "teal" | "dan
 
 export default function SchoolRequestsPage() {
   const router = useRouter();
-  const user = useAuthStore((s) => s.user);
+  const user = useAuthStore((s: any) => s.user);
   const isAdmin = user?.role === "SCHOOL_ADMIN";
   const { addToast } = useToastStore();
   const { mutate: reviewRequest, isPending: reviewing } = useReviewSchoolRequest();

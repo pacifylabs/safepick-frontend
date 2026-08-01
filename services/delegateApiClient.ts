@@ -1,5 +1,6 @@
 import { useDelegateAuthStore } from "@/stores/delegateAuth.store";
 import { getApiErrorMessage } from "@/services/apiError";
+import { csrfHeaders } from "@/lib/session";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -17,19 +18,22 @@ export async function delegateApiFetch<T>(
   path: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = useDelegateAuthStore.getState().accessToken;
+  const method = options.method ?? "GET";
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    ...csrfHeaders(method),
     ...(options.headers || {}),
   };
-  
-  if (token) {
-    (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
-  }
 
   let res: Response;
   try {
-    res = await fetch(`${BASE_URL}${path}`, { ...options, headers });
+    // The delegate session travels in its own httpOnly cookie; no token is
+    // read from or held by client-side script.
+    res = await fetch(`${BASE_URL}${path}`, {
+      ...options,
+      credentials: "include",
+      headers,
+    });
   } catch (e) {
     throw new ApiError("Network error", 0, null);
   }

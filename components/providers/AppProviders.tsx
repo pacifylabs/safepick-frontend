@@ -28,7 +28,6 @@ const queryClient = new QueryClient({
 export function AppProviders(props: { children: React.ReactNode }) {
   const [mswReady, setMswReady] = useState(false);
   const isAuthenticated = useAuthStore((state: any) => state.isAuthenticated);
-  const accessToken = useAuthStore((state: any) => state.accessToken);
   const setSession = useAuthStore((state: any) => state.setSession);
   const user = useAuthStore((state: any) => state.user);
 
@@ -84,10 +83,10 @@ export function AppProviders(props: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (mswReady && accessToken && !user) {
+    if (mswReady && isAuthenticated && !user) {
       getCurrentUser()
         .then((response) => {
-          setSession(response.user, accessToken);
+          setSession(response.user);
         })
         .catch((err) => {
           // Token might be invalid or /auth/me endpoint doesn't exist
@@ -96,7 +95,7 @@ export function AppProviders(props: { children: React.ReactNode }) {
           // The user can be populated from other data sources (e.g., children response)
         });
     }
-  }, [mswReady, accessToken, user, setSession]);
+  }, [mswReady, isAuthenticated, user, setSession]);
 
   if (!mswReady) {
     return (
